@@ -1,0 +1,65 @@
+% GroundLM @ EMNLP 2026 submission.
+% Uses the ACL template: drop acl.sty, acl_natbib.bst (and optionally
+% ACL-style.sty) from https://github.com/acl-org/acl-style-files into this dir.
+\documentclass[11pt]{article}
+\usepackage[review]{acl}          % use [final] for camera-ready
+\usepackage{times}
+\usepackage{latexsym}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\emergencystretch=1.5em   % avoid overfull hboxes in the narrow ACL columns
+
+\title{A Support--Faithfulness Contrast Aligns Across Model Families\\
+up to a Linear Map but Does Not Transfer to Real Hallucinations:\\
+A Matched-Pair Study}
+
+\author{Anonymous ACL submission}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Internals-based, reference-free hallucination detection treats ``context-faithfulness''
+---is an answer entailed by the provided context?---as a linear direction in the
+residual stream. But in the standard extractive setup, faithfulness is almost
+perfectly correlated with \emph{lexical overlap} (whether the answer string occurs
+in the context, $r{=}0.99$ in our data), so an apparent ``grounding probe'' may be a
+string-matching detector. We introduce a matched \textsc{Support}$\times$\textsc{Overlap}
+construction that decouples the two ($r{=}0.50$ on its model-free cells), including a
+wrong-question trap on which an off-the-shelf NLI model is fooled ${\sim}25\%$ of the
+time. With this control, on four instruction-tuned families (Llama-3.1-8B,
+Qwen2.5-7B, Mistral-7B, Gemma-2-9B), we report: (i)~a mid-layer context-grounding
+signal \emph{does} exist beyond lexical overlap---within the answer-present stratum,
+where overlap is held constant, support is decodable at AUROC~$0.87$ (raw) and
+$0.72$--$0.78$ after purging model confidence---though by construction this stratum
+cannot separate grounding from factoid-correctness, so we make no claim of a grounding
+axis geometrically distinct from factuality. (ii)~This direction \emph{aligns across
+the four families up to a linear map}: an orthogonal-Procrustes map transports it
+nearly collinear with each family's native direction (cosine~${\approx}0.98$, vs.\
+${\approx}0.01$ for a random direction through the same map), and far exceeds an
+anchor-projection baseline; we rest this on the geometry rather than the
+(ceiling-saturated) transferred-probe AUROC. (iii)~Yet the synthetic direction
+\emph{does not} transfer to real hallucination detection: on RAGTruth it scores below
+NLI, confidence, and lexical overlap among single-pass API-free baselines, and within
+a task no internals- or NLI-based signal (including a sentence-level SummaC-style NLI
+baseline) exceeds ${\approx}0.6$ AUROC---while overlap's apparent edge
+($0.753$ pooled, $0.647$ macro) is largely a between-task base-rate artifact. Only an
+in-domain probe trained on human labels recovers a usable signal ($0.77$--$0.82$ on
+the three RAGTruth families; it exceeds a single-hypothesis NLI baseline but only ties
+lexical overlap on one). Our contribution is
+a confound-controlled methodology, a released wrong-question diagnostic, and a
+cautionary result: a grounding direction identified on controlled stimuli is real and
+portable, but is not, by itself, a deployable hallucination detector. All experiments
+are API-free and run on a single A100-40G.
+\end{abstract}
+
+\input{sections}
+
+\bibliography{references}
+
+\end{document}

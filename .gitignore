@@ -1,0 +1,22 @@
+__pycache__/
+*.pyc
+.DS_Store
+
+# Large GPU-extraction caches (~165MB each, >GitHub's 100MB limit).
+# Regenerate with: bash reproduce.sh extract   (needs an A100). The small result
+# JSONs in runs/ ARE tracked, so the CPU analysis/figures are reproducible.
+runs/**/features.npz
+*.npz
+*.npz.meta.json
+# SummaC sentence-NLI checkpoint cache (rebuilt by scripts/nli_sentence_ragtruth.py)
+runs/_nli_sent_cache/
+
+# LaTeX build artifacts
+paper/*.aux
+paper/*.bbl
+paper/*.blg
+paper/*.log
+paper/*.out
+paper/*.fdb_latexmk
+paper/*.fls
+paper/*.synctex.gz

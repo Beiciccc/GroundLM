@@ -1,0 +1,272 @@
+### BUILD datasets (CtrlPairs-v2 + RAGTruth, with NLI baselines) ###
+Loading weights:   0%|          | 0/202 [00:00<?, ?it/s]Loading weights: 100%|██████████| 202/202 [00:00<00:00, 3701.90it/s]
+scored NLI entailment for 3593 statements (the C4 baseline)
+saved 3593 statements -> data/ctrlpairs_v2.jsonl
+{
+  "n": 3593,
+  "cell_counts": {
+    "A": 1200,
+    "C": 1200,
+    "D": 1193
+  },
+  "corr_support_overlapbin": 0.49926816479332675,
+  "corr_support_overlapfrac": 0.467069721714334,
+  "support_rate": 0.3339827442248817,
+  "overlap_rate": 0.6679654884497634
+}
+saved 1200 belief items -> data/belief_items.jsonl
+Repo card metadata block was not found. Setting CardData to empty.
+Generating train split: 0 examples [00:00, ? examples/s]Generating train split: 6000 examples [00:00, 47498.19 examples/s]Generating train split: 15090 examples [00:00, 75551.94 examples/s]
+Generating test split: 0 examples [00:00, ? examples/s]Generating test split: 2700 examples [00:00, 66988.19 examples/s]
+{
+  "n": 2000,
+  "faithful_rate": 0.658,
+  "by_task": {
+    "Summary": {
+      "n": 667,
+      "faithful_rate": 0.7946026986506747
+    },
+    "Data2txt": {
+      "n": 667,
+      "faithful_rate": 0.3568215892053973
+    },
+    "QA": {
+      "n": 666,
+      "faithful_rate": 0.8228228228228228
+    }
+  }
+}
+Loading weights:   0%|          | 0/202 [00:00<?, ?it/s]Loading weights: 100%|██████████| 202/202 [00:00<00:00, 8571.76it/s]
+scored NLI on 2000 RAGTruth items
+saved 2000 -> data/ragtruth.jsonl
+### EXTRACT qwen25_7b (Qwen/Qwen2.5-7B-Instruct, bs=4) ###
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+[transformers] The following generation flags are not valid and may be ignored: ['output_hidden_states']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
+Qwen/Qwen2.5-7B-Instruct: 3593 statements
+Loading weights:   0%|          | 0/339 [00:00<?, ?it/s]Loading weights:  80%|███████▉  | 271/339 [00:00<00:00, 2612.00it/s]Loading weights: 100%|██████████| 339/339 [00:00<00:00, 2695.83it/s]
+  extracted features: last_8 shape (3593, 3584), layers=[8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22]
+  parametric knows-gold: 84.0% of 1200 items
+  saved -> runs/qwen25_7b_v2
+### EXTRACT qwen25_7b RAGTruth (max-len 2048) ###
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+[transformers] The following generation flags are not valid and may be ignored: ['output_hidden_states']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
+Qwen/Qwen2.5-7B-Instruct: 2000 statements
+Loading weights:   0%|          | 0/339 [00:00<?, ?it/s]Loading weights: 100%|██████████| 339/339 [00:00<00:00, 8505.68it/s]
+  extracted features: last_8 shape (2000, 3584), layers=[8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22]
+  saved -> runs/qwen25_7b_rt
+model=Qwen/Qwen2.5-7B-Instruct layer L14
+
+RAGTruth n=2000 faithful_rate=0.66  (detect hallucination; AUROC higher=better, AURC lower=better)
+Traceback (most recent call last):
+  File "/root/GroundLM/scripts/analyze_gate_ragtruth.py", line 111, in <module>
+    main()
+  File "/root/GroundLM/scripts/analyze_gate_ragtruth.py", line 85, in main
+    ar = aurc(sc, faith)               # treat score as "safe to trust" ordering
+         ^^^^^^^^^^^^^^^
+  File "/root/GroundLM/scripts/../src/groundlm/gate/conformal_gate.py", line 45, in aurc
+    return float(np.trapz(risk, cov))
+                 ^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/numpy/__init__.py", line 792, in __getattr__
+    raise AttributeError(f"module {__name__!r} has no attribute {attr!r}")
+AttributeError: module 'numpy' has no attribute 'trapz'. Did you mean: 'trace'?
+rt failed qwen25_7b
+model=Qwen/Qwen2.5-7B-Instruct n=3593 layers=[8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22] | O=1 frac=0.67 support frac=0.33
+  L 8 | supp AUROC all=0.751 O1=0.656 O0=nan -surf=0.602 | fact=0.771 | angle=58(p=0.00) | confasym=+0.00
+  L 9 | supp AUROC all=0.818 O1=0.741 O0=nan -surf=0.682 | fact=0.798 | angle=80(p=0.00) | confasym=+0.18
+  L10 | supp AUROC all=0.812 O1=0.795 O0=nan -surf=0.721 | fact=0.854 | angle=80(p=0.00) | confasym=-0.04
+  L11 | supp AUROC all=0.825 O1=0.816 O0=nan -surf=0.743 | fact=0.860 | angle=81(p=0.00) | confasym=+0.02
+  L12 | supp AUROC all=0.875 O1=0.865 O0=nan -surf=0.833 | fact=0.902 | angle=83(p=0.00) | confasym=-0.06
+  L13 | supp AUROC all=0.878 O1=0.870 O0=nan -surf=0.849 | fact=0.912 | angle=79(p=0.00) | confasym=-0.09
+  L14 | supp AUROC all=0.883 O1=0.865 O0=nan -surf=0.833 | fact=0.907 | angle=78(p=0.00) | confasym=-0.00
+  L15 | supp AUROC all=0.890 O1=0.872 O0=nan -surf=0.865 | fact=0.915 | angle=88(p=0.00) | confasym=-0.08
+  L16 | supp AUROC all=0.900 O1=0.873 O0=nan -surf=0.859 | fact=0.920 | angle=77(p=0.00) | confasym=+0.09
+  L17 | supp AUROC all=0.900 O1=0.872 O0=nan -surf=0.862 | fact=0.920 | angle=76(p=0.00) | confasym=+0.09
+  L18 | supp AUROC all=0.906 O1=0.873 O0=nan -surf=0.866 | fact=0.921 | angle=76(p=0.00) | confasym=+0.04
+  L19 | supp AUROC all=0.911 O1=0.873 O0=nan -surf=0.866 | fact=0.907 | angle=69(p=0.00) | confasym=+0.13
+  L20 | supp AUROC all=0.901 O1=0.874 O0=nan -surf=0.858 | fact=0.880 | angle=59(p=0.00) | confasym=-0.04
+  L21 | supp AUROC all=0.890 O1=0.874 O0=nan -surf=0.862 | fact=0.862 | angle=51(p=0.00) | confasym=-0.08
+  L22 | supp AUROC all=0.879 O1=0.873 O0=nan -surf=0.856 | fact=0.854 | angle=46(p=0.00) | confasym=-0.12
+
+best O=1 support AUROC (grounding beyond overlap): L21 = 0.874  ->  SEMANTIC GROUNDING AXIS EXISTS beyond overlap
+freed cache: qwen25_7b
+### EXTRACT mistral7b_v03 (mistralai/Mistral-7B-Instruct-v0.3, bs=16) ###
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+[transformers] The following generation flags are not valid and may be ignored: ['output_hidden_states']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
+mistralai/Mistral-7B-Instruct-v0.3: 3593 statements
+Loading weights:   0%|          | 0/291 [00:00<?, ?it/s]Loading weights:  68%|██████▊   | 198/291 [00:00<00:00, 1902.22it/s]Loading weights: 100%|██████████| 291/291 [00:00<00:00, 2133.63it/s]
+  extracted features: last_9 shape (3593, 4096), layers=[9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]
+  parametric knows-gold: 92.6% of 1200 items
+  saved -> runs/mistral7b_v03_v2
+### EXTRACT mistral7b_v03 RAGTruth (max-len 2048) ###
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+[transformers] The following generation flags are not valid and may be ignored: ['output_hidden_states']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
+mistralai/Mistral-7B-Instruct-v0.3: 2000 statements
+Loading weights:   0%|          | 0/291 [00:00<?, ?it/s]Loading weights: 100%|██████████| 291/291 [00:00<00:00, 8630.50it/s]
+Traceback (most recent call last):
+  File "/root/GroundLM/scripts/run_extract.py", line 51, in <module>
+    main()
+  File "/root/GroundLM/scripts/run_extract.py", line 35, in main
+    feats = extract(args.model, stmts, layers=args.layers, pooling=(args.pooling,),
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/GroundLM/scripts/../src/groundlm/extract/activations.py", line 110, in extract
+    out = model(input_ids=input_ids, attention_mask=attn)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1779, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1790, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/transformers/utils/generic.py", line 907, in wrapper
+    output = func(self, *args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/transformers/models/mistral/modeling_mistral.py", line 447, in forward
+    outputs: BaseModelOutputWithPast = self.model(
+                                       ^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1779, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1790, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/transformers/utils/generic.py", line 1036, in wrapper
+    output = func(self, *args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/transformers/utils/output_capturing.py", line 252, in wrapper
+    outputs = func(self, *args, **kwargs)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/transformers/models/mistral/modeling_mistral.py", line 385, in forward
+    hidden_states = decoder_layer(
+                    ^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/transformers/modeling_layers.py", line 93, in __call__
+    return super().__call__(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1779, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1885, in _call_impl
+    return inner()
+           ^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1833, in inner
+    result = forward_call(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/transformers/models/mistral/modeling_mistral.py", line 238, in forward
+    hidden_states = self.mlp(hidden_states)
+                    ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1779, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1790, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/transformers/models/mistral/modeling_mistral.py", line 47, in forward
+    down_proj = self.down_proj(self.act_fn(self.gate_proj(x)) * self.up_proj(x))
+                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 896.00 MiB. GPU 0 has a total capacity of 39.49 GiB of which 835.56 MiB is free. Including non-PyTorch memory, this process has 38.67 GiB memory in use. Of the allocated memory 37.95 GiB is allocated by PyTorch, and 221.78 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://docs.pytorch.org/docs/stable/notes/cuda.html#optimizing-memory-usage-with-pytorch-cuda-alloc-conf)
+rt failed mistral7b_v03
+model=mistralai/Mistral-7B-Instruct-v0.3 n=3593 layers=[9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25] | O=1 frac=0.67 support frac=0.33
+  L 9 | supp AUROC all=0.876 O1=0.851 O0=nan -surf=0.829 | fact=0.898 | angle=84(p=0.00) | confasym=-0.10
+  L10 | supp AUROC all=0.894 O1=0.870 O0=nan -surf=0.875 | fact=0.915 | angle=73(p=0.00) | confasym=-0.22
+  L11 | supp AUROC all=0.890 O1=0.875 O0=nan -surf=0.897 | fact=0.909 | angle=58(p=0.00) | confasym=-0.14
+  L12 | supp AUROC all=0.898 O1=0.876 O0=nan -surf=0.910 | fact=0.911 | angle=58(p=0.00) | confasym=-0.10
+  L13 | supp AUROC all=0.895 O1=0.876 O0=nan -surf=0.896 | fact=0.906 | angle=60(p=0.00) | confasym=-0.07
+  L14 | supp AUROC all=0.894 O1=0.876 O0=nan -surf=0.895 | fact=0.897 | angle=57(p=0.00) | confasym=+0.03
+  L15 | supp AUROC all=0.895 O1=0.875 O0=nan -surf=0.899 | fact=0.899 | angle=59(p=0.00) | confasym=+0.05
+  L16 | supp AUROC all=0.894 O1=0.871 O0=nan -surf=0.894 | fact=0.882 | angle=54(p=0.00) | confasym=-0.08
+  L17 | supp AUROC all=0.889 O1=0.871 O0=nan -surf=0.889 | fact=0.874 | angle=52(p=0.00) | confasym=-0.11
+  L18 | supp AUROC all=0.883 O1=0.870 O0=nan -surf=0.883 | fact=0.865 | angle=49(p=0.00) | confasym=-0.12
+  L19 | supp AUROC all=0.880 O1=0.870 O0=nan -surf=0.883 | fact=0.861 | angle=47(p=0.00) | confasym=-0.11
+  L20 | supp AUROC all=0.859 O1=0.866 O0=nan -surf=0.868 | fact=0.844 | angle=40(p=0.00) | confasym=-0.07
+  L21 | supp AUROC all=0.856 O1=0.865 O0=nan -surf=0.866 | fact=0.844 | angle=40(p=0.00) | confasym=-0.07
+  L22 | supp AUROC all=0.848 O1=0.865 O0=nan -surf=0.862 | fact=0.841 | angle=38(p=0.00) | confasym=-0.08
+  L23 | supp AUROC all=0.842 O1=0.864 O0=nan -surf=0.860 | fact=0.840 | angle=37(p=0.00) | confasym=-0.08
+  L24 | supp AUROC all=0.838 O1=0.863 O0=nan -surf=0.858 | fact=0.839 | angle=36(p=0.00) | confasym=-0.07
+  L25 | supp AUROC all=0.836 O1=0.862 O0=nan -surf=0.856 | fact=0.836 | angle=36(p=0.00) | confasym=-0.07
+
+best O=1 support AUROC (grounding beyond overlap): L12 = 0.876  ->  SEMANTIC GROUNDING AXIS EXISTS beyond overlap
+freed cache: mistral7b_v03
+### EXTRACT llama31_8b (meta-llama/Llama-3.1-8B-Instruct, bs=6) ###
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+meta-llama/Llama-3.1-8B-Instruct: 3593 statements
+Fetching 4 files:   0%|          | 0/4 [00:00<?, ?it/s]Fetching 4 files:  25%|██▌       | 1/4 [05:31<16:34, 331.46s/it]Fetching 4 files:  50%|█████     | 2/4 [05:51<04:56, 148.17s/it]Fetching 4 files:  75%|███████▌  | 3/4 [06:13<01:30, 90.60s/it] Fetching 4 files: 100%|██████████| 4/4 [06:13<00:00, 93.35s/it]
+[transformers] The following generation flags are not valid and may be ignored: ['output_hidden_states']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
+Loading weights:   0%|          | 0/291 [00:00<?, ?it/s]Loading weights: 100%|██████████| 291/291 [00:00<00:00, 7405.31it/s]
+  extracted features: last_9 shape (3593, 4096), layers=[9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]
+  parametric knows-gold: 94.8% of 1200 items
+  saved -> runs/llama31_8b_v2
+### EXTRACT llama31_8b RAGTruth (max-len 2048) ###
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+[transformers] The following generation flags are not valid and may be ignored: ['output_hidden_states']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
+meta-llama/Llama-3.1-8B-Instruct: 2000 statements
+Loading weights:   0%|          | 0/291 [00:00<?, ?it/s]Loading weights: 100%|██████████| 291/291 [00:00<00:00, 7439.29it/s]
+  extracted features: last_9 shape (2000, 4096), layers=[9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]
+  saved -> runs/llama31_8b_rt
+model=meta-llama/Llama-3.1-8B-Instruct layer L16
+
+RAGTruth n=2000 faithful_rate=0.66  (detect hallucination; AUROC higher=better, AURC lower=better)
+Traceback (most recent call last):
+  File "/root/GroundLM/scripts/analyze_gate_ragtruth.py", line 111, in <module>
+    main()
+  File "/root/GroundLM/scripts/analyze_gate_ragtruth.py", line 85, in main
+    ar = aurc(sc, faith)               # treat score as "safe to trust" ordering
+         ^^^^^^^^^^^^^^^
+  File "/root/GroundLM/scripts/../src/groundlm/gate/conformal_gate.py", line 45, in aurc
+    return float(np.trapz(risk, cov))
+                 ^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/numpy/__init__.py", line 792, in __getattr__
+    raise AttributeError(f"module {__name__!r} has no attribute {attr!r}")
+AttributeError: module 'numpy' has no attribute 'trapz'. Did you mean: 'trace'?
+rt failed llama31_8b
+model=meta-llama/Llama-3.1-8B-Instruct n=3593 layers=[9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25] | O=1 frac=0.67 support frac=0.33
+  L 9 | supp AUROC all=0.887 O1=0.869 O0=nan -surf=0.873 | fact=0.916 | angle=69(p=0.00) | confasym=-0.17
+  L10 | supp AUROC all=0.887 O1=0.871 O0=nan -surf=0.887 | fact=0.917 | angle=65(p=0.00) | confasym=-0.18
+  L11 | supp AUROC all=0.899 O1=0.872 O0=nan -surf=0.890 | fact=0.924 | angle=72(p=0.00) | confasym=-0.14
+  L12 | supp AUROC all=0.900 O1=0.872 O0=nan -surf=0.891 | fact=0.919 | angle=68(p=0.00) | confasym=-0.12
+  L13 | supp AUROC all=0.906 O1=0.872 O0=nan -surf=0.885 | fact=0.916 | angle=68(p=0.00) | confasym=+0.02
+  L14 | supp AUROC all=0.905 O1=0.873 O0=nan -surf=0.886 | fact=0.917 | angle=68(p=0.00) | confasym=-0.02
+  L15 | supp AUROC all=0.906 O1=0.875 O0=nan -surf=0.887 | fact=0.914 | angle=65(p=0.00) | confasym=+0.04
+  L16 | supp AUROC all=0.908 O1=0.875 O0=nan -surf=0.888 | fact=0.917 | angle=67(p=0.00) | confasym=+0.08
+  L17 | supp AUROC all=0.900 O1=0.872 O0=nan -surf=0.870 | fact=0.885 | angle=61(p=0.00) | confasym=+0.07
+  L18 | supp AUROC all=0.899 O1=0.871 O0=nan -surf=0.871 | fact=0.876 | angle=59(p=0.00) | confasym=+0.01
+  L19 | supp AUROC all=0.896 O1=0.870 O0=nan -surf=0.871 | fact=0.872 | angle=58(p=0.00) | confasym=-0.07
+  L20 | supp AUROC all=0.895 O1=0.870 O0=nan -surf=0.868 | fact=0.869 | angle=58(p=0.00) | confasym=-0.08
+  L21 | supp AUROC all=0.893 O1=0.870 O0=nan -surf=0.868 | fact=0.864 | angle=56(p=0.00) | confasym=-0.10
+  L22 | supp AUROC all=0.892 O1=0.870 O0=nan -surf=0.865 | fact=0.860 | angle=55(p=0.00) | confasym=-0.13
+  L23 | supp AUROC all=0.892 O1=0.868 O0=nan -surf=0.864 | fact=0.856 | angle=55(p=0.00) | confasym=-0.15
+  L24 | supp AUROC all=0.889 O1=0.868 O0=nan -surf=0.860 | fact=0.851 | angle=54(p=0.00) | confasym=-0.11
+  L25 | supp AUROC all=0.887 O1=0.868 O0=nan -surf=0.854 | fact=0.849 | angle=54(p=0.00) | confasym=-0.12
+
+best O=1 support AUROC (grounding beyond overlap): L16 = 0.875  ->  SEMANTIC GROUNDING AXIS EXISTS beyond overlap
+freed cache: llama31_8b
+### EXTRACT gemma2_9b (google/gemma-2-9b-it, bs=2) ###
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+google/gemma-2-9b-it: 3593 statements
+Fetching 4 files:   0%|          | 0/4 [00:00<?, ?it/s]Fetching 4 files:  25%|██▌       | 1/4 [08:55<26:45, 535.30s/it]Fetching 4 files: 100%|██████████| 4/4 [08:55<00:00, 133.83s/it]
+[transformers] The following generation flags are not valid and may be ignored: ['output_hidden_states']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
+Loading weights:   0%|          | 0/464 [00:00<?, ?it/s]Loading weights: 100%|██████████| 464/464 [00:00<00:00, 7510.96it/s]
+  extracted features: last_12 shape (3593, 3584), layers=[12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33]
+  parametric knows-gold: 95.2% of 1200 items
+  saved -> runs/gemma2_9b_v2
+### EXTRACT gemma2_9b RAGTruth (max-len 2048) ###
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+[transformers] The following generation flags are not valid and may be ignored: ['output_hidden_states']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
+google/gemma-2-9b-it: 2000 statements
+Loading weights:   0%|          | 0/464 [00:00<?, ?it/s]Loading weights: 100%|██████████| 464/464 [00:00<00:00, 7891.93it/s]
+  extracted features: last_12 shape (2000, 3584), layers=[12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33]
+  saved -> runs/gemma2_9b_rt
+model=google/gemma-2-9b-it layer L21
+
+RAGTruth n=2000 faithful_rate=0.66  (detect hallucination; AUROC higher=better, AURC lower=better)
+Traceback (most recent call last):
+  File "/root/GroundLM/scripts/analyze_gate_ragtruth.py", line 111, in <module>
+    main()
+  File "/root/GroundLM/scripts/analyze_gate_ragtruth.py", line 85, in main
+    ar = aurc(sc, faith)               # treat score as "safe to trust" ordering
+         ^^^^^^^^^^^^^^^
+  File "/root/GroundLM/scripts/../src/groundlm/gate/conformal_gate.py", line 45, in aurc
+    return float(np.trapz(risk, cov))
+                 ^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/numpy/__init__.py", line 792, in __getattr__
+    raise AttributeError(f"module {__name__!r} has no attribute {attr!r}")
+AttributeError: module 'numpy' has no attribute 'trapz'. Did you mean: 'trace'?
+rt failed gemma2_9b

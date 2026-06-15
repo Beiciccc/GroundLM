@@ -1,0 +1,7 @@
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+[transformers] The following generation flags are not valid and may be ignored: ['output_hidden_states']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
+Qwen/Qwen2.5-7B-Instruct: 3593 statements
+Loading weights:   0%|          | 0/339 [00:00<?, ?it/s]Loading weights: 100%|██████████| 339/339 [00:00<00:00, 7317.64it/s]
+  extracted features: last_8 shape (3593, 3584), layers=[8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22]
+  parametric knows-gold: 84.0% of 1200 items
+  saved -> runs/qwen25_7b_v2

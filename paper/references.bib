@@ -1,0 +1,167 @@
+% References for the GroundLM Faithfulness-Axis paper.
+% arXiv IDs marked [V] were verified live (2026-06-13) during the novelty check.
+% Tool/baseline IDs (DeBERTaV3, AlignScore, CAD, ContextCite, SelfCite, E5, BGE,
+% SGen) are from prior knowledge — double-check author lists before camera-ready.
+
+% ---- datasets / benchmarks ----
+@inproceedings{longpre2021nqswap,
+  title={Entity-Based Knowledge Conflicts in Question Answering},
+  author={Longpre, Shayne and Perisetla, Kartik and Chen, Anthony and Ramesh, Nikhil and DuBois, Chris and Singh, Sameer},
+  booktitle={EMNLP}, year={2021}, note={arXiv:2109.05052 [V]}}
+
+@inproceedings{ming2025faitheval,
+  title={{FaithEval}: Can Your Language Model Stay Faithful to Context, Even If ``The Moon is Made of Marshmallows''},
+  author={Ming, Yifei and Purushwalkam, Senthil and Pandit, Shrey and Ke, Zixuan and Nguyen, Xuan-Phi and Xiong, Caiming and Joty, Shafiq},
+  booktitle={ICLR}, year={2025}, note={arXiv:2410.03727 [V]}}
+
+@inproceedings{niu2024ragtruth,
+  title={{RAGTruth}: A Hallucination Corpus for Developing Trustworthy Retrieval-Augmented Language Models},
+  author={Niu, Cheng and Wu, Yuanhao and Zhu, Juno and Xu, Siliang and Shum, Kashun and Zhong, Randy and Song, Juntong and Zhang, Tong},
+  booktitle={ACL}, year={2024}, note={arXiv:2401.00396 [V]}}
+
+@inproceedings{gao2023alce,
+  title={Enabling Large Language Models to Generate Text with Citations},
+  author={Gao, Tianyu and Yen, Howard and Yu, Jiatong and Chen, Danqi},
+  booktitle={EMNLP}, year={2023}, note={ALCE; arXiv:2305.14627 [V]}}
+
+% ---- truth / factuality geometry ----
+@inproceedings{azaria2023saplma,
+  title={The Internal State of an {LLM} Knows When It's Lying},
+  author={Azaria, Amos and Mitchell, Tom},
+  booktitle={Findings of EMNLP}, year={2023}, note={SAPLMA; arXiv:2304.13734 [V]}}
+
+@inproceedings{marks2024geometry,
+  title={The Geometry of Truth: Emergent Linear Structure in {LLM} Representations of True/False Datasets},
+  author={Marks, Samuel and Tegmark, Max},
+  booktitle={COLM}, year={2024}, note={arXiv:2310.06824 [V]}}
+
+@inproceedings{burger2024truthuniversal,
+  title={Truth is Universal: Robust Detection of Lies in {LLM}s},
+  author={B{\"u}rger, Lennart and Hamprecht, Fred A. and Nadler, Boaz},
+  booktitle={NeurIPS}, year={2024}, note={arXiv:2407.12831 [V]}}
+
+@article{azizian2025orthogonal,
+  title={The Geometries of Truth Are Orthogonal Across Tasks},
+  author={Azizian, Waiss and Kirchhof, Michael and Ndiaye, Eugene and Bethune, Louis and Klein, Michal and Ablin, Pierre and Cuturi, Marco},
+  journal={arXiv preprint arXiv:2506.08572}, year={2025}, note={[V]}}
+
+@inproceedings{bao2025probing,
+  title={Probing the Geometry of Truth: Consistency and Generalization of Truth Directions in {LLM}s Across Logical Transformations and Question Answering Tasks},
+  author={Bao, Yuntai and Zhang, Xuhong and Du, Tianyu and Zhao, Xinkui and Feng, Zhengwen and Peng, Hao and Yin, Jianwei},
+  booktitle={Findings of ACL}, year={2025}, note={arXiv:2506.00823 [V]}}
+
+@article{cho2026confidencemanifold,
+  title={The Confidence Manifold: Geometric Structure of Correctness Representations in Language Models},
+  author={Cho, Seonglae and Wu, Zekun and Da Costa, Kleyton and Koshiyama, Adriano},
+  journal={arXiv preprint arXiv:2602.08159}, year={2026}, note={[V]}}
+
+@article{noanswer2025,
+  title={No Answer Needed: Predicting {LLM} Answer Accuracy from Question-Only Linear Probes},
+  author={Moreno Cencerrado, Ivan Vicente and Padres Masdemont, Arnau and Gonzalvez Hawthorne, Anton and Africa, David Demitri and Pacchiardi, Lorenzo},
+  journal={arXiv preprint arXiv:2509.10625}, year={2025}, note={[V]}}
+
+% ---- faithfulness/factuality as joint geometric objects ----
+@inproceedings{wang2025space,
+  title={One {SPACE} to Rule Them All: Jointly Mitigating Factuality and Faithfulness Hallucinations in {LLM}s},
+  author={Wang, Pengbo and Li, Chaozhuo and Wang, Chenxu and Zheng, Liwen and Zhang, Litian and Zhang, Xi},
+  booktitle={NeurIPS}, year={2025}, note={arXiv:2506.11088 [V]}}
+
+@article{adarsh2026context,
+  title={How Context Shapes Truth: Geometric Transformations of Statement-level Truth Representations in {LLM}s},
+  author={Adarsh, Shivam and Maistro, Maria and Lioma, Christina},
+  journal={arXiv preprint arXiv:2601.06599}, year={2026}, note={ACL 2026; [V]}}
+
+@article{gao2026proberag,
+  title={Probing Latent Knowledge Conflict for Faithful Retrieval-Augmented Generation},
+  author={Gao, Linfeng and Bi, Baolong and Yuan, Zheng and Wang, Le and Chen, Zerui and Wei, Zhimin and Liu, Shenghua and Zhang, Qinggang and Su, Jinsong},
+  journal={arXiv preprint arXiv:2510.12460}, year={2025}, note={CLEAR; [V]}}
+
+% ---- residual-stream under knowledge conflict ----
+@inproceedings{zhao2024residualconflict,
+  title={Analysing the Residual Stream of Language Models Under Knowledge Conflicts},
+  author={Zhao, Yu and Du, Xiaotang and Hong, Giwon and Gema, Aryo Pradipta and Devoto, Alessio and Wang, Hongru and He, Xuanli and Wong, Kam-Fai and Minervini, Pasquale},
+  booktitle={NeurIPS Workshop on Foundation Model Interventions}, year={2024}, note={arXiv:2410.16090 [V]}}
+
+@inproceedings{sun2025redeep,
+  title={{ReDeEP}: Detecting Hallucination in Retrieval-Augmented Generation via Mechanistic Interpretability},
+  author={Sun, Zhongxiang and others},
+  booktitle={ICLR}, year={2025}, note={arXiv:2410.11414 [V]}}
+
+@article{brink2026attribution,
+  title={Probing for Knowledge Attribution in Large Language Models},
+  author={Brink, Ivo and Boer, Alexander and Ulmer, Dennis},
+  journal={arXiv preprint arXiv:2602.22787}, year={2026}, note={[V]}}
+
+% ---- cross-family transfer ----
+@article{puri2025atlas,
+  title={{Atlas-Alignment}: Making Interpretability Transferable Across Language Models},
+  author={Puri, Bruno and Berend, Jim and Lapuschkin, Sebastian and Samek, Wojciech},
+  journal={arXiv preprint arXiv:2510.27413}, year={2025}, note={[V]}}
+
+@article{kim2026crossfamily,
+  title={Cross-Family Universality of Behavioral Axes via Anchor-Projected Representations},
+  author={Kim, Su-Hyeon and Han, Yo-Sub},
+  journal={arXiv preprint arXiv:2605.09875}, year={2026}, note={ACS; [V]}}
+
+% ---- faithfulness-vs-factuality decomposition & gates ----
+@article{fadeeva2025franq,
+  title={Faithfulness-Aware Uncertainty Quantification for Fact-Checking the Output of Retrieval Augmented Generation},
+  author={Fadeeva, Ekaterina and Rubashevskii, Aleksandr and Piatrashyn, Dzianis and Vashurin, Roman and Dhuliawala, Shehzaad and Shelmanov, Artem and Baldwin, Timothy and Nakov, Preslav and Sachan, Mrinmaya and Panov, Maxim},
+  journal={arXiv preprint arXiv:2505.21072}, year={2025}, note={FRANQ; [V]}}
+
+@article{zhu2026saber,
+  title={Trust or Abstain? A Self-Aware {RAG} Approach},
+  author={Zhu, Xi and Wang, Ziqi and Mei, Kai and Xu, Wujiang and Guo, Minghao and Yang, Bangji and Fan, Jiajun and Metaxas, Dimitris N.},
+  journal={arXiv preprint arXiv:2605.18792}, year={2026}, note={SABER; [V]}}
+
+@article{oneill2025singledirection,
+  title={A Single Direction of Truth: An Observer Model's Linear Residual Probe Exposes and Steers Contextual Hallucinations},
+  author={O'Neill, Charles and Chalnev, Slava and Zhao, Chi Chi and Kirkby, Max and Jayasekara, Mudith},
+  journal={arXiv preprint arXiv:2507.23221}, year={2025}, note={[V]}}
+
+@inproceedings{lee2024sgen,
+  title={Selective Generation for Language Models},
+  author={Lee, Minjae and others},
+  booktitle={NeurIPS}, year={2024}, note={SGen; FDR-E conformal selective generation -- verify arXiv id before camera-ready}}
+
+% ---- tools / baselines ----
+@inproceedings{he2023debertav3,
+  title={{DeBERTaV3}: Improving DeBERTa using ELECTRA-Style Pre-Training with Gradient-Disentangled Embedding Sharing},
+  author={He, Pengcheng and Gao, Jianfeng and Chen, Weizhu},
+  booktitle={ICLR}, year={2023}, note={arXiv:2111.09543}}
+
+@inproceedings{zha2023alignscore,
+  title={{AlignScore}: Evaluating Factual Consistency with A Unified Alignment Function},
+  author={Zha, Yuheng and Yang, Yichi and Li, Ruichen and Hu, Zhiting},
+  booktitle={ACL}, year={2023}, note={arXiv:2305.16739}}
+
+@article{laban2022summac,
+  title={{SummaC}: Re-Visiting {NLI}-based Models for Inconsistency Detection in Summarization},
+  author={Laban, Philippe and Schnabel, Tobias and Bennett, Paul N. and Hearst, Marti A.},
+  journal={Transactions of the Association for Computational Linguistics},
+  volume={10}, pages={163--177}, year={2022}, publisher={MIT Press}}
+
+@inproceedings{shi2024cad,
+  title={Trusting Your Evidence: Hallucinate Less with Context-Aware Decoding},
+  author={Shi, Weijia and Han, Xiaochuang and Lewis, Mike and Tsvetkov, Yulia and Zettlemoyer, Luke and Yih, Wen-tau},
+  booktitle={NAACL}, year={2024}, note={CAD; arXiv:2305.14739}}
+
+@inproceedings{cohenwang2024contextcite,
+  title={{ContextCite}: Attributing Model Generation to Context},
+  author={Cohen-Wang, Benjamin and Shah, Harshay and Georgiev, Kristian and Madry, Aleksander},
+  booktitle={NeurIPS}, year={2024}, note={arXiv:2409.00729}}
+
+@inproceedings{chuang2025selfcite,
+  title={{SelfCite}: Self-Supervised Alignment for Context Attribution in Large Language Models},
+  author={Chuang, Yung-Sung and others},
+  booktitle={ICML}, year={2025}, note={arXiv:2502.09604}}
+
+@article{wang2022e5,
+  title={Text Embeddings by Weakly-Supervised Contrastive Pre-training},
+  author={Wang, Liang and Yang, Nan and Huang, Xiaolong and Jiao, Binxing and Yang, Linjun and Jiang, Daxin and Majumder, Rangan and Wei, Furu},
+  journal={arXiv preprint arXiv:2212.03533}, year={2022}, note={E5}}
+
+@inproceedings{xiao2024bge,
+  title={{C-Pack}: Packed Resources For General Chinese Embeddings},
+  author={Xiao, Shitao and Liu, Zheng and Zhang, Peitian and Muennighoff, Niklas},
+  booktitle={SIGIR}, year={2024}, note={BGE; arXiv:2309.07597}}

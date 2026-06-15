@@ -1,0 +1,20 @@
+{
+  "layer": 14,
+  "model": "Qwen/Qwen2.5-7B-Instruct",
+  "all": {
+    "aurc_faith_axis": 0.5013582499447855,
+    "aurc_two_axis": 0.5108729304250457,
+    "aurc_max_softmax": 0.6872596419778875,
+    "aurc_nli": 0.4369903451305151,
+    "coverage_at_risk": 0.0005566379070414695,
+    "n": 3593
+  },
+  "overlap1_hard": {
+    "aurc_faith_axis": 0.32624169216490384,
+    "aurc_two_axis": 0.3037047043578857,
+    "aurc_max_softmax": 0.637434068588119,
+    "aurc_nli": 0.31976103911612297,
+    "coverage_at_risk": 0.0008333333333333334,
+    "n": 2400
+  }
+}

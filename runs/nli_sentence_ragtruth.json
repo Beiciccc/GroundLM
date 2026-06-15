@@ -1,0 +1,46 @@
+{
+  "n": 2000,
+  "pairs": 305999,
+  "device": "mps",
+  "ctx_cap": 60,
+  "nli_model": "MoritzLaurer/DeBERTa-v3-base-mnli-fever-anli",
+  "aggregation": "max over context sentences; response = mean (SummaC-ZS) | min",
+  "pooled": {
+    "summac_mean": 0.613698474910681,
+    "summac_min": 0.6639976492650065,
+    "nli_whole": 0.6731189676318455,
+    "overlap": 0.7532694768836985
+  },
+  "macro": {
+    "summac_mean": 0.595748891379456,
+    "summac_min": 0.5791081997916115,
+    "nli_whole": 0.5822393236626299,
+    "overlap": 0.6466114098771851
+  },
+  "per_task": {
+    "Data2txt": {
+      "n": 667,
+      "faithful_rate": 0.3568215892053973,
+      "summac_mean": 0.610996846290964,
+      "summac_min": 0.5209104620869327,
+      "nli_whole": 0.5469677381442087,
+      "overlap": 0.6047237076648841
+    },
+    "QA": {
+      "n": 666,
+      "faithful_rate": 0.8228228228228228,
+      "summac_mean": 0.5565693430656935,
+      "summac_min": 0.5906532228133119,
+      "nli_whole": 0.5666831621922553,
+      "overlap": 0.6856751824817517
+    },
+    "Summary": {
+      "n": 667,
+      "faithful_rate": 0.7946026986506747,
+      "summac_mean": 0.6196804847817106,
+      "summac_min": 0.6257609144745903,
+      "nli_whole": 0.6330670706514254,
+      "overlap": 0.6494353394849194
+    }
+  }
+}

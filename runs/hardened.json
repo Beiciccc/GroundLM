@@ -1,0 +1,156 @@
+{
+  "in_domain": {
+    "qwen25_7b": {
+      "layer": 14,
+      "auroc": 0.7657785865372652,
+      "ci": [
+        0.7437847133442069,
+        0.7883723375808831
+      ],
+      "auroc_no_overlap": 0.6036578591869745,
+      "overlap_auroc": 0.7532694768836985,
+      "vs_overlap_diff": 0.012482097007349348,
+      "vs_overlap_ci": [
+        -0.012438386985719748,
+        0.03882952471407169
+      ],
+      "vs_overlap_p": 0.1725
+    },
+    "llama31_8b": {
+      "layer": 16,
+      "auroc": 0.8157128192822481,
+      "ci": [
+        0.7955698300427804,
+        0.8356744716258324
+      ],
+      "auroc_no_overlap": 0.6586379512611316,
+      "overlap_auroc": 0.7532694768836985,
+      "vs_overlap_diff": 0.0624697122018439,
+      "vs_overlap_ci": [
+        0.038956716269740496,
+        0.08686101910831578
+      ],
+      "vs_overlap_p": 0.0
+    },
+    "gemma2_9b": {
+      "layer": 21,
+      "auroc": 0.8000553244814164,
+      "ci": [
+        0.7790706477158355,
+        0.8204532037040252
+      ],
+      "auroc_no_overlap": 0.6302658241348051,
+      "overlap_auroc": 0.7532694768836985,
+      "vs_overlap_diff": 0.04722927774511787,
+      "vs_overlap_ci": [
+        0.022435469152895383,
+        0.07198703382772491
+      ],
+      "vs_overlap_p": 0.0
+    }
+  },
+  "c1": {
+    "qwen25_7b": {
+      "layer": 14,
+      "supp_O1_raw": 0.8716881944444445,
+      "supp_O1_conf_purged": 0.6994368055555555,
+      "logprob_only": 0.7949413194444445,
+      "nli_within_O1": 0.745725,
+      "overlap_within_O1": 0.5,
+      "SF_identical": true,
+      "SF_corr": 1.0,
+      "cross_strata_AvsC": 0.6188413194444444
+    },
+    "mistral7b_v03": {
+      "layer": 16,
+      "supp_O1_raw": 0.8735291666666666,
+      "supp_O1_conf_purged": 0.7825944444444445,
+      "logprob_only": 0.8507243055555553,
+      "nli_within_O1": 0.745725,
+      "overlap_within_O1": 0.5,
+      "SF_identical": true,
+      "SF_corr": 1.0,
+      "cross_strata_AvsC": 0.7788701388888889
+    },
+    "llama31_8b": {
+      "layer": 16,
+      "supp_O1_raw": 0.876495138888889,
+      "supp_O1_conf_purged": 0.7235902777777778,
+      "logprob_only": 0.8572881944444445,
+      "nli_within_O1": 0.745725,
+      "overlap_within_O1": 0.5,
+      "SF_identical": true,
+      "SF_corr": 1.0,
+      "cross_strata_AvsC": 0.78076875
+    },
+    "gemma2_9b": {
+      "layer": 21,
+      "supp_O1_raw": 0.878120138888889,
+      "supp_O1_conf_purged": 0.7387972222222222,
+      "logprob_only": 0.8509850694444443,
+      "nli_within_O1": 0.745725,
+      "overlap_within_O1": 0.5,
+      "SF_identical": true,
+      "SF_corr": 1.0,
+      "cross_strata_AvsC": 0.7479760416666668
+    }
+  },
+  "c3": {
+    "cos": 0.9760082848131572,
+    "auroc": 0.905992009573378,
+    "within": 0.9046595385325669,
+    "rand_map": 0.518507271641996,
+    "rand_lab": 0.5060768328430556,
+    "rand_cos": 0.012824310207761846,
+    "rand_lab_cos": 0.10298591864444988,
+    "cos_fac": 0.9897252762864756,
+    "auroc_fac": 0.915184486242248,
+    "within_fac": 0.9110954176768801
+  },
+  "cellC": {
+    "n_items": 1200,
+    "n_distinct_q": 418,
+    "n_collision": 278,
+    "frac_collision": 0.23166666666666666,
+    "fooled_all": 0.37583333333333335,
+    "fooled_clean": 0.25488069414316705,
+    "fooled_cont": 0.7769784172661871,
+    "mean_ent_cleanC": 0.3122729479361511,
+    "mean_ent_A": 0.7374319616953532,
+    "mean_ent_D": 0.17829854145633606,
+    "supp_O1_clean_qwen25_7b": 0.9882384309472162,
+    "supp_O1_clean_mistral7b_v03": 0.9961243673174258,
+    "supp_O1_clean_llama31_8b": 0.9972161966738972,
+    "supp_O1_clean_gemma2_9b": 0.9985104844540853,
+    "corr_SO_all": 0.4992681647933273,
+    "corr_SO_clean": 0.5647847598756538
+  },
+  "c4_pertask": {
+    "tasks": [
+      "Data2txt",
+      "QA",
+      "Summary"
+    ],
+    "per_task": {
+      "faithful_rate": {
+        "Data2txt": 0.3568215892053973,
+        "QA": 0.8228228228228228,
+        "Summary": 0.7946026986506747
+      },
+      "overlap": {
+        "Data2txt": 0.6047237076648841,
+        "QA": 0.6856751824817517,
+        "Summary": 0.6494353394849194
+      },
+      "nli": {
+        "Data2txt": 0.5469677381442087,
+        "QA": 0.5666831621922553,
+        "Summary": 0.6330670706514254
+      }
+    },
+    "overlap_pooled": 0.7532694768836985,
+    "overlap_macro": 0.6466114098771851,
+    "nli_pooled": 0.6731189676318455,
+    "nli_macro": 0.5822393236626299
+  }
+}
