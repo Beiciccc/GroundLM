@@ -25,6 +25,9 @@ def main():
     ap.add_argument("--batch-size", type=int, default=16)
     ap.add_argument("--max-len", type=int, default=1024)
     ap.add_argument("--device", default="cuda")
+    ap.add_argument("--prompt-mode", default="normal",
+                    choices=["normal", "no_context", "shuffled_context"])
+    ap.add_argument("--skip-belief", action="store_true")
     args = ap.parse_args()
     os.makedirs(args.out_dir, exist_ok=True)
 
@@ -34,12 +37,12 @@ def main():
 
     feats = extract(args.model, stmts, layers=args.layers, pooling=(args.pooling,),
                     batch_size=args.batch_size, max_len=args.max_len,
-                    device=args.device, model=model, tok=tok)
+                    device=args.device, model=model, tok=tok, prompt_mode=args.prompt_mode)
     save_features(feats, os.path.join(args.out_dir, "features"))
     L0 = feats["layers"][0]
     print(f"  extracted features: {args.pooling}_{L0} shape {feats[f'{args.pooling}_{L0}'].shape}, layers={feats['layers']}")
 
-    if args.belief_items and os.path.exists(args.belief_items):
+    if args.belief_items and not args.skip_belief and os.path.exists(args.belief_items):
         items = [json.loads(l) for l in open(args.belief_items) if l.strip()]
         pb = score_parametric_belief(args.model, items, model=model, tok=tok)
         np.savez(os.path.join(args.out_dir, "parametric_belief.npz"), **pb)

@@ -74,7 +74,10 @@ def _left_pad(batch_ids, pad_id):
 
 def extract(model_id: str, statements, *, layers="mid", pooling=("last", "mean"),
             batch_size: int = 16, dtype: str = "bfloat16", device: str = "cuda",
-            max_len: int = 1024, model=None, tok=None) -> dict:
+            max_len: int = 1024, model=None, tok=None, prompt_mode: str = "normal") -> dict:
+    # prompt_mode: "normal" (context+question+answer) | "no_context" (question+answer only,
+    # ablation for Point-3 question-answer-compatibility) | "shuffled_context"
+    # (question+answer with an UNRELATED donor context, ablation that context is actually used).
     import torch
     import torch.nn.functional as F
 
@@ -94,11 +97,22 @@ def extract(model_id: str, statements, *, layers="mid", pooling=("last", "mean")
                  or (isinstance(v, str) and len(v) <= 16))]   # keep 'cell' etc. for subsetting
     meta = {k: [] for k in meta_keys}
 
+    donor_ctx = None
+    if prompt_mode == "shuffled_context":                 # unrelated donor context per row (seeded)
+        perm = np.random.default_rng(12345).permutation(len(rows))
+        perm = [(int(p) + 1) % len(rows) if int(p) == i else int(p) for i, p in enumerate(perm)]
+        donor_ctx = [rows[p]["context"] for p in perm]
+
     for start in range(0, len(rows), batch_size):
         batch = rows[start:start + batch_size]
         enc, alens = [], []
-        for r in batch:
-            prompt = PROMPT_TMPL.format(context=r["context"], question=r["question"])
+        for j, r in enumerate(batch):
+            if prompt_mode == "no_context":
+                prompt = f"Question: {r['question']}\nAnswer:"
+            elif prompt_mode == "shuffled_context":
+                prompt = PROMPT_TMPL.format(context=donor_ctx[start + j], question=r["question"])
+            else:
+                prompt = PROMPT_TMPL.format(context=r["context"], question=r["question"])
             ids, alen = _encode_prompt_answer(tok, prompt, r["asserted_answer"], max_len)
             enc.append(ids); alens.append(alen)
         input_ids, attn, T = _left_pad(enc, tok.pad_token_id)
@@ -132,7 +146,8 @@ def extract(model_id: str, statements, *, layers="mid", pooling=("last", "mean")
             for k in meta_keys:
                 meta[k].append(r[k])
 
-    result = {"model_id": model_id, "layers": keep, "pooling": list(pooling), "n_layers": n_layers}
+    result = {"model_id": model_id, "layers": keep, "pooling": list(pooling), "n_layers": n_layers,
+              "prompt_mode": prompt_mode}
     for k, v in feats.items():
         result[k] = np.concatenate(v).astype(np.float16)
     for k, v in conf.items():

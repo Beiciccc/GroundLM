@@ -18,6 +18,9 @@ echo "### STAGE B: analysis from cached features (no GPU) ###"
 # 1. C1 (a-priori depth-0.5 layers) + C3 (cosine + signed nulls + factuality-within) +
 #    cell-C contamination + C4 per-task + in-domain probe (wired into gate JSONs).
 python3 scripts/harden_analyses.py        # -> runs/c1_apriori.json, runs/hardened.json, runs/*_rt/report_gate_ragtruth.json
+# 1b. Reviewer-response analyses: clean (collision-free) Table 1, Procrustes nuisance
+#     baseline (per-pair + length/overlap/confidence cosine), per-task synth/conf/in-domain.
+python3 scripts/reviewer_analyses.py      # -> runs/reviewer_analyses.json
 # 2. Cross-family transfer matrix (for the C3 heatmap) and per-model C1/C2.
 python3 scripts/analyze_transfer_v2.py --dirs runs/qwen25_7b_v2 runs/mistral7b_v03_v2 runs/llama31_8b_v2 runs/gemma2_9b_v2 || true
 # 2b. v1 (extractive) confound number for the decoupling figure (CPU; no model).

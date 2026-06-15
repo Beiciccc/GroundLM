@@ -39,44 +39,51 @@ With this control we run a careful study across four model families
 (Llama-3.1-8B, Qwen2.5-7B-Instruct, Mistral-7B-v0.3, Gemma-2-9B). We report two
 positive results and two honest negatives.
 \begin{enumerate}[leftmargin=1.4em,itemsep=1pt,topsep=2pt]
-  \item \textbf{An overlap-independent grounding signal (\S\ref{sec:c1}).} A
-    mid-layer grounding signal \emph{does} exist beyond lexical overlap: it decodes
-    support among answer-present items at AUROC ${\approx}0.87$ (raw; $0.72$--$0.78$
-    after purging model confidence) on all four families under item-grouped
-    cross-validation. We are explicit about a limit of the design: within the
-    answer-present stratum, support and our \emph{synthetic} factuality label are
-    identical by construction, so this isolates grounding from \emph{lexical
-    overlap} but \emph{not} from factoid-correctness, and we do not claim a grounding
-    axis geometrically distinct from a parametric-factuality direction.
+  \item \textbf{An overlap-independent support signal (\S\ref{sec:c1}).} Within the
+    answer-present stratum (lexical overlap held constant), support is decodable on
+    all four families: on the collision-free cells the raw within-stratum AUROC is
+    near-ceiling (${\approx}0.99$) and stays at $0.76$--$0.88$ after purging model
+    confidence, under item-grouped cross-validation. We are explicit about two limits.
+    (i)~Within this stratum the contrast varies \emph{only the question}, so the
+    signal may reflect question--answer appropriateness rather than use of the
+    context; a question-fixed cross-strata control (\S\ref{sec:c1}) bounds how much is
+    context-driven.
+    (ii)~Support and our \emph{synthetic} factuality label are identical here by
+    construction, so this isolates the signal from \emph{lexical overlap} but
+    \emph{not} from factoid-correctness. We therefore claim a non-overlap
+    support/appropriateness signal, not a grounding axis geometrically distinct from
+    factuality.
   \item \textbf{Cross-family alignment up to a linear map (\S\ref{sec:c3}).} An
-    orthogonal-Procrustes map carries the grounding direction between families so the
+    orthogonal-Procrustes map carries the support direction between families so the
     transported direction is nearly collinear with the target family's \emph{native}
     direction (cosine ${\approx}0.98$, vs.\ ${\approx}0.01$ for a random direction
     through the same map), whereas an anchor-projection transfer reaches only $0.67$
     AUROC \citep{kim2026crossfamily}. The transferred-probe AUROC ($0.91$) equals the
     within-family bound but is ceiling-saturated, and signed map-aware nulls sit at
-    chance ($0.51$); we therefore rest the claim on the cosine. The factuality axis transports identically, indicating a
-    shared low-rank contrast rather than a grounding-specific axis; we claim no
+    chance ($0.51$); we therefore rest the claim on the cosine. Factuality, answer-length and overlap directions transport identically while a
+    confidence direction does not, indicating a shared stimulus-derived contrast
+    rather than a grounding-specific axis; we claim no
     universality beyond these four $7$--$9$B models \citep{puri2025atlas}.
   \item \textbf{No confidence asymmetry (\S\ref{sec:c2}).} Contrary to a natural
     hypothesis, softmax confidence and activation norm do not absorb the
     factuality axis more than the faithfulness axis; the effect is null.
   \item \textbf{Synthetic axes do not transfer to real hallucinations
     (\S\ref{sec:c4}).} Applied to RAGTruth \citep{niu2024ragtruth}, the
-    controlled-stimulus grounding direction scores \emph{below} NLI, confidence, and
+    controlled-stimulus support direction scores \emph{below} NLI, confidence, and
     lexical overlap among single-pass API-free baselines; within a task no internals-
     or NLI-based signal---including a sentence-level SummaC-style NLI baseline---exceeds
     ${\approx}0.6$ AUROC, and even lexical overlap, the strongest baseline, reaches only
     macro $0.647$. An in-domain probe trained on RAGTruth human
     labels recovers a usable signal ($0.77$--$0.82$ on the three RAGTruth families;
     exceeds a conservative single-hypothesis NLI baseline but ties lexical overlap on
-    Qwen), so a real grounding signal exists in the internals but is a \emph{different
+    Qwen), so a real support signal exists in the internals but is a \emph{different
     direction} from the synthetic axis and needs in-domain annotation.
 \end{enumerate}
 The takeaway for the ``faithful and efficient'' agenda is cautionary but useful:
-internals-based grounding directions identified on controlled data are real and
-remarkably portable across model families, yet are \emph{not}, by themselves,
-deployable hallucination detectors---on real data, lexical overlap still dominates.
+internals-based support contrasts identified on controlled data are real and
+remarkably portable across model families (though not grounding-specific), yet are
+\emph{not}, by themselves, deployable hallucination detectors---on real data, lexical
+overlap still dominates.
 
 \section{Related Work}
 \label{sec:related}
@@ -104,7 +111,7 @@ that is not reducible to lexical overlap.
 \paragraph{Cross-model transfer.}
 Linear concept directions can be aligned across models via orthogonal Procrustes
 \citep{puri2025atlas} or anchor projection \citep{kim2026crossfamily}. We apply both
-to a grounding direction; Procrustes renders it nearly collinear with the target's
+to a support direction; Procrustes renders it nearly collinear with the target's
 native direction (cosine ${\approx}0.98$) whereas anchor projection does not.
 
 \paragraph{Reference-free hallucination detection.}
@@ -124,7 +131,8 @@ $c_{\mathrm{org}}$ and a substituted entity $a_{\mathrm{swap}}$ supported by an
 entity-swapped context $c_{\mathrm{sub}}$. We define two bits per (context, answer):
 \textsc{Support}~$S$ (does the given context entail the asserted answer for the asked
 question?) and \textsc{Overlap}~$O$ (does the answer string occur in the context?).
-The factorial uses four cells:
+The $2{\times}2$ design has four cells, of which we realize three (cell~B is
+unrealized in this release; see below):
 \begin{center}\small
 \begin{tabular}{@{}llcc@{}}
 \toprule
@@ -157,7 +165,7 @@ label error is purged (Fig.~\ref{fig:decoupling}).
 
 \begin{figure*}[t]\centering
 \includegraphics[width=0.86\textwidth]{figs/fig_decoupling.pdf}
-\caption{\textbf{Decoupling grounding from lexical overlap.} (a)~The matched
+\caption{\textbf{Partially decoupling support from lexical overlap.} (a)~The matched
 construction drops $|\mathrm{corr}(\textsc{support},\textsc{overlap})|$ from $0.99$
 (extractive NQ-Swap) to $0.50$ (model-free cells A/C/D), and would reach $\approx 0$
 with the paraphrase cell~B (projected; cell~B has zero yield in this release).
@@ -232,7 +240,7 @@ only lower SummaC and is thus conservative)---plus max-softmax confidence and le
 overlap. Everything is API-free; the NLI baselines use the small DeBERTa model and all
 activation extraction runs on one A100-40G.
 
-\subsection{A grounding axis exists beyond lexical overlap}
+\subsection{A support signal beyond lexical overlap}
 \label{sec:c1}
 \paragraph{Leakage-controlled protocol.}
 Cells A/C/D of an item share the original context $c_{\mathrm{org}}$ verbatim
@@ -253,57 +261,61 @@ result is not a single-layer artifact. Confidence intervals are item cluster
 bootstraps (resampling \textsc{item\_id} with replacement).
 
 Table~\ref{tab:c1} reports support decodability within the answer-present stratum
-$O{=}1$ (cells A vs.\ C), where lexical overlap is held constant. Two caveats bound
-this number. First, within $O{=}1$ the support contrast varies \emph{only the
-question} (context and answer are held fixed), and our \emph{synthetic} factuality
-label is \emph{identical} to support by construction---they diverge only in the
-answer-absent cell~D---so supp$_{O=1}$ and a within-stratum factuality probe decode
-the same labels and coincide numerically (${\approx}0.877$). This number isolates
-grounding from \emph{lexical overlap}, but \emph{not} from factoid-correctness.
-Second, in this stratum overlap and answer length are themselves uninformative
-(AUROC~$0.500$), so surface removal carries no information here; the operative
-confound is \emph{model confidence}. Answer log-prob alone separates $A$ from $C$ at
-$0.80$--$0.86$ and NLI at $0.75$; after regressing the hidden states on log-prob and
-max-softmax the support contrast drops to $0.70$--$0.78$ (Table~\ref{tab:c1}), which
-we take as the primary confound-controlled estimate ($0.87$ is a raw upper bound). A
-cross-strata control that fixes the question at training time (train $A$ vs.\ $D$,
-evaluate $A$ vs.\ $C$) still transfers at $0.62$--$0.78$---weakest on Qwen and
-Gemma---confirming a real but model-dependent grounding component. Because $23.2\%$ of
-cell-C items are donor-collision mislabels (\S\ref{sec:construction}), supp$_{O=1}$ is
-a \emph{lower} bound: removing them (at the same a-priori layers) lifts it to
-$0.99$ ($0.988$--$0.999$). We therefore claim an
-overlap-independent, confidence-controlled grounding signal at $0.70$--$0.78$, and we
-do \emph{not} claim a grounding axis geometrically distinct from factuality (the
-$51$--$67^\circ$ support--factuality angle is a contrast among only three cell-means
-and, on matched binary partitions of those means, is not by itself evidence of
-distinctness).
+$O{=}1$ (cells A vs.\ C), where lexical overlap is held constant, on the
+\emph{collision-free} cells: we drop the $23.2\%$ of cell-C items whose donor question
+is string-identical to the original (\S\ref{sec:construction}), which would otherwise
+mislabel genuinely-supported items as unsupported. Three observations bound the
+interpretation. First, the raw within-stratum AUROC is \emph{near-ceiling}
+($0.99$; $0.988$--$0.999$ across families): once mislabels are removed, $A$ and $C$ are
+almost perfectly separable. We read this less as strong grounding than as evidence
+that the contrast is \emph{easy}---within $O{=}1$ it varies \emph{only the question}
+(context and answer are fixed), so a probe can in principle separate $A$ from $C$ by
+question--answer appropriateness without using the context. Second, the operative
+confound is \emph{model confidence} (overlap and answer length are uninformative here,
+AUROC~$0.500$): answer log-prob and NLI separate $A$ from $C$ on their own, so we
+residualize the hidden states on log-prob and max-softmax; the support contrast then
+falls to $0.76$--$0.88$, which we take as the primary confound-controlled estimate.
+Third, a cross-strata control that \emph{fixes the question} (train $A$ vs.\ $D$, where
+only the context changes; evaluate $A$ vs.\ $C$) transfers at $0.66$--$0.88$, weakest
+on Qwen: a context-driven component is present, but the gap to the raw ceiling is
+consistent with a residual question--answer-compatibility component that this matched
+design cannot rule out. Finally, support and our \emph{synthetic} factuality label are
+\emph{identical} within $O{=}1$ by construction (they diverge only in the
+answer-absent cell~D), so this isolates the signal from \emph{lexical overlap} but
+\emph{not} from factoid-correctness; we claim a non-overlap support/appropriateness
+signal, not a grounding axis geometrically distinct from factuality. The decisive
+control---re-extracting $A$ vs.\ $C$ with the context \emph{removed} (question$+$answer
+only) or replaced by an unrelated passage---would separate context use from
+question--answer compatibility directly; pending that no-context ablation we bound the
+context's contribution only via the cross-strata control above ($0.66$--$0.88$).
 
 \begin{table}[t]\centering\small
 \setlength{\tabcolsep}{3.5pt}
-\begin{tabular}{@{}lccccc@{}}
+\begin{tabular}{@{}lcccc@{}}
 \toprule
-model & $L$ & supp$_{O=1}$ & 95\%\,CI & {\footnotesize$+$conf} & {\footnotesize cross} \\
+model & $L$ & supp$_{O=1}$ & {\footnotesize$+$conf} & {\footnotesize cross} \\
 \midrule
-Qwen2.5 & 14 & 0.872 & {\scriptsize[.859,.885]} & 0.70 & 0.62 \\
-Mistral & 16 & 0.874 & {\scriptsize[.860,.887]} & 0.78 & 0.78 \\
-Llama   & 16 & 0.876 & {\scriptsize[.863,.890]} & 0.72 & 0.78 \\
-Gemma   & 21 & 0.878 & {\scriptsize[.864,.892]} & 0.74 & 0.75 \\
+Qwen2.5 & 14 & 0.988 & 0.757 & 0.660 \\
+Mistral & 16 & 0.996 & 0.878 & 0.870 \\
+Llama   & 16 & 0.997 & 0.784 & 0.876 \\
+Gemma   & 21 & 0.999 & 0.806 & 0.827 \\
 \bottomrule
 \end{tabular}
-\caption{\textbf{C1 (confound-controlled).} Layer fixed a priori at relative depth
-$0.5$; GroupKFold on \textsc{item\_id}; polarity resolved on the train fold.
-supp$_{O=1}$ is grouped-CV support AUROC within the answer-present stratum (raw upper
-bound; item cluster-bootstrap 95\%\,CI). \emph{$+$conf-purge}: after residualizing the
-hidden states on confidence (log-prob, max-softmax)---our primary estimate.
-\emph{cross-strata}: train $A$ vs.\ $D$ (question fixed), evaluate $A$ vs.\ $C$. Within
-$O{=}1$, support and the synthetic factuality label coincide, so we make no
-distinctness claim.}
+\caption{\textbf{C1 (confound-controlled, collision-free).} Layer fixed a priori at
+relative depth $0.5$; GroupKFold on \textsc{item\_id}; polarity resolved on the train
+fold; donor-collision cell-C mislabels removed (\S\ref{sec:construction}; $n_A{=}1200$,
+$n_C{=}922$). supp$_{O=1}$ is grouped-CV support AUROC within the answer-present
+stratum---near-ceiling once mislabels are removed, because the contrast varies only the
+question and is easily separable. \emph{$+$conf}: after residualizing the hidden states
+on confidence (log-prob, max-softmax)---our primary estimate. \emph{cross}: train $A$
+vs.\ $D$ (question fixed, only context changes), evaluate $A$ vs.\ $C$. Within $O{=}1$
+support and the synthetic factuality label coincide, so we make no distinctness claim.}
 \label{tab:c1}
 \end{table}
 
 \begin{figure*}[t]\centering
 \includegraphics[width=0.9\textwidth]{figs/fig_c1_layers.pdf}
-\caption{\textbf{A grounding axis exists beyond overlap, peaking mid-layer.}
+\caption{\textbf{A support signal beyond overlap, peaking mid-layer.}
 Cross-validated AUROC vs.\ relative layer depth for support within the
 answer-present stratum ($O{=}1$, where overlap is uninformative), support after
 removing surface covariates, and factuality. The overlap-independent support
@@ -319,26 +331,30 @@ is small and inconsistent in sign across the families and layers we examined (it
 not favour the factuality axis), so we report a null result and do not rely on
 confidence-purging to distinguish the two notions.
 
-\subsection{Grounding directions align across families up to a linear map}
+\subsection{Matched-stimulus contrasts align across families up to a linear map}
 \label{sec:c3}
-We ask whether the grounding direction occupies the \emph{same} geometry across
+We ask whether the support direction occupies the \emph{same} geometry across
 families up to a linear map. The direct evidence is geometric: the Procrustes-mapped
 source direction is nearly collinear with the target family's \emph{native} direction
-(transported-to-native cosine ${\approx}0.98$; Table~\ref{tab:c3}), well above anchor
-projection. The cosine is far above its null: a random or label-shuffled source
-direction transported through the \emph{same} fitted map is essentially orthogonal to
-the native direction (cosine $0.01$ and $0.10$ respectively), so $0.976$ is not an
-artifact of the shared-stimulus geometry. We deliberately do \emph{not} headline the
-transferred-probe AUROC ($0.906$): it equals the within-family bound ($0.905$) and is
-therefore ceiling-saturated (a transported probe cannot beat the native one, so AUROC
-has no headroom to register loss); scored with polarity-honest (signed) AUROC, random
-and shuffled-label directions through the map sit at chance ($0.51$/$0.51$). Critically,
-the factuality axis transports \emph{identically} (cosine $0.99$, AUROC $0.915$), so
-what aligns is a shared low-rank contrast defined by the matched stimuli, not a
-grounding-specific axis. We therefore conclude that grounding
-directions \emph{align across these four families up to a linear map} (the cosine
-evidence is robust to the nulls), and explicitly avoid claims of near-lossless or
-universal transfer.
+(transported-to-native cosine $0.976$, range $0.95$--$0.99$ over the $12$ ordered
+pairs; Table~\ref{tab:c3}), well above anchor projection. The cosine is far above its
+null: a random or label-shuffled source direction transported through the \emph{same}
+fitted map is essentially orthogonal to the native direction (cosine $0.01$ and $0.10$
+respectively), so $0.976$ is not an artifact of the shared-stimulus geometry. We
+deliberately do \emph{not} headline the transferred-probe AUROC ($0.906$): it equals
+the within-family bound ($0.905$) and is therefore ceiling-saturated; scored with
+polarity-honest (signed) AUROC, random and shuffled-label directions through the map
+sit at chance ($0.51$/$0.51$). \textbf{This alignment is not specific to grounding.}
+Transporting the \emph{factuality}, \emph{answer-length}, and \emph{lexical-overlap}
+directions through the same maps gives cosines of $0.99$/$0.98$/$0.99$---as high as
+support---whereas a purely model-internal \emph{confidence} direction transports at
+only $0.50$ (and unstably, $0.04$--$0.90$ across pairs). So what aligns is any contrast
+\emph{derived from the shared input stimuli}, a shared low-rank stimulus geometry, not
+a grounding-specific axis; that confidence does \emph{not} align shows the alignment is
+non-trivial but also that it carries no grounding-specific content. We therefore
+conclude only that \emph{matched-stimulus contrasts---support among them---are linearly
+alignable across these four $7$--$9$B families}, and avoid any claim of a
+grounding-specific or near-lossless transfer.
 
 \begin{table}[t]\centering\small
 \setlength{\tabcolsep}{3.5pt}
@@ -347,25 +363,30 @@ universal transfer.
 axis & cosine & AUROC & within & rand-map & rand-lab \\
 \midrule
 \textsc{Support}    & \textbf{0.976} & 0.906 & 0.905 & 0.519 & 0.506 \\
-\textsc{Factuality} & 0.990 & 0.915 & 0.911 & --- & --- \\
+\textsc{Factuality} & 0.989 & 0.915 & 0.911 & --- & --- \\
+\midrule
+\multicolumn{6}{@{}l}{\footnotesize\itshape nuisance directions:}\\
+length     & 0.976 & --- & --- & --- & --- \\
+overlap    & 0.992 & --- & --- & --- & --- \\
+confidence & 0.504 & --- & --- & --- & --- \\
 \bottomrule
 \end{tabular}
 \caption{\textbf{C3 (cosine-based, leakage-controlled).} Mean over the $12$
-cross-family ordered pairs, GroupKFold on \textsc{item\_id} ($3$ seeds), all columns
-single-protocol. \emph{cosine}: transported-to-native cosine (the alignment evidence;
-non-saturating). A random / label-shuffled source direction transported through the
-\emph{same} map has cosine only $0.01$ / $0.10$ with the native direction, so $0.976$
-is far above its cosine null. \emph{AUROC}/\emph{within}: transferred-probe vs.\
+cross-family ordered pairs, GroupKFold on \textsc{item\_id}. \emph{cosine}:
+transported-to-native cosine (the alignment evidence; non-saturating). A random /
+label-shuffled source direction through the \emph{same} map has cosine only $0.01$ /
+$0.10$ with the native direction. \emph{AUROC}/\emph{within}: transferred-probe vs.\
 within-family AUROC---equal, hence ceiling-saturated. \emph{rand-map}/\emph{rand-lab}:
-random / shuffled-label source directions through the map, scored with signed
-(polarity-honest) AUROC, sit at chance ($0.51$). Factuality aligns identically,
-indicating a shared contrast rather than a grounding-specific axis.}
+random / shuffled-label directions through the map, signed AUROC, at chance. Support,
+factuality, answer-length and overlap directions all align at ${\approx}0.98$, while a
+model-internal confidence direction does not ($0.50$): alignment is a generic property
+of contrasts derived from the shared stimuli, not a grounding-specific axis.}
 \label{tab:c3}
 \end{table}
 
 \begin{figure}[t]\centering
 \includegraphics[width=\columnwidth]{figs/fig_c3_heatmap.pdf}
-\caption{\textbf{Grounding directions align across families up to a linear map.}
+\caption{\textbf{Matched-stimulus contrasts align across families up to a linear map.}
 Source$\to$target transfer AUROC of the support direction. (a)~Orthogonal Procrustes
 is uniformly high on- and off-diagonal; we read this as alignment (cosine $0.98$,
 Table~\ref{tab:c3}), not as lossless transfer, since the AUROC is ceiling-saturated.
@@ -376,7 +397,9 @@ families.}
 
 \subsection{Synthetic axes do not transfer to real hallucinations}
 \label{sec:c4}
-We learn $d_S$ on CtrlPairs and apply it to RAGTruth responses of the same model,
+We learn $d_S$ on CtrlPairs and apply it to the fixed RAGTruth responses (hidden states
+extracted through that same model; the responses are RAGTruth's own, so the NLI and
+overlap baselines are response-intrinsic and identical across the three models),
 predicting the human faithfulness label (Table~\ref{tab:c4}). Here we keep the
 \emph{support-polarity} sign fixed from CtrlPairs and score without the
 test-fold flip, because flipping per-test inflates a near-chance axis; CtrlPairs
@@ -403,7 +426,7 @@ check and is conservative (\S\ref{sec:experiments}); against the strong overlap
 baseline ($0.753$) it wins on Llama and Gemma (paired bootstrap $p{<}0.001$) but only
 ties on Qwen ($+0.01$, $p{=}0.17$). Residualizing lexical overlap out of the
 features first drops it to $0.60$--$0.66$, so much of even this signal is overlap. A
-real grounding signal therefore exists in the internals, but it is a \emph{different
+real support signal therefore exists in the internals, but it is a \emph{different
 direction} from the synthetic axis and is recoverable only with in-domain human
 annotation.
 
@@ -420,7 +443,8 @@ Gemma   & 0.541 & 0.686 & 0.800 & 0.673 & 0.753 \\
 \bottomrule
 \end{tabular}
 \caption{\textbf{C4 (leakage-controlled).} RAGTruth hallucination detection
-(AUROC). The label-free synthetic grounding axis (synth-$d_S$, support polarity
+(AUROC; three families---Mistral's RAGTruth extraction OOM'd). The label-free
+synthetic support axis (synth-$d_S$, support polarity
 fixed from CtrlPairs, a-priori mid layer, scored without the test-fold flip) is
 below NLI, confidence, and lexical overlap, and for the weakest family
 (Gemma, $0.541$) is barely above chance. $^{\dagger}$in-domain probe uses RAGTruth
@@ -442,21 +466,27 @@ human labels beats NLI. Axis starts at chance ($0.5$).}
 \toprule
 signal & Data2txt & QA & Summary & macro \\
 \midrule
+synth-$d_S$        & 0.541 & 0.611 & 0.658 & 0.604 \\
+confidence         & 0.591 & 0.544 & 0.679 & 0.605 \\
 NLI, whole-resp.   & 0.547 & 0.567 & 0.633 & 0.582 \\
 NLI, sent.\ (mean) & 0.611 & 0.557 & 0.620 & 0.596 \\
 NLI, sent.\ (min)  & 0.521 & 0.591 & 0.626 & 0.579 \\
 overlap            & 0.605 & 0.686 & 0.649 & 0.647 \\
 \midrule
+in-domain$^{\dagger}$ & 0.742 & 0.721 & 0.679 & 0.714 \\
+\midrule
 faithful-rate & 0.357 & 0.823 & 0.795 & --- \\
 \bottomrule
 \end{tabular}
-\caption{\textbf{C4, per task type.} Within-task RAGTruth AUROC. The pooled numbers in
-Table~\ref{tab:c4} overstate every signal because faithful base rates differ sharply
-across tasks (bottom row): overlap's pooled $0.753$ falls to macro $0.647$, NLI's
-$0.673$ to $0.582$. A more elaborate sentence-level SummaC-style NLI baseline (max over
-context sentences, then mean or min over response sentences) does no better
-(macro $0.596$/$0.579$). Within a task, every label-free signal is weak
-(${\approx}0.6$); overlap is merely the least-bad.}
+\caption{\textbf{C4, per task type.} Within-task RAGTruth AUROC (synth-$d_S$,
+confidence, and in-domain are the mean over the three RAGTruth models; NLI and overlap
+are response-intrinsic). The pooled numbers in Table~\ref{tab:c4} overstate every
+signal because faithful base rates differ sharply across tasks (bottom row): overlap's
+pooled $0.753$ falls to macro $0.647$, NLI's $0.673$ to $0.582$. A more elaborate
+sentence-level SummaC-style NLI baseline does no better (macro $0.596$/$0.579$). Within
+a task \emph{every} label-free signal is weak (macro $0.58$--$0.65$)---the synthetic
+axis ($0.604$) and confidence ($0.605$) included---and overlap ($0.647$) is merely the
+least-bad. $^{\dagger}$the in-domain probe ($0.714$ macro) uses RAGTruth human labels.}
 \label{tab:c4_pertask}
 \end{table}
 
@@ -464,7 +494,7 @@ context sentences, then mean or min over response sentences) does no better
 \label{sec:discussion}
 Our results separate two questions usually merged. \emph{Does} a signal that is not
 lexical overlap exist in the internals? Yes---within the overlap-controlled stratum,
-support is decodable at $0.70$--$0.78$ after purging model confidence, and the
+support is decodable at $0.76$--$0.88$ after purging model confidence, and the
 underlying direction aligns across four model families up to a linear map. \emph{Is}
 that direction a deployable, label-free hallucination detector? No---it does not
 transfer to RAGTruth, where lexical overlap remains the strongest single-pass
@@ -474,9 +504,10 @@ utility is the main lesson, and it cautions against reading deployment claims fr
 synthetic-stimulus probes. We are explicit about what we do \emph{not} show:
 (i)~within the answer-present stratum support and our synthetic factuality label
 coincide, so we cannot claim a grounding axis geometrically distinct from
-factoid-correctness, and even the confidence-purged $0.70$--$0.78$ removes only the
-\emph{linear} confidence component, so it remains an upper bound on isolated
-grounding; (ii)~cell~B has zero yield, so the fully-orthogonalized
+factoid-correctness, and even the confidence-purged $0.76$--$0.88$ removes only the
+\emph{linear} confidence component; the direct no-context ablation that would separate
+context use from question--answer compatibility is left to future work, so $0.76$--$0.88$
+remains an upper bound on isolated grounding; (ii)~cell~B has zero yield, so the fully-orthogonalized
 ($\mathrm{corr}{\approx}0$) design is not instantiated and all analyses use cells
 A/C/D at $\mathrm{corr}{=}0.50$ with overlap stratification; (iii)~the cosine alignment
 is measured on shared stimuli, so it shows alignment of a shared low-rank contrast,

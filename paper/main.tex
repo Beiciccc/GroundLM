@@ -12,7 +12,7 @@
 \usepackage{booktabs}
 \usepackage{graphicx}
 \usepackage{enumitem}
-\emergencystretch=1.5em   % avoid overfull hboxes in the narrow ACL columns
+\emergencystretch=2em   % avoid overfull hboxes in the narrow ACL columns
 
 \title{A Support--Faithfulness Contrast Aligns Across Model Families\\
 up to a Linear Map but Does Not Transfer to Real Hallucinations:\\
@@ -30,20 +30,25 @@ residual stream. But in the standard extractive setup, faithfulness is almost
 perfectly correlated with \emph{lexical overlap} (whether the answer string occurs
 in the context, $r{=}0.99$ in our data), so an apparent ``grounding probe'' may be a
 string-matching detector. We introduce a matched \textsc{Support}$\times$\textsc{Overlap}
-construction that decouples the two ($r{=}0.50$ on its model-free cells), including a
+construction that \emph{partially} decouples the two (halving the confound to
+$r{=}0.50$ on its model-free cells; a fully answer-absent supported cell is left to
+future work), including a
 wrong-question trap on which an off-the-shelf NLI model is fooled ${\sim}25\%$ of the
 time. With this control, on four instruction-tuned families (Llama-3.1-8B,
-Qwen2.5-7B, Mistral-7B, Gemma-2-9B), we report: (i)~a mid-layer context-grounding
+Qwen2.5-7B, Mistral-7B, Gemma-2-9B), we report: (i)~a mid-layer support
 signal \emph{does} exist beyond lexical overlap---within the answer-present stratum,
-where overlap is held constant, support is decodable at AUROC~$0.87$ (raw) and
-$0.72$--$0.78$ after purging model confidence---though by construction this stratum
-cannot separate grounding from factoid-correctness, so we make no claim of a grounding
-axis geometrically distinct from factuality. (ii)~This direction \emph{aligns across
-the four families up to a linear map}: an orthogonal-Procrustes map transports it
-nearly collinear with each family's native direction (cosine~${\approx}0.98$, vs.\
-${\approx}0.01$ for a random direction through the same map), and far exceeds an
-anchor-projection baseline; we rest this on the geometry rather than the
-(ceiling-saturated) transferred-probe AUROC. (iii)~Yet the synthetic direction
+where overlap is held constant, support is decodable on all four families
+(near-ceiling, $0.99$ raw on the collision-free cells; $0.76$--$0.88$ after purging
+confidence)---but this stratum varies only the question, so the signal may reflect
+question--answer appropriateness as much as context use, and support coincides with
+synthetic factuality by construction; we therefore claim a non-overlap support signal,
+not a grounding axis geometrically distinct from factuality. (ii)~This contrast
+\emph{aligns across the four families up to a linear map} (transported-to-native
+cosine~${\approx}0.98$ vs.\ ${\approx}0.01$ for a random direction through the same
+map; we rest this on the geometry, as the transferred-probe AUROC is
+ceiling-saturated)---but length, overlap and factuality directions align equally well
+while confidence does not, so the alignment is a generic matched-stimulus property,
+not grounding-specific. (iii)~Yet the synthetic direction
 \emph{does not} transfer to real hallucination detection: on RAGTruth it scores below
 NLI, confidence, and lexical overlap among single-pass API-free baselines, and within
 a task no internals- or NLI-based signal (including a sentence-level SummaC-style NLI
@@ -53,13 +58,17 @@ in-domain probe trained on human labels recovers a usable signal ($0.77$--$0.82$
 the three RAGTruth families; it exceeds a single-hypothesis NLI baseline but only ties
 lexical overlap on one). Our contribution is
 a confound-controlled methodology, a released wrong-question diagnostic, and a
-cautionary result: a grounding direction identified on controlled stimuli is real and
-portable, but is not, by itself, a deployable hallucination detector. All experiments
+cautionary result: a support contrast identified on controlled stimuli is real and
+portable across families---though not grounding-specific---but is not, by itself, a
+deployable hallucination detector. All experiments
 are API-free and run on a single A100-40G.
 \end{abstract}
 
 \input{sections}
 
 \bibliography{references}
+
+\appendix
+\input{appendix}
 
 \end{document}
