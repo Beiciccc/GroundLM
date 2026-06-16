@@ -1,0 +1,10 @@
+{
+  "model_id": "google/gemma-2-9b-it",
+  "layers": [
+    21
+  ],
+  "pooling": [
+    "last"
+  ],
+  "n_layers": 42
+}

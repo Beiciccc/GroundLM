@@ -23,15 +23,17 @@ declare -A HF=(
   [gemma2_9b]="google/gemma-2-9b-it"
 )
 declare -A BS=( [qwen25_7b]=4 [mistral7b_v03]=16 [llama31_8b]=6 [gemma2_9b]=2 )  # large-vocab OOM-safe
+declare -A LAYER=( [qwen25_7b]=14 [mistral7b_v03]=16 [llama31_8b]=16 [gemma2_9b]=21 )  # a-priori depth-0.5
 
 for m in "${MODELS[@]}"; do
   for mode in no_context shuffled_context; do
     suf=$([ "$mode" = "no_context" ] && echo nc || echo shuf)
     out="runs/${m}_v2_${suf}"
+    if [ -f "$out/features.npz" ]; then echo "### skip $out (already done) ###"; continue; fi
     echo "### $m / $mode -> $out ###"
     PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True python3 scripts/run_extract.py \
       --model "${HF[$m]}" --ctrlpairs data/ctrlpairs_v2.jsonl \
-      --layers mid --pooling last --batch-size "${BS[$m]}" --max-len 1024 \
+      --layers "${LAYER[$m]}" --pooling last --batch-size "${BS[$m]}" --max-len 1024 \
       --prompt-mode "$mode" --skip-belief --out-dir "$out"
   done
 done

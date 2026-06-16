@@ -1,0 +1,10 @@
+{
+  "model_id": "Qwen/Qwen2.5-7B-Instruct",
+  "layers": [
+    14
+  ],
+  "pooling": [
+    "last"
+  ],
+  "n_layers": 28
+}

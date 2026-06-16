@@ -36,23 +36,22 @@ misleads even ``gold'' entailment checks.
 
 \paragraph{Contributions.}
 With this control we run a careful study across four model families
-(Llama-3.1-8B, Qwen2.5-7B-Instruct, Mistral-7B-v0.3, Gemma-2-9B). We report two
-positive results and two honest negatives.
+(Llama-3.1-8B, Qwen2.5-7B-Instruct, Mistral-7B-v0.3, Gemma-2-9B). The result is a
+methodology and a chain of confound-controlled negatives: each apparent ``grounding''
+signal, once a confound is removed, turns out to be something else.
 \begin{enumerate}[leftmargin=1.4em,itemsep=1pt,topsep=2pt]
-  \item \textbf{An overlap-independent support signal (\S\ref{sec:c1}).} Within the
-    answer-present stratum (lexical overlap held constant), support is decodable on
-    all four families: on the collision-free cells the raw within-stratum AUROC is
-    near-ceiling (${\approx}0.99$) and stays at $0.76$--$0.88$ after purging model
-    confidence, under item-grouped cross-validation. We are explicit about two limits.
-    (i)~Within this stratum the contrast varies \emph{only the question}, so the
-    signal may reflect question--answer appropriateness rather than use of the
-    context; a question-fixed cross-strata control (\S\ref{sec:c1}) bounds how much is
-    context-driven.
-    (ii)~Support and our \emph{synthetic} factuality label are identical here by
-    construction, so this isolates the signal from \emph{lexical overlap} but
-    \emph{not} from factoid-correctness. We therefore claim a non-overlap
-    support/appropriateness signal, not a grounding axis geometrically distinct from
-    factuality.
+  \item \textbf{An overlap-controlled internal signal that is \emph{not}
+    context-grounding (\S\ref{sec:c1}).} Within the answer-present stratum (lexical
+    overlap held constant), a support contrast is decodable on all four families
+    (collision-free raw AUROC near-ceiling, ${\approx}0.99$; $0.76$--$0.88$ after
+    purging model confidence). But a \emph{no-context ablation} shows it is mostly
+    question--answer compatibility: removing the context barely changes it (raw
+    $0.95$--$0.98$, confidence-purged unchanged), so the probe separates the matched
+    answer from the wrong-question answer \emph{without reading the context}. Together
+    with the fact that support coincides with our \emph{synthetic} factuality label
+    here by construction, this shows an overlap-controlled internal contrast can still
+    be compatibility and factoid-correctness---we therefore do \emph{not} claim a
+    context-grounding signal, even an overlap-controlled one.
   \item \textbf{Cross-family alignment up to a linear map (\S\ref{sec:c3}).} An
     orthogonal-Procrustes map carries the support direction between families so the
     transported direction is nearly collinear with the target family's \emph{native}
@@ -240,7 +239,7 @@ only lower SummaC and is thus conservative)---plus max-softmax confidence and le
 overlap. Everything is API-free; the NLI baselines use the small DeBERTa model and all
 activation extraction runs on one A100-40G.
 
-\subsection{A support signal beyond lexical overlap}
+\subsection{The within-stratum signal is question--answer compatibility, not grounding}
 \label{sec:c1}
 \paragraph{Leakage-controlled protocol.}
 Cells A/C/D of an item share the original context $c_{\mathrm{org}}$ verbatim
@@ -275,19 +274,24 @@ confound is \emph{model confidence} (overlap and answer length are uninformative
 AUROC~$0.500$): answer log-prob and NLI separate $A$ from $C$ on their own, so we
 residualize the hidden states on log-prob and max-softmax; the support contrast then
 falls to $0.76$--$0.88$, which we take as the primary confound-controlled estimate.
-Third, a cross-strata control that \emph{fixes the question} (train $A$ vs.\ $D$, where
-only the context changes; evaluate $A$ vs.\ $C$) transfers at $0.66$--$0.88$, weakest
-on Qwen: a context-driven component is present, but the gap to the raw ceiling is
-consistent with a residual question--answer-compatibility component that this matched
-design cannot rule out. Finally, support and our \emph{synthetic} factuality label are
-\emph{identical} within $O{=}1$ by construction (they diverge only in the
-answer-absent cell~D), so this isolates the signal from \emph{lexical overlap} but
-\emph{not} from factoid-correctness; we claim a non-overlap support/appropriateness
-signal, not a grounding axis geometrically distinct from factuality. The decisive
-control---re-extracting $A$ vs.\ $C$ with the context \emph{removed} (question$+$answer
-only) or replaced by an unrelated passage---would separate context use from
-question--answer compatibility directly; pending that no-context ablation we bound the
-context's contribution only via the cross-strata control above ($0.66$--$0.88$).
+Third---and decisively---a \emph{no-context ablation} settles what the signal is:
+re-extracting the $A$/$C$ activations with the context \emph{removed}
+(question$+$answer only) leaves supp$_{O=1}$ almost unchanged (raw $0.95$--$0.98$ vs.\
+$0.99$ with context; the confidence-purged estimate does not collapse either,
+$0.80$--$0.83$, rising for two families and falling only ${\sim}0.08$ for Mistral),
+and replacing the context with an unrelated passage gives the same ($0.94$--$0.98$).
+The within-$O{=}1$ contrast is therefore mostly \emph{question--answer compatibility}:
+the probe separates $A$ (whose question the answer fits) from $C$ (whose donor question
+it does not) \emph{without reading the context at all}. A cross-strata control (train
+$A$ vs.\ $D$, which fixes the question but also varies overlap since $D$ is
+answer-absent; evaluate $A$ vs.\ $C$) does transfer at $0.66$--$0.88$, so \emph{some}
+context-sensitive component exists, but it is an upper bound and not separable from the
+dominant compatibility signal here. Finally, support and our
+\emph{synthetic} factuality label are \emph{identical} within $O{=}1$ by construction
+(they diverge only in the answer-absent cell~D). We therefore do \emph{not} claim a
+context-grounding signal: within the overlap-controlled stratum the decodable contrast
+is question--answer compatibility---not isolated from factoid-correctness, and not shown
+to use the context at all.
 
 \begin{table}[t]\centering\small
 \setlength{\tabcolsep}{3.5pt}
@@ -315,11 +319,13 @@ support and the synthetic factuality label coincide, so we make no distinctness 
 
 \begin{figure*}[t]\centering
 \includegraphics[width=0.9\textwidth]{figs/fig_c1_layers.pdf}
-\caption{\textbf{A support signal beyond overlap, peaking mid-layer.}
-Cross-validated AUROC vs.\ relative layer depth for support within the
-answer-present stratum ($O{=}1$, where overlap is uninformative), support after
-removing surface covariates, and factuality. The overlap-independent support
-signal is high and stable through mid layers on all four families.}
+\caption{\textbf{The within-stratum contrast peaks mid-layer---but it is not grounding.}
+Cross-validated AUROC vs.\ relative layer depth for the support contrast within the
+answer-present stratum ($O{=}1$, where overlap is uninformative), the same after
+removing surface covariates, and factuality. The contrast is high and stable through
+mid layers on all four families (per-layer curves use all cells; the collision-free
+supp$_{O=1}$ is in Table~\ref{tab:c1}); a no-context ablation (\S\ref{sec:c1}) shows it
+is mostly question--answer compatibility, not context use.}
 \label{fig:c1layers}
 \end{figure*}
 
@@ -492,22 +498,24 @@ least-bad. $^{\dagger}$the in-domain probe ($0.714$ macro) uses RAGTruth human l
 
 \section{Discussion and Limitations}
 \label{sec:discussion}
-Our results separate two questions usually merged. \emph{Does} a signal that is not
-lexical overlap exist in the internals? Yes---within the overlap-controlled stratum,
-support is decodable at $0.76$--$0.88$ after purging model confidence, and the
-underlying direction aligns across four model families up to a linear map. \emph{Is}
+Our results separate two questions usually merged. \emph{Does} a non-overlap signal
+exist in the internals? Within the overlap-controlled stratum a contrast is decodable
+($0.76$--$0.88$ purged) and aligns across four families up to a linear map---but a
+no-context ablation shows this within-stratum contrast is mostly \emph{question--answer
+compatibility}, not context use, and the alignment is a generic matched-stimulus
+property (length and overlap directions align equally well). An apparent ``grounding''
+signal thus survives an overlap control yet is still not grounding. \emph{Is}
 that direction a deployable, label-free hallucination detector? No---it does not
 transfer to RAGTruth, where lexical overlap remains the strongest single-pass
 baseline (and even that edge is largely a between-task base-rate artifact:
 Table~\ref{tab:c4_pertask}). The gap between a clean controlled signal and real-world
 utility is the main lesson, and it cautions against reading deployment claims from
 synthetic-stimulus probes. We are explicit about what we do \emph{not} show:
-(i)~within the answer-present stratum support and our synthetic factuality label
-coincide, so we cannot claim a grounding axis geometrically distinct from
-factoid-correctness, and even the confidence-purged $0.76$--$0.88$ removes only the
-\emph{linear} confidence component; the direct no-context ablation that would separate
-context use from question--answer compatibility is left to future work, so $0.76$--$0.88$
-remains an upper bound on isolated grounding; (ii)~cell~B has zero yield, so the fully-orthogonalized
+(i)~within the answer-present stratum the decodable contrast is question--answer
+compatibility (a no-context ablation leaves it almost unchanged, raw $0.95$--$0.98$) and
+coincides with our synthetic factuality label by construction, so we cannot claim a
+context-grounding signal there; only a question-fixed cross-strata control
+($0.66$--$0.88$) shows any context-sensitive component; (ii)~cell~B has zero yield, so the fully-orthogonalized
 ($\mathrm{corr}{\approx}0$) design is not instantiated and all analyses use cells
 A/C/D at $\mathrm{corr}{=}0.50$ with overlap stratification; (iii)~the cosine alignment
 is measured on shared stimuli, so it shows alignment of a shared low-rank contrast,
