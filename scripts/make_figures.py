@@ -189,9 +189,10 @@ def fig_c4_ragtruth():
     x = np.arange(len(fams)); w = 0.2
     for k, (lab, vals, col, hatch) in enumerate(methods):
         ax.bar(x + (k - 1.5) * w, vals, w, label=lab, color=col, hatch=hatch, edgecolor="white", linewidth=0.3)
-    ax.axhline(0.5, ls="--", lw=0.7, color="k"); ax.text(2.4, 0.51, "chance", fontsize=7.5, ha="right")
+    ax.axhline(0.5, ls="--", lw=0.7, color="k")
+    ax.text(2.5, 0.506, "chance", fontsize=7, ha="left", va="bottom", color="0.3")
     ax.set_xticks(x); ax.set_xticklabels([f.split("-")[0] for f in fams])
-    ax.set_ylabel("hallucination-detection AUROC"); ax.set_ylim(0.5, 0.83)
+    ax.set_ylabel("hallucination-detection AUROC"); ax.set_ylim(0.46, 0.83); ax.set_xlim(-0.55, 3.0)
     ax.legend(loc="upper center", bbox_to_anchor=(0.5, 1.34), ncol=2, fontsize=7, handlelength=1.3)
     save(fig, "fig_c4_ragtruth")
 
