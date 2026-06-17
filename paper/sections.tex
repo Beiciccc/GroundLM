@@ -104,7 +104,9 @@ claiming to adjudicate whether factuality and faithfulness share a direction.
 
 \paragraph{Knowledge conflict and source attribution.}
 Probes can detect knowledge conflict and predict which source a model follows
-\citep{zhao2024residualconflict,sun2025redeep,brink2026attribution}. These are
+\citep{zhao2024residualconflict,sun2025redeep,brink2026attribution}, and benchmarks
+such as FaithEval \citep{ming2025faitheval} score context-versus-parametric
+faithfulness behaviorally. These are
 behavioral/source signals; we ask whether a \emph{content} grounding axis exists
 that is not reducible to lexical overlap.
 
@@ -120,7 +122,8 @@ scorers \citep{zha2023alignscore}; \emph{internals}-based probes---single residu
 directions \citep{oneill2025singledirection} and the truth/faithfulness directions
 above; and \emph{confidence}/correctness signals
 \citep{cho2026confidencemanifold,noanswer2025}, with faithfulness-aware UQ
-\citep{fadeeva2025franq} combining several. We use one baseline from each family on
+\citep{fadeeva2025franq} and self-aware RAG abstention \citep{zhu2026saber} combining
+several. We use one baseline from each family on
 RAGTruth---NLI (external), model confidence, and lexical overlap---and find our
 controlled-stimulus axis does not beat them.
 
