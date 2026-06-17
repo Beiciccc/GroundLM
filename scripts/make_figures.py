@@ -88,7 +88,7 @@ def fig_decoupling():
     axb.set_title("(b) NLI is fooled by overlap", loc="left", fontweight="bold")
     for b, v in zip(bars, vals):
         axb.text(b.get_x() + b.get_width() / 2, v + 0.02, f"{v:.2f}", ha="center", fontsize=8)
-    axb.annotate("answer present\nbut unsupported", xy=(1.24, 0.18), xytext=(1.05, 0.82),
+    axb.annotate("answer present\nbut unsupported", xy=(1.27, vals[1]), xytext=(1.05, 0.82),
                  fontsize=7.5, ha="center", color=VERM,
                  arrowprops=dict(arrowstyle="->", color=VERM, lw=0.6))
     save(fig, "fig_decoupling")
