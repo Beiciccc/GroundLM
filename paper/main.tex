@@ -24,28 +24,28 @@ A Matched-Pair Study}
 \maketitle
 
 \begin{abstract}
-Internals-based, reference-free hallucination detection treats
-\emph{context-faithfulness}---is an answer entailed by the provided context?---as a
-linear direction in the residual stream. But in the standard extractive setup,
-faithfulness is almost perfectly correlated with \emph{lexical overlap} ($r{=}0.99$ in
-our data), so an apparent ``grounding probe'' may be a string-matching detector. We
-introduce a matched \textsc{Support}$\times$\textsc{Overlap} construction that
-\emph{partially} decouples the two (halving the confound to $r{=}0.50$), with a
-wrong-question trap that fools an off-the-shelf NLI model. Across four
-instruction-tuned $7$--$9$B families we find, at each step, that an apparent grounding
-signal is something else once a confound is removed. (i)~Within the overlap-controlled
-stratum a support contrast is decodable, but a \emph{no-context ablation} shows it is
-mostly question--answer compatibility---not use of the context---and is inseparable
-from factoid-correctness by construction, so we claim no context-grounding signal.
-(ii)~The contrast aligns across families up to a linear map, but answer-length, overlap
-and factuality directions align just as well, so the alignment is a generic
-matched-stimulus property, not grounding-specific. (iii)~The synthetic direction does
-not transfer to real hallucinations: on RAGTruth it scores below NLI, confidence, and
-lexical overlap, and only an in-domain probe trained on human labels recovers a usable
-signal. Our contribution is a confound-controlled methodology, a released
-wrong-question diagnostic, and a cautionary result: internals-based grounding claims
-survive one confound only to fall to the next. All experiments are API-free and run on
-a single A100-40G.
+We provide a confound-controlled methodology and a released
+``wrong-question'' diagnostic for internals-based, reference-free hallucination
+detection, which treats \emph{context-faithfulness}---is an answer entailed by the
+provided context?---as a linear direction in the residual stream. In the standard
+extractive setup, faithfulness is almost perfectly correlated with \emph{lexical
+overlap} ($r{=}0.99$ in our data), so an apparent ``grounding probe'' may be a
+string-matching detector. Our matched \textsc{Support}$\times$\textsc{Overlap}
+construction \emph{partially} decouples faithfulness from overlap, halving the confound
+to $r{=}0.50$, and the wrong-question diagnostic fools an off-the-shelf NLI model.
+Across four instruction-tuned $7$--$9$B families, run API-free on a single A100-40G,
+three findings follow. (i)~Within the overlap-controlled stratum a support contrast is
+linearly decodable; a \emph{no-context ablation} shows this signal reflects
+question--answer compatibility rather than use of the provided context, and it is
+inseparable from factoid-correctness by construction. (ii)~The support contrast aligns
+across families up to a linear map (orthogonal Procrustes), but answer-length,
+lexical-overlap, and factuality directions align equally well, so the alignment is a
+generic matched-stimulus property rather than grounding-specific. (iii)~The synthetic
+support direction does not transfer to real hallucinations: on RAGTruth it scores below
+NLI, model confidence, and lexical overlap, while an in-domain probe trained on human
+labels recovers a usable signal. Together these establish a confound-controlled
+methodology and a released diagnostic for separating a grounding signal from
+lexical-overlap and question--answer-compatibility confounds.
 \end{abstract}
 
 \input{sections}
