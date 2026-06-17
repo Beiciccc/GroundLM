@@ -95,7 +95,8 @@ def fig_decoupling():
 
 
 def fig_c1_layers():
-    fig, axes = plt.subplots(2, 2, figsize=(5.6, 4.0), sharex=False)
+    fig, axes = plt.subplots(2, 2, figsize=(5.6, 4.3), sharex=False)
+    handles_labels = None
     for ax, (d, title) in zip(axes.ravel(), MODELS):
         data, meta = load(f"{d}_v2")
         S = data["support"].astype(int); O = data["overlap_measured"].astype(int)
@@ -107,15 +108,30 @@ def fig_c1_layers():
         for L in layers:
             X = data[f"last_{L}"].astype(np.float64)[m1]
             raw.append(cv_auroc(X, S[m1])); pur.append(cv_auroc(purge(X, conf), S[m1]))
-        ax.plot(xs, raw, "-o", color=BLUE, ms=2, lw=1.1, label=r"support $|_{O=1}$ (raw)")
+        ax.plot(xs, raw, "-o", color=BLUE, ms=2, lw=1.1, label=r"support$|_{O=1}$ (with context)")
         ax.plot(xs, pur, "--s", color=VERM, ms=2, lw=1.0, label="$+$confidence-purge")
-        ax.axhline(logp, ls="-", lw=0.7, color=GRAY, label="log-prob only")
+        ax.axhline(logp, ls="-", lw=0.7, color=GRAY, label="log-prob baseline")
         ax.axhline(0.5, ls=":", lw=0.6, color="k")
+        # no-context overlay: the SAME all-cells CV-AUROC metric as the raw curve,
+        # at the a-priori mid layer (the only layer cached for the ablation run).
+        La = int(list(json.load(open(f"runs/{d}_v2_nc/features.meta.json"))["layers"])[0])
+        nc = dict(np.load(f"runs/{d}_v2_nc/features.npz", allow_pickle=True))
+        raw_nc = cv_auroc(nc[f"last_{La}"].astype(np.float64)[m1], S[m1])
+        xa = La / nL; raw_ctx_a = raw[layers.index(La)]
+        ax.plot([xa, xa], [raw_ctx_a, raw_nc], color=GREEN, lw=0.8, zorder=4)
+        ax.plot([xa], [raw_nc], marker="*", ms=8, color=GREEN, mec="k", mew=0.4,
+                ls="none", zorder=5, label="context removed (mid-layer)")
+        ax.annotate(f"$-{raw_ctx_a - raw_nc:.2f}$", xy=(xa, raw_nc),
+                    xytext=(xa + 0.015, raw_nc - 0.006), fontsize=5.3, color=GREEN, va="top")
         ax.set_title(title, fontsize=7, fontweight="bold")
         ax.set_ylim(0.45, 0.92); ax.set_xlim(min(xs) - .02, max(xs) + .02)
         ax.set_xlabel("relative layer depth"); ax.set_ylabel("AUROC")
-    axes[0, 0].legend(loc="lower left", fontsize=5.2, handlelength=1.4)
-    fig.tight_layout(pad=0.4)
+        if handles_labels is None:
+            handles_labels = ax.get_legend_handles_labels()
+    fig.tight_layout(pad=0.5)
+    fig.subplots_adjust(bottom=0.14)
+    fig.legend(*handles_labels, loc="lower center", ncol=4, fontsize=5.9,
+               handlelength=1.5, columnspacing=1.1, bbox_to_anchor=(0.5, 0.01))
     save(fig, "fig_c1_layers")
 
 

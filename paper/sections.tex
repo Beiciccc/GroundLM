@@ -326,11 +326,15 @@ support and the synthetic factuality label coincide, so we make no distinctness 
 \includegraphics[width=0.9\textwidth]{figs/fig_c1_layers.pdf}
 \caption{\textbf{The within-stratum contrast peaks mid-layer---but it is not grounding.}
 Cross-validated AUROC vs.\ relative layer depth for the support contrast within the
-answer-present stratum ($O{=}1$, where overlap is uninformative), the same after
-removing surface covariates, and factuality. The contrast is high and stable through
-mid layers on all four families (per-layer curves use all cells; the collision-free
-supp$_{O=1}$ is in Table~\ref{tab:c1}); a no-context ablation (\S\ref{sec:c1}) shows it
-is mostly question--answer compatibility, not context use.}
+answer-present stratum ($O{=}1$, where overlap is uninformative): raw, and after
+purging model confidence; the grey line is a log-probability baseline. The contrast is
+high and stable through mid layers on all four families (per-layer curves use all
+cells; the collision-free supp$_{O=1}$ is in Table~\ref{tab:c1}). The green star marks
+the same probe and metric at the a-priori mid layer with the context \emph{removed}
+(\S\ref{sec:c1}): the raw AUROC barely moves (per-panel drop annotated; the
+confidence-purged value is likewise unchanged and shuffled context behaves the same),
+so the within-stratum contrast is mostly question--answer compatibility rather than
+context use.}
 \label{fig:c1layers}
 \end{figure*}
 
