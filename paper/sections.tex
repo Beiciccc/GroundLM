@@ -368,7 +368,7 @@ alignable across these four $7$--$9$B families}, and avoid any claim of a
 grounding-specific or near-lossless transfer.
 
 \begin{table}[t]\centering\small
-\setlength{\tabcolsep}{3.5pt}
+\setlength{\tabcolsep}{2.5pt}
 \begin{tabular}{@{}lccccc@{}}
 \toprule
 axis & cosine & AUROC & within & rand-map & rand-lab \\
@@ -479,9 +479,9 @@ signal & Data2txt & QA & Summary & macro \\
 \midrule
 synth-$d_S$        & 0.541 & 0.611 & 0.658 & 0.604 \\
 confidence         & 0.591 & 0.544 & 0.679 & 0.605 \\
-NLI, whole-resp.   & 0.547 & 0.567 & 0.633 & 0.582 \\
-NLI, sent.\ (mean) & 0.611 & 0.557 & 0.620 & 0.596 \\
-NLI, sent.\ (min)  & 0.521 & 0.591 & 0.626 & 0.579 \\
+NLI (whole-resp.)    & 0.547 & 0.567 & 0.633 & 0.582 \\
+Sent-NLI (mean)      & 0.611 & 0.557 & 0.620 & 0.596 \\
+Sent-NLI (min)       & 0.521 & 0.591 & 0.626 & 0.579 \\
 overlap            & 0.605 & 0.686 & 0.649 & 0.647 \\
 \midrule
 in-domain$^{\dagger}$ & 0.742 & 0.721 & 0.679 & 0.714 \\
@@ -493,8 +493,8 @@ faithful-rate & 0.357 & 0.823 & 0.795 & --- \\
 confidence, and in-domain are the mean over the three RAGTruth models; NLI and overlap
 are response-intrinsic). The pooled numbers in Table~\ref{tab:c4} overstate every
 signal because faithful base rates differ sharply across tasks (bottom row): overlap's
-pooled $0.753$ falls to macro $0.647$, NLI's $0.673$ to $0.582$. A more elaborate
-sentence-level SummaC-style NLI baseline does no better (macro $0.596$/$0.579$). Within
+pooled $0.753$ falls to macro $0.647$, NLI's $0.673$ to $0.582$. The \emph{Sent-NLI} rows are the
+SummaC-style sentence-level baseline; they do no better (macro $0.596$/$0.579$). Within
 a task \emph{every} label-free signal is weak (macro $0.58$--$0.65$)---the synthetic
 axis ($0.604$) and confidence ($0.605$) included---and overlap ($0.647$) is merely the
 least-bad. $^{\dagger}$the in-domain probe ($0.714$ macro) uses RAGTruth human labels.}
