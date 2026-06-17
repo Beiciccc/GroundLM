@@ -356,7 +356,15 @@ source direction is nearly collinear with the target family's \emph{native} dire
 pairs; Table~\ref{tab:c3}), well above anchor projection. The cosine is far above its
 null: a random or label-shuffled source direction transported through the \emph{same}
 fitted map is essentially orthogonal to the native direction (cosine $0.01$ and $0.10$
-respectively), so $0.976$ is not an artifact of the shared-stimulus geometry. We
+respectively), so $0.976$ is not an artifact of the shared-stimulus geometry. It is
+also not an artifact of fitting the map and the directions on the same items: with the
+map fit on a calibration split and the target's \emph{native} direction re-estimated on
+a disjoint, item-grouped held-out split, the transported-to-native cosine is
+$0.971{\pm}0.014$ (mean over $12$ pairs ${\times}\,10$ splits; $0.970$ with both source
+and target directions held out from the map), versus an in-sample $0.977$---a $0.006$
+gap that matches the native direction's own cross-split self-consistency ($0.994$), so
+the Procrustes map adds no measurable inflation (factuality behaves identically,
+$0.990{\to}0.982$). We
 deliberately do \emph{not} headline the transferred-probe AUROC ($0.906$): it equals
 the within-family bound ($0.905$) and is therefore ceiling-saturated; scored with
 polarity-honest (signed) AUROC, random and shuffled-label directions through the map
@@ -389,7 +397,9 @@ confidence & 0.504 & --- & --- & --- & --- \\
 \end{tabular}
 \caption{\textbf{C3 (cosine-based, leakage-controlled).} Mean over the $12$
 cross-family ordered pairs, GroupKFold on \textsc{item\_id}. \emph{cosine}:
-transported-to-native cosine (the alignment evidence; non-saturating). A random /
+transported-to-native cosine (the alignment evidence; non-saturating); shown in-sample,
+it stays at $0.971$ when the native direction is re-estimated on an item-grouped
+held-out split (\S\ref{sec:c3}), so it is not a map-fitting artifact. A random /
 label-shuffled source direction through the \emph{same} map has cosine only $0.01$ /
 $0.10$ with the native direction. \emph{AUROC}/\emph{within}: transferred-probe vs.\
 within-family AUROC---equal, hence ceiling-saturated. \emph{rand-map}/\emph{rand-lab}:

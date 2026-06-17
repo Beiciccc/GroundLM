@@ -20,7 +20,7 @@ from groundlm.transfer.procrustes import fit_map, transport_direction   # noqa: 
 from groundlm.probe.directions import fit_direction, _unit              # noqa: E402
 
 MODELS = ["qwen25_7b", "mistral7b_v03", "llama31_8b", "gemma2_9b"]
-SEEDS = list(range(10))
+SEEDS = list(range(10))  # 12 ordered pairs x 10 seeds = 120 measurements/quantity
 AXES = {"support": "S", "factuality": "F"}   # support = the claim; factuality = positive control
 
 
