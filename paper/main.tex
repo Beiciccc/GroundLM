@@ -24,44 +24,28 @@ A Matched-Pair Study}
 \maketitle
 
 \begin{abstract}
-Internals-based, reference-free hallucination detection treats ``context-faithfulness''
----is an answer entailed by the provided context?---as a linear direction in the
-residual stream. But in the standard extractive setup, faithfulness is almost
-perfectly correlated with \emph{lexical overlap} (whether the answer string occurs
-in the context, $r{=}0.99$ in our data), so an apparent ``grounding probe'' may be a
-string-matching detector. We introduce a matched \textsc{Support}$\times$\textsc{Overlap}
-construction that \emph{partially} decouples the two (halving the confound to
-$r{=}0.50$ on its model-free cells; a fully answer-absent supported cell is left to
-future work), including a
-wrong-question trap on which an off-the-shelf NLI model is fooled ${\sim}25\%$ of the
-time. With this control, on four instruction-tuned families (Llama-3.1-8B,
-Qwen2.5-7B, Mistral-7B, Gemma-2-9B), we report: (i)~within the answer-present
-stratum (overlap held constant) a support contrast is decodable on all four families
-(near-ceiling, $0.99$ raw on the collision-free cells; $0.76$--$0.88$ after purging
-confidence), but a \emph{no-context ablation} shows it is mostly question--answer
-compatibility---removing the context barely changes it ($0.95$--$0.98$ raw,
-confidence-purged unchanged)---and it coincides with synthetic factuality by
-construction; we therefore claim \emph{no} context-grounding signal, even an
-overlap-controlled one. (ii)~This contrast
-\emph{aligns across the four families up to a linear map} (transported-to-native
-cosine~${\approx}0.98$ vs.\ ${\approx}0.01$ for a random direction through the same
-map; we rest this on the geometry, as the transferred-probe AUROC is
-ceiling-saturated)---but length, overlap and factuality directions align equally well
-while confidence does not, so the alignment is a generic matched-stimulus property,
-not grounding-specific. (iii)~Yet the synthetic direction
-\emph{does not} transfer to real hallucination detection: on RAGTruth it scores below
-NLI, confidence, and lexical overlap among single-pass API-free baselines, and within
-a task no internals- or NLI-based signal (including a sentence-level SummaC-style NLI
-baseline) exceeds ${\approx}0.6$ AUROC---while overlap's apparent edge
-($0.753$ pooled, $0.647$ macro) is largely a between-task base-rate artifact. Only an
-in-domain probe trained on human labels recovers a usable signal ($0.77$--$0.82$ on
-the three RAGTruth families; it exceeds a single-hypothesis NLI baseline but only ties
-lexical overlap on one). Our contribution is
-a confound-controlled methodology, a released wrong-question diagnostic, and a
-cautionary result: a support contrast identified on controlled stimuli is real and
-portable across families---though not grounding-specific---but is not, by itself, a
-deployable hallucination detector. All experiments
-are API-free and run on a single A100-40G.
+Internals-based, reference-free hallucination detection treats
+\emph{context-faithfulness}---is an answer entailed by the provided context?---as a
+linear direction in the residual stream. But in the standard extractive setup,
+faithfulness is almost perfectly correlated with \emph{lexical overlap} ($r{=}0.99$ in
+our data), so an apparent ``grounding probe'' may be a string-matching detector. We
+introduce a matched \textsc{Support}$\times$\textsc{Overlap} construction that
+\emph{partially} decouples the two (halving the confound to $r{=}0.50$), with a
+wrong-question trap that fools an off-the-shelf NLI model. Across four
+instruction-tuned $7$--$9$B families we find, at each step, that an apparent grounding
+signal is something else once a confound is removed. (i)~Within the overlap-controlled
+stratum a support contrast is decodable, but a \emph{no-context ablation} shows it is
+mostly question--answer compatibility---not use of the context---and is inseparable
+from factoid-correctness by construction, so we claim no context-grounding signal.
+(ii)~The contrast aligns across families up to a linear map, but answer-length, overlap
+and factuality directions align just as well, so the alignment is a generic
+matched-stimulus property, not grounding-specific. (iii)~The synthetic direction does
+not transfer to real hallucinations: on RAGTruth it scores below NLI, confidence, and
+lexical overlap, and only an in-domain probe trained on human labels recovers a usable
+signal. Our contribution is a confound-controlled methodology, a released
+wrong-question diagnostic, and a cautionary result: internals-based grounding claims
+survive one confound only to fall to the next. All experiments are API-free and run on
+a single A100-40G.
 \end{abstract}
 
 \input{sections}
