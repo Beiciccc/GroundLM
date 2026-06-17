@@ -3,11 +3,12 @@
 
 A grounded language model should answer from the \emph{provided context}, not from
 its parametric memory or from surface cues. Reference-free, internals-based methods
-operationalize this by reading a linear ``faithfulness'' or ``truth'' direction from
-the residual stream
-\citep{azaria2023saplma,marks2024geometry,burger2024truthuniversal,oneill2025singledirection},
-an attractive recipe because it needs no external judge and costs roughly one
-forward pass. Two distinct notions are routinely conflated under this banner:
+operationalize this by reading a linear direction from the residual stream: much prior
+work decodes a ``truth'' or ``lying'' direction
+\citep{azaria2023saplma,marks2024geometry,burger2024truthuniversal}, and more recent
+work extends this style of analysis to a \emph{contextual} faithfulness direction
+\citep{oneill2025singledirection}---an attractive recipe because it needs no external
+judge and costs roughly one forward pass. Two distinct notions are routinely conflated under this banner:
 \emph{parametric-factuality}---is a claim true in the model's memory?---and
 \emph{context-faithfulness}---is a claim entailed by the given context? Recent work
 treats both as activation objects and asks how they relate \citep{wang2025space},
@@ -109,17 +110,19 @@ that is not reducible to lexical overlap.
 
 \paragraph{Cross-model transfer.}
 Linear concept directions can be aligned across models via orthogonal Procrustes
-\citep{puri2025atlas} or anchor projection \citep{kim2026crossfamily}. We apply both
+\citep{schonemann1966,puri2025atlas} or anchor projection \citep{kim2026crossfamily}. We apply both
 to a support direction; Procrustes renders it nearly collinear with the target's
 native direction (cosine ${\approx}0.98$) whereas anchor projection does not.
 
 \paragraph{Reference-free hallucination detection.}
-NLI/entailment and alignment scores \citep{zha2023alignscore}, single residual
-directions \citep{oneill2025singledirection}, confidence/correctness probes
-\citep{cho2026confidencemanifold,noanswer2025}, and faithfulness-aware UQ
-\citep{fadeeva2025franq} all target RAG faithfulness. We use NLI, confidence, and
-lexical overlap as baselines on RAGTruth and find our controlled-stimulus axis does
-not beat them.
+Reference-free detectors fall into three families: \emph{external} entailment/alignment
+scorers \citep{zha2023alignscore}; \emph{internals}-based probes---single residual
+directions \citep{oneill2025singledirection} and the truth/faithfulness directions
+above; and \emph{confidence}/correctness signals
+\citep{cho2026confidencemanifold,noanswer2025}, with faithfulness-aware UQ
+\citep{fadeeva2025franq} combining several. We use one baseline from each family on
+RAGTruth---NLI (external), model confidence, and lexical overlap---and find our
+controlled-stimulus axis does not beat them.
 
 \section{The \textsc{Support}$\times$\textsc{Overlap} Construction}
 \label{sec:construction}
@@ -225,10 +228,12 @@ sits at chance rather than being inflated above $0.5$).
 \label{sec:experiments}
 
 \paragraph{Setup.}
-Four instruction-tuned families: Llama-3.1-8B, Qwen2.5-7B, Mistral-7B-v0.3,
-Gemma-2-9B. CtrlPairs: $1{,}200$ NQ-Swap items $\to 3{,}593$ matched statements
+Four instruction-tuned families: Llama-3.1-8B \citep{llama31}, Qwen2.5-7B
+\citep{qwen25}, Mistral-7B-v0.3 \citep{mistral7b}, Gemma-2-9B \citep{gemma2}. CtrlPairs: $1{,}200$ NQ-Swap items $\to 3{,}593$ matched statements
 (cells A/C/D). RAGTruth: $2{,}000$ test responses with response-level hallucination
-labels \citep{niu2024ragtruth}. Baselines: NLI (DeBERTa-v3-base-mnli-fever-anli \citep{he2023debertav3}) in two
+labels \citep{niu2024ragtruth}. Baselines: NLI (the \texttt{DeBERTa-v3-base-mnli-fever-anli} checkpoint
+\citep{nli_checkpoint}---DeBERTaV3 \citep{he2023debertav3} fine-tuned on MNLI, FEVER
+and ANLI \citep{mnli,fever,anli}) in two
 variants---(i)~\emph{whole-response}: a single (context, declarativized-answer)
 entailment query (deliberately simple and conservative for multi-sentence responses);
 and (ii)~\emph{sentence-level}, a SummaC-style decomposition \citep{laban2022summac}
