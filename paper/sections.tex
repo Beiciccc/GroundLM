@@ -38,11 +38,11 @@ misleads even ``gold'' entailment checks.
 \paragraph{Contributions.}
 With this control we run a careful study across four model families
 (Llama-3.1-8B, Qwen2.5-7B-Instruct, Mistral-7B-v0.3, Gemma-2-9B). The result is a
-methodology and a chain of confound-controlled negatives: each apparent ``grounding''
-signal, once a confound is removed, turns out to be something else.
+confound-controlled methodology and a series of controls that, one by one, attribute
+the apparent ``grounding'' signal to factors other than context use.
 \begin{enumerate}[leftmargin=1.4em,itemsep=1pt,topsep=2pt]
-  \item \textbf{An overlap-controlled internal signal that is \emph{not}
-    context-grounding (\S\ref{sec:c1}).} Within the answer-present stratum (lexical
+  \item \textbf{An overlap-controlled internal signal that reflects
+    question--answer compatibility, not context-grounding (\S\ref{sec:c1}).} Within the answer-present stratum (lexical
     overlap held constant), a support contrast is decodable on all four families
     (collision-free raw AUROC near-ceiling, ${\approx}0.99$; $0.76$--$0.88$ after
     purging model confidence). But a \emph{no-context ablation} shows it is mostly
@@ -50,9 +50,9 @@ signal, once a confound is removed, turns out to be something else.
     $0.95$--$0.98$, confidence-purged unchanged), so the probe separates the matched
     answer from the wrong-question answer \emph{without reading the context}. Together
     with the fact that support coincides with our \emph{synthetic} factuality label
-    here by construction, this shows an overlap-controlled internal contrast can still
-    be compatibility and factoid-correctness---we therefore do \emph{not} claim a
-    context-grounding signal, even an overlap-controlled one.
+    here by construction, this attributes the overlap-controlled contrast to
+    question--answer compatibility and factoid-correctness rather than
+    context-grounding.
   \item \textbf{Cross-family alignment up to a linear map (\S\ref{sec:c3}).} An
     orthogonal-Procrustes map carries the support direction between families so the
     transported direction is nearly collinear with the target family's \emph{native}
@@ -62,8 +62,8 @@ signal, once a confound is removed, turns out to be something else.
     within-family bound but is ceiling-saturated, and signed map-aware nulls sit at
     chance ($0.51$); we therefore rest the claim on the cosine. Factuality, answer-length and overlap directions transport identically while a
     confidence direction does not, indicating a shared stimulus-derived contrast
-    rather than a grounding-specific axis; we claim no
-    universality beyond these four $7$--$9$B models \citep{puri2025atlas}.
+    rather than a grounding-specific axis; we do not generalize
+    beyond these four $7$--$9$B models \citep{puri2025atlas}.
   \item \textbf{No confidence asymmetry (\S\ref{sec:c2}).} Contrary to a natural
     hypothesis, softmax confidence and activation norm do not absorb the
     factuality axis more than the faithfulness axis; the effect is null.
@@ -79,10 +79,10 @@ signal, once a confound is removed, turns out to be something else.
     Qwen), so a real support signal exists in the internals but is a \emph{different
     direction} from the synthetic axis and needs in-domain annotation.
 \end{enumerate}
-The takeaway for the ``faithful and efficient'' agenda is cautionary but useful:
+The takeaway for the ``faithful and efficient'' agenda is twofold:
 internals-based support contrasts identified on controlled data are real and
-remarkably portable across model families (though not grounding-specific), yet are
-\emph{not}, by themselves, deployable hallucination detectors---on real data, lexical
+remarkably portable across model families (though not grounding-specific), but are
+not, by themselves, deployable hallucination detectors---on real data, lexical
 overlap still dominates.
 
 \section{Related Work}
