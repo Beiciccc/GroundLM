@@ -158,8 +158,9 @@ orthogonalized $\mathrm{corr}{\approx}0$ design would require cell~B). One cavea
 over $1{,}200$ items, so for $278$ items ($23.2\%$) the donor $q'$ is string-identical
 to $q$ and $a_{\mathrm{true}}$ \emph{does} answer it; we flag these
 \emph{donor-collision} items and report cell-C results with them removed (the full
-construction will dedup $q'{\neq}q$). On \emph{clean} cell~C an open NLI model
-\citep{he2023debertav3} still rates $25.5\%$ of unsupported-but-present items as
+construction will dedup $q'{\neq}q$). On \emph{clean} cell~C an off-the-shelf NLI
+checkpoint \citep{nli_checkpoint,he2023debertav3} still rates $25.5\%$ of
+unsupported-but-present items as
 ``supported'' (mean entailment $0.31$, vs.\ $0.74$ for cell~A and $0.18$ for cell~D);
 the raw $37.6\%$ rate is inflated by the collisions, which NLI entails $77.7\%$ of the
 time (correctly). Lexical overlap thus misleads ``gold'' entailment even after the
@@ -505,49 +506,37 @@ least-bad. $^{\dagger}$the in-domain probe ($0.714$ macro) uses RAGTruth human l
 \label{tab:c4_pertask}
 \end{table}
 
-\section{Discussion and Limitations}
-\label{sec:discussion}
+\section{Conclusion}
+\label{sec:conclusion}
 Our results separate two questions usually merged. \emph{Does} a non-overlap signal
 exist in the internals? Within the overlap-controlled stratum a contrast is decodable
 ($0.76$--$0.88$ purged) and aligns across four families up to a linear map---but a
 no-context ablation shows this within-stratum contrast is mostly \emph{question--answer
 compatibility}, not context use, and the alignment is a generic matched-stimulus
 property (length and overlap directions align equally well). An apparent ``grounding''
-signal thus survives an overlap control yet is still not grounding. \emph{Is}
-that direction a deployable, label-free hallucination detector? No---it does not
-transfer to RAGTruth, where lexical overlap remains the strongest single-pass
-baseline (and even that edge is largely a between-task base-rate artifact:
-Table~\ref{tab:c4_pertask}). The gap between a clean controlled signal and real-world
-utility is the main lesson, and it cautions against reading deployment claims from
-synthetic-stimulus probes. We are explicit about what we do \emph{not} show:
-(i)~within the answer-present stratum the decodable contrast is question--answer
-compatibility (a no-context ablation leaves it almost unchanged, raw $0.95$--$0.98$) and
-coincides with our synthetic factuality label by construction, so we cannot claim a
-context-grounding signal there; only a question-fixed cross-strata control
-($0.66$--$0.88$) shows any context-sensitive component; (ii)~cell~B has zero yield, so the fully-orthogonalized
-($\mathrm{corr}{\approx}0$) design is not instantiated and all analyses use cells
-A/C/D at $\mathrm{corr}{=}0.50$ with overlap stratification; (iii)~the cosine alignment
-is measured on shared stimuli, so it shows alignment of a shared low-rank contrast,
-not a fully unpaired transfer; (iv)~RAGTruth covers three task types and one
-annotation scheme, the negative is on $3/4$ families (Mistral's RAGTruth extraction
-OOM'd), and stronger internals detectors (e.g.\ ReDeEP \citep{sun2025redeep}) and
-sampling-based methods are out of our single-A100 budget---so we show that
-\emph{this} synthetic axis fails, not that internals cannot work. Whether any
-label-free signal can decisively beat lexical overlap on real hallucinations is the
+signal thus survives an overlap control yet is still not grounding. \emph{Is} that
+direction a deployable, label-free hallucination detector? No---it does not transfer to
+RAGTruth, where lexical overlap remains the strongest single-pass baseline (and even
+that edge is largely a between-task base-rate artifact: Table~\ref{tab:c4_pertask}).
+The gap between a clean controlled signal and real-world utility is the main lesson, and
+it cautions against reading deployment claims from synthetic-stimulus probes; whether
+any label-free signal can decisively beat lexical overlap on real hallucinations is the
 natural next question.
 
-\paragraph{Evaluation rigor.}
-Because cells A/C/D of an item reuse the same context, all cross-validation and
-all Procrustes calibration/evaluation splits group on \textsc{item\_id}
-(GroupKFold), so no near-duplicate rows cross the train/test boundary; estimates
-change negligibly from the ungrouped numbers (e.g.\ C1 supp$_{O=1}$ shifts by
-$\le0.01$, C3 raw transfer stays ${\approx}0.91$), so the positive findings are not
-leakage artifacts. We resolve axis polarity on the train (or calibration) fold only;
-the test-fold $\max(\mathrm{AUC},1{-}\mathrm{AUC})$ convention floors a non-predictive
-direction above $0.5$ (it inflates a true-chance random direction to
-$\approx0.54$--$0.59$), which matters for the \emph{weak} numbers---the C3 map-aware
-nulls and the synthetic axis on RAGTruth---so we report those without the flip. The C1
-analysis layer is fixed a priori at relative depth $0.5$ (as C3/C4 already do) rather
-than argmax-selected on the reported metric. All confound-controlled estimates
-(confidence-purge, cross-strata, in-domain) and the C3 cosine and nulls are released
-as a single cached-feature script.
+\section*{Limitations}
+We are explicit about what we do \emph{not} show. (i)~Within the answer-present stratum
+the decodable contrast is question--answer compatibility (a no-context ablation leaves
+it almost unchanged, raw $0.95$--$0.98$) and coincides with our synthetic factuality
+label by construction, so we cannot claim a context-grounding signal there; only a
+question-fixed cross-strata control ($0.66$--$0.88$) shows any context-sensitive
+component. (ii)~Cell~B has zero yield, so the fully-orthogonalized
+($\mathrm{corr}{\approx}0$) design is not instantiated and all analyses use cells A/C/D
+at $\mathrm{corr}{=}0.50$ with overlap stratification. (iii)~The cosine alignment is
+measured on shared stimuli, so it shows alignment of a shared low-rank contrast, not a
+fully unpaired transfer. (iv)~RAGTruth covers three task types and one annotation
+scheme, and the negative is on $3/4$ families (Mistral's RAGTruth extraction OOM'd);
+the in-domain probe is scored with response-level grouping, which does not hold out
+passages shared across responses and is therefore, if anything, an optimistic ceiling.
+(v)~Stronger internals detectors (e.g.\ ReDeEP \citep{sun2025redeep}) and
+sampling-based methods are out of our single-A100 budget, so we show that \emph{this}
+synthetic axis fails, not that internals cannot work.

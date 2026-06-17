@@ -1,8 +1,9 @@
 \section{Implementation Details and Reproducibility}
 \label{app:impl}
-All numbers reproduce from cached features with \texttt{reproduce.sh}; extraction code,
-result JSONs, and built datasets are released. Below we fix every choice a reader
-would need to re-run the study.
+All numbers reproduce from cached features with \texttt{reproduce.sh}. We will release
+the extraction code, cached features, result JSONs, and the constructed datasets upon
+acceptance; an anonymized archive is provided for review. Below we fix every choice a
+reader would need to re-run the study.
 
 \paragraph{Prompt and answer span.}
 Activations are extracted from a raw template (no chat formatting):
@@ -65,6 +66,19 @@ $0.77$--$0.82$ is, if anything, an optimistic ceiling. Confidence purging remove
 component of the hidden states linearly predictable from the confound set before
 fitting. Cross-family transfer fits an orthogonal Procrustes map on shared stimuli at
 each model's a-priori layer (nearest cached layer to relative depth $0.5$).
+
+\paragraph{Evaluation rigor.}
+Grouping on \textsc{item\_id} changes estimates negligibly from the ungrouped numbers
+(C1 supp$_{O=1}$ shifts by $\le0.01$, C3 raw transfer stays ${\approx}0.91$), so the
+positive findings are not leakage artifacts. We resolve axis polarity on the train (or
+calibration) fold only; the test-fold $\max(\mathrm{AUC},1{-}\mathrm{AUC})$ convention
+floors a non-predictive direction above $0.5$ (it inflates a true-chance random
+direction to $\approx0.54$--$0.59$), which matters for the \emph{weak} numbers---the C3
+map-aware nulls and the synthetic axis on RAGTruth---so we report those without the
+flip. The C1 analysis layer is fixed a priori at relative depth $0.5$ (as C3/C4 already
+do) rather than argmax-selected on the reported metric. All confound-controlled
+estimates (confidence-purge, cross-strata, in-domain) and the C3 cosine and nulls are
+released as a single cached-feature script.
 
 \paragraph{Compute.}
 All activation extraction runs on a single A100-40G; per-model batch sizes are reduced

@@ -34,7 +34,9 @@ SHORT = {
 }
 JOURNAL_EXTRA = {"nli_checkpoint": "volume={32}, number={1}, ", "schonemann1966": "volume={31}, number={1}, "}
 DOWNGRADE = {"adarsh2026context", "gao2026proberag"}   # unconfirmed future venue -> arXiv
-OVERRIDE_AUTHORS = {"qwen25": "{Qwen Team} and Yang, An and others"}
+# Mega-author technical reports: use the official corporate authorship so the ACL bst
+# renders a clean "Team. 2024." instead of the truncated "and 1 others".
+OVERRIDE_AUTHORS = {"qwen25": "{Qwen Team}", "gemma2": "{Gemma Team}", "llama31": "{Llama Team}"}
 
 LABAN = """@article{laban2022summac,
   title={{SummaC}: Re-Visiting {NLI}-based Models for Inconsistency Detection in Summarization},
