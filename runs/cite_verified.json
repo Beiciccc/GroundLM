@@ -544,5 +544,20 @@
   "source_url": "https://www.cambridge.org/core/journals/psychometrika/article/generalized-solution-of-the-orthogonal-procrustes-problem/AF9BDA5A7C7771F1ECE5632862068F27",
   "confidence": "high",
   "notes": "Verified on Cambridge Core (Psychometrika). Peter H. Schoenemann, Psychometrika, 1966, vol. 31, issue 1, pages 1-10. DOI 10.1007/BF02289451. Author name carries umlaut: Sch\\\"onemann. No arXiv (predates arXiv)."
+ },
+ "laban2022summac": {
+  "bibkey": "laban2022summac",
+  "status": "verified_venue",
+  "entry_type": "article",
+  "title": "SummaC: Re-Visiting NLI-based Models for Inconsistency Detection in Summarization",
+  "authors": "Laban, Philippe and Schnabel, Tobias and Bennett, Paul N. and Hearst, Marti A.",
+  "venue": "Transactions of the Association for Computational Linguistics (TACL)",
+  "year": "2022",
+  "pages": "163--177",
+  "volume": "10",
+  "arxiv_id": "2111.09525",
+  "source_url": "https://aclanthology.org/2022.tacl-1.10/",
+  "confidence": "high",
+  "notes": "TACL vol 10, pp 163-177, 2022. Bib entry is the hardcoded LABAN constant in generate_bib.py; added to the ledger so every cited key has a verification record."
  }
 }

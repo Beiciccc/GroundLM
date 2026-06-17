@@ -60,7 +60,7 @@ the apparent ``grounding'' signal to factors other than context use.
     through the same map), whereas an anchor-projection transfer reaches only $0.67$
     AUROC \citep{kim2026crossfamily}. The transferred-probe AUROC ($0.91$) equals the
     within-family bound but is ceiling-saturated, and signed map-aware nulls sit at
-    chance ($0.51$); we therefore rest the claim on the cosine. Factuality, answer-length and overlap directions transport identically while a
+    chance ($0.52$); we therefore rest the claim on the cosine. Factuality, answer-length and overlap directions transport identically while a
     confidence direction does not, indicating a shared stimulus-derived contrast
     rather than a grounding-specific axis; we do not generalize
     beyond these four $7$--$9$B models \citep{puri2025atlas}.
@@ -153,7 +153,7 @@ next item's question). Cell~B paraphrases $c_{\mathrm{org}}$ so the answer is
 entailed but not copied (open instruct model, kept only if token-overlap${\le}0.34$
 and an NLI model still entails it); in this release cell~B has \emph{zero} yield, so
 all reported analyses use the model-free cells A/C/D with
-$\mathrm{corr}(S,O){=}0.50$ ($0.57$ after removing the donor-collision items below; an
+$\mathrm{corr}(S,O){=}0.50$ ($0.56$ after removing the donor-collision items below; an
 orthogonalized $\mathrm{corr}{\approx}0$ design would require cell~B). One caveat in cell~C: NQ-Swap dev has only $418$ distinct questions
 over $1{,}200$ items, so for $278$ items ($23.2\%$) the donor $q'$ is string-identical
 to $q$ and $a_{\mathrm{true}}$ \emph{does} answer it; we flag these
@@ -361,14 +361,15 @@ also not an artifact of fitting the map and the directions on the same items: wi
 map fit on a calibration split and the target's \emph{native} direction re-estimated on
 a disjoint, item-grouped held-out split, the transported-to-native cosine is
 $0.971{\pm}0.014$ (mean over $12$ pairs ${\times}\,10$ splits; $0.970$ with both source
-and target directions held out from the map), versus an in-sample $0.977$---a $0.006$
-gap that matches the native direction's own cross-split self-consistency ($0.994$), so
+and target directions held out from the map), essentially unchanged from the in-sample
+value (Table~\ref{tab:c3}); the ${\sim}0.006$ drop matches the native direction's own
+cross-split self-consistency loss ($0.994$), so
 the Procrustes map adds no measurable inflation (factuality behaves identically,
 $0.990{\to}0.982$). We
 deliberately do \emph{not} headline the transferred-probe AUROC ($0.906$): it equals
 the within-family bound ($0.905$) and is therefore ceiling-saturated; scored with
 polarity-honest (signed) AUROC, random and shuffled-label directions through the map
-sit at chance ($0.51$/$0.51$). \textbf{This alignment is not specific to grounding.}
+sit at chance ($0.52$/$0.51$). \textbf{This alignment is not specific to grounding.}
 Transporting the \emph{factuality}, \emph{answer-length}, and \emph{lexical-overlap}
 directions through the same maps gives cosines of $0.99$/$0.98$/$0.99$---as high as
 support---whereas a purely model-internal \emph{confidence} direction transports at
