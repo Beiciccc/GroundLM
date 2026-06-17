@@ -15,8 +15,8 @@ mpl.rcParams.update({
     "font.family": "sans-serif",
     "font.sans-serif": ["Arial", "Helvetica", "DejaVu Sans"],
     "pdf.fonttype": 42, "svg.fonttype": "none",
-    "font.size": 7, "axes.titlesize": 7.5, "axes.labelsize": 7,
-    "xtick.labelsize": 6.3, "ytick.labelsize": 6.3, "legend.fontsize": 6.2,
+    "font.size": 9, "axes.titlesize": 9.5, "axes.labelsize": 9,
+    "xtick.labelsize": 8, "ytick.labelsize": 8, "legend.fontsize": 8,
     "axes.spines.right": False, "axes.spines.top": False,
     "axes.linewidth": 0.7, "legend.frameon": False,
     "xtick.major.width": 0.7, "ytick.major.width": 0.7,
@@ -76,20 +76,20 @@ def fig_decoupling():
     axa.set_ylabel(r"$|\mathrm{corr}(\mathrm{support},\,\mathrm{overlap})|$")
     axa.set_ylim(0, 1.0); axa.set_title("(a) decoupling the confound", loc="left", fontweight="bold")
     for b, v in zip(bars, corrs):
-        axa.text(b.get_x() + b.get_width() / 2, v + 0.02, f"{v:.2f}", ha="center", fontsize=6)
+        axa.text(b.get_x() + b.get_width() / 2, v + 0.02, f"{v:.2f}", ha="center", fontsize=8)
     cells = ["A\nsup,pres", "C\nunsup,pres", "D\nunsup,abs"]
     vals = [cellmeans["A"], cellmeans["C"], cellmeans["D"]]
     cols = [GREEN, VERM, GRAY]
     bars = axb.bar(range(3), vals, color=cols, width=0.62)
     axb.axhline(0.5, ls="--", lw=0.7, color="k")
-    axb.text(2.45, 0.52, "decision\nthreshold", fontsize=5.4, ha="right", va="bottom")
+    axb.text(2.45, 0.52, "decision\nthreshold", fontsize=7.5, ha="right", va="bottom")
     axb.set_xticks(range(3)); axb.set_xticklabels(cells)
     axb.set_ylabel("NLI entailment prob."); axb.set_ylim(0, 1.0)
     axb.set_title("(b) NLI is fooled by overlap", loc="left", fontweight="bold")
     for b, v in zip(bars, vals):
-        axb.text(b.get_x() + b.get_width() / 2, v + 0.02, f"{v:.2f}", ha="center", fontsize=6)
+        axb.text(b.get_x() + b.get_width() / 2, v + 0.02, f"{v:.2f}", ha="center", fontsize=8)
     axb.annotate("answer present\nbut unsupported", xy=(1, vals[1]), xytext=(1.05, 0.78),
-                 fontsize=5.4, ha="center", color=VERM,
+                 fontsize=7.5, ha="center", color=VERM,
                  arrowprops=dict(arrowstyle="->", color=VERM, lw=0.6))
     save(fig, "fig_decoupling")
 
@@ -122,15 +122,15 @@ def fig_c1_layers():
         ax.plot([xa], [raw_nc], marker="*", ms=8, color=GREEN, mec="k", mew=0.4,
                 ls="none", zorder=5, label="context removed (mid-layer)")
         ax.annotate(f"$-{raw_ctx_a - raw_nc:.2f}$", xy=(xa, raw_nc),
-                    xytext=(xa + 0.015, raw_nc - 0.006), fontsize=5.3, color=GREEN, va="top")
-        ax.set_title(title, fontsize=7, fontweight="bold")
+                    xytext=(xa + 0.015, raw_nc - 0.006), fontsize=7, color=GREEN, va="top")
+        ax.set_title(title, fontsize=9, fontweight="bold")
         ax.set_ylim(0.45, 0.92); ax.set_xlim(min(xs) - .02, max(xs) + .02)
         ax.set_xlabel("relative layer depth"); ax.set_ylabel("AUROC")
         if handles_labels is None:
             handles_labels = ax.get_legend_handles_labels()
     fig.tight_layout(pad=0.5)
     fig.subplots_adjust(bottom=0.14)
-    fig.legend(*handles_labels, loc="lower center", ncol=4, fontsize=5.9,
+    fig.legend(*handles_labels, loc="lower center", ncol=4, fontsize=7.5,
                handlelength=1.5, columnspacing=1.1, bbox_to_anchor=(0.5, 0.01))
     save(fig, "fig_c1_layers")
 
@@ -154,21 +154,22 @@ def _transfer_mat(mode_off):
 def fig_c3_heatmap():
     Mp, names = _transfer_mat("procrustes_raw")
     Ma, _ = _transfer_mat("acs_purged")
-    fig, (a1, a2) = plt.subplots(1, 2, figsize=(5.8, 2.7))
-    for ax, M, ttl in [(a1, Mp, "(a) orthogonal Procrustes"), (a2, Ma, "(b) anchor projection (ACS)")]:
+    fig, (a1, a2) = plt.subplots(1, 2, figsize=(3.6, 2.0), gridspec_kw={"wspace": 0.18})
+    for ax, M, ttl in [(a1, Mp, "(a) Procrustes"), (a2, Ma, "(b) anchor (ACS)")]:
         im = ax.imshow(M, vmin=0.5, vmax=0.92, cmap="viridis", aspect="equal")
         ax.set_xticks(range(4)); ax.set_yticks(range(4))
         short = [n.split("-")[0] for n in names]
-        ax.set_xticklabels(short, rotation=35, ha="right"); ax.set_yticklabels(short)
-        ax.set_title(ttl, loc="left", fontsize=7, fontweight="bold")
+        ax.set_xticklabels(short, rotation=35, ha="right")
+        ax.set_yticklabels(short if ax is a1 else [])
+        ax.set_title(ttl, loc="left", fontsize=9, fontweight="bold")
         ax.set_xlabel("target");
         if ax is a1: ax.set_ylabel("source")
         for i in range(4):
             for j in range(4):
-                ax.text(j, i, f"{M[i,j]:.2f}", ha="center", va="center", fontsize=5.6,
+                ax.text(j, i, f"{M[i,j]:.2f}", ha="center", va="center", fontsize=8,
                         color="white" if M[i, j] < 0.78 else "black")
     cb = fig.colorbar(im, ax=[a1, a2], fraction=0.025, pad=0.02)
-    cb.set_label("transfer AUROC (support axis)", fontsize=6)
+    cb.set_label("transfer AUROC (support axis)", fontsize=8)
     save(fig, "fig_c3_heatmap")
 
 
@@ -188,10 +189,10 @@ def fig_c4_ragtruth():
     x = np.arange(len(fams)); w = 0.2
     for k, (lab, vals, col, hatch) in enumerate(methods):
         ax.bar(x + (k - 1.5) * w, vals, w, label=lab, color=col, hatch=hatch, edgecolor="white", linewidth=0.3)
-    ax.axhline(0.5, ls="--", lw=0.7, color="k"); ax.text(2.4, 0.51, "chance", fontsize=5.4, ha="right")
+    ax.axhline(0.5, ls="--", lw=0.7, color="k"); ax.text(2.4, 0.51, "chance", fontsize=7.5, ha="right")
     ax.set_xticks(x); ax.set_xticklabels([f.split("-")[0] for f in fams])
     ax.set_ylabel("hallucination-detection AUROC"); ax.set_ylim(0.5, 0.83)
-    ax.legend(loc="upper center", bbox_to_anchor=(0.5, 1.32), ncol=2, fontsize=5.5, handlelength=1.3)
+    ax.legend(loc="upper center", bbox_to_anchor=(0.5, 1.34), ncol=2, fontsize=7, handlelength=1.3)
     save(fig, "fig_c4_ragtruth")
 
 
