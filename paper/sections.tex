@@ -432,10 +432,9 @@ families.}
 
 \subsection{Synthetic axes do not transfer to real hallucinations}
 \label{sec:c4}
-We learn $d_S$ on CtrlPairs and apply it to the fixed RAGTruth responses (hidden states
-extracted through that same model; the responses are RAGTruth's own, so the NLI and
-overlap baselines are response-intrinsic and identical across the three models),
-predicting the human faithfulness label (Table~\ref{tab:c4}). Here we keep the
+We learn $d_S$ on CtrlPairs and apply it to the fixed RAGTruth responses (the NLI and
+overlap baselines are response-intrinsic, hence identical across models), predicting the
+human faithfulness label (Table~\ref{tab:c4}). Here we keep the
 \emph{support-polarity} sign fixed from CtrlPairs and score without the
 test-fold flip, because flipping per-test inflates a near-chance axis; CtrlPairs
 and RAGTruth share no items, so there is no leakage in this transfer. Scored
@@ -443,21 +442,18 @@ honestly, the label-free synthetic axis reaches only $0.54$--$0.66$\,AUROC
 (and drops toward chance for the weakest family)---\emph{below} NLI ($0.673$),
 model confidence ($0.62$--$0.72$), and plain lexical overlap ($0.753$), which is
 the single best predictor on RAGTruth. Removing the polarity flip can only lower
-these numbers, so the C4 negative is if anything understated by the original
-table. Thus on real data overlap still dominates, and even NLI does not escape it.
+these numbers, so the negative is if anything understated; on real data overlap still
+dominates.
 A more sophisticated sentence-level NLI baseline (SummaC-style, max entailment over
 context sentences) does no better: pooled $0.614$/$0.664$ and within-task macro
-$0.596$/$0.579$ (mean/min), essentially tied with the whole-response NLI ($0.582$,
-within sampling noise) and still well below overlap (Table~\ref{tab:c4_pertask})---consistent
-with RAGTruth hallucinations often being abstractive or reasoning-level errors that
-survive sentence-by-sentence entailment, on which a small off-the-shelf NLI model has
-limited headroom.
+$0.596$/$0.579$ (mean/min), essentially tied with the whole-response NLI ($0.582$) and
+still well below overlap (Table~\ref{tab:c4_pertask})---many RAGTruth hallucinations are
+abstractive errors that survive sentence-level entailment.
 An \emph{in-domain} probe ($5$-fold grouped-CV $L_2$-logistic on the same mid-layer
 states, target${=}$human faithfulness label) does recover a usable signal:
 AUROC $0.77$/$0.82$/$0.80$ for Qwen/Llama/Gemma (item-bootstrap $95\%$ CIs in
-Table~\ref{tab:c4}). It exceeds our NLI baseline ($0.673$) on all three families---though that
-baseline scores each multi-sentence response with a single whole-response entailment
-check and is conservative (\S\ref{sec:experiments}); against the strong overlap
+Table~\ref{tab:c4}). It exceeds our NLI baseline ($0.673$) on all three families (a conservative
+whole-response check, \S\ref{sec:experiments}); against the strong overlap
 baseline ($0.753$) it wins on Llama and Gemma (paired bootstrap $p{<}0.001$) but only
 ties on Qwen ($+0.01$, $p{=}0.17$). Residualizing lexical overlap out of the
 features first drops it to $0.60$--$0.66$, so much of even this signal is overlap. A
