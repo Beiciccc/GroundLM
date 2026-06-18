@@ -5,7 +5,7 @@
 # confirms a grounding axis beyond overlap.
 set -euo pipefail
 cd "$(dirname "$0")/.."
-[ -f env.sh ] && source env.sh || true     # box: HF_ENDPOINT=hf-mirror, HF_HOME, HF_TOKEN
+[ -f env.sh ] && source env.sh || true     # optional: HF_ENDPOINT (mirror), HF_HOME, HF_TOKEN
 
 SOURCE="${SOURCE:-pminervini/NQ-Swap}"
 SPLIT="${SPLIT:-dev}"

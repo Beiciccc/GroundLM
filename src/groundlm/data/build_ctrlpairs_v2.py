@@ -1,7 +1,7 @@
 """Stage 0 v2 — SUPPORT x OVERLAP decoupled construction.
 
 The v1 NQ-Swap 2x2 made grounding == lexical overlap (corr 0.99), so the
-"faithfulness axis" was just a string-copy detector (pilot, 2026-06-13). v2
+"faithfulness axis" was just a string-copy detector (pilot). v2
 crosses *semantic support* with *lexical overlap* so the grounding probe cannot
 be solved by overlap:
 

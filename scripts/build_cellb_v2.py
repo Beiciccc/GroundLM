@@ -1,4 +1,4 @@
-"""Improved cell-B (supported, answer-absent) builder, local/MPS, no API.
+"""Improved cell-B (supported, answer-absent) builder, no API.
 
 Why the original yielded zero: a single greedy rewrite either keeps answer tokens
 (overlap > 0.34) or loses entailment (NLI < 0.5). Improvements:
@@ -16,7 +16,6 @@ Env: CB_MODEL, CB_K, CB_ITEMS, CB_DEVICE, CB_OVMAX, CB_ENT, CB_MAXNEW.
 """
 from __future__ import annotations
 import os, sys, json, time, re
-os.environ.setdefault("PYTORCH_ENABLE_MPS_FALLBACK", "1")
 os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 from groundlm.data.build_ctrlpairs_v2 import _overlap_frac, _present
@@ -24,7 +23,7 @@ from groundlm.gate.baselines import nli_entailment_scores
 
 NLI = "MoritzLaurer/DeBERTa-v3-base-mnli-fever-anli"
 MODEL = os.environ.get("CB_MODEL", "Qwen/Qwen2.5-1.5B-Instruct")
-DEVICE = os.environ.get("CB_DEVICE", "mps")
+DEVICE = os.environ.get("CB_DEVICE", "cpu")
 K = int(os.environ.get("CB_K", "4"))
 ITEMS = int(os.environ.get("CB_ITEMS", "40"))
 OVMAX = float(os.environ.get("CB_OVMAX", "0.34"))

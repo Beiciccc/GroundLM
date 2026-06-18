@@ -1,7 +1,6 @@
 {
   "n": 2000,
   "pairs": 305999,
-  "device": "mps",
   "ctx_cap": 60,
   "nli_model": "MoritzLaurer/DeBERTa-v3-base-mnli-fever-anli",
   "aggregation": "max over context sentences; response = mean (SummaC-ZS) | min",

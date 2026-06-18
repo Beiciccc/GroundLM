@@ -10,7 +10,7 @@ STAGE="${1:-analysis}"   # 'extract' (GPU, from scratch) or 'analysis' (default,
 
 if [ "$STAGE" = "extract" ]; then
   echo "### STAGE A: GPU extraction (build datasets + extract 4 families + RAGTruth) ###"
-  # China-network box: set HF_ENDPOINT=https://hf-mirror.com and caches on the data disk first.
+  # If huggingface.co is unreachable, set HF_ENDPOINT to a mirror and point the HF caches at a large disk first.
   bash scripts/run_strengthen.sh   # build_v2 + build_ragtruth + run_extract per model (+disk cleanup)
 fi
 
@@ -29,7 +29,7 @@ python3 scripts/analyze_transfer_v2.py --dirs runs/qwen25_7b_v2 runs/mistral7b_v
 # 2b. v1 (extractive) confound number for the decoupling figure (CPU; no model).
 python3 scripts/v1_corr.py                # -> runs/v1_corr.json
 # 2c. Sentence-level (SummaC-style) NLI baseline on RAGTruth -> Table c4_pertask rows.
-#     Uses the small DeBERTa-MNLI model only (no LLM); ~30 min on Apple-MPS/CPU,
+#     Uses the small DeBERTa-MNLI model only (no LLM); ~30 min on CPU,
 #     checkpoints to runs/_nli_sent_cache/ and resumes if interrupted.
 python3 scripts/nli_sentence_ragtruth.py  # -> runs/nli_sentence_ragtruth.json
 # 3. Figures (read the JSONs above; no hardcoded results).

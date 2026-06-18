@@ -14,10 +14,9 @@ Higher score = more supported = faithful, so AUROC(score, faithful) is directly
 comparable to the whole-response NLI and lexical-overlap baselines. Fully API-free;
 runs on the local NLI model (no 8B LLM, no GPU box). Writes runs/nli_sentence_ragtruth.json.
 
-Env: NLI_DEVICE (mps|cpu|cuda), NLI_BATCH, CTX_CAP, LIMIT (>0 = small subset probe).
+Env: NLI_DEVICE (cuda|cpu), NLI_BATCH, CTX_CAP, LIMIT (>0 = small subset probe).
 """
 import os, sys, json, time
-os.environ.setdefault("PYTORCH_ENABLE_MPS_FALLBACK", "1")
 os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 import numpy as np
@@ -26,7 +25,7 @@ from sklearn.metrics import roc_auc_score
 from groundlm.gate.baselines import nli_entailment_scores
 
 NLI = "MoritzLaurer/DeBERTa-v3-base-mnli-fever-anli"
-DEVICE = os.environ.get("NLI_DEVICE", "mps")
+DEVICE = os.environ.get("NLI_DEVICE", "cpu")
 BATCH = int(os.environ.get("NLI_BATCH", "64"))
 MAXLEN = int(os.environ.get("MAXLEN", "256"))     # 98% of (ctx_sent, ans_sent) pairs are <=256 tok
 CTX_CAP = int(os.environ.get("CTX_CAP", "60"))   # cap context sentences (>2% of pairs trimmed)
@@ -84,7 +83,7 @@ def main():
 
     print(f"items={len(rows)} pairs={len(premises)} device={DEVICE} batch={BATCH} maxlen={MAXLEN} ctx_cap={CTX_CAP}", flush=True)
     # Sort by approx length so each batch pads to a similar (usually short) length: minimizes
-    # padding compute and avoids MPS OOM spikes from a long pair landing in a big batch. Restore after.
+    # padding compute and avoids GPU OOM spikes from a long pair landing in a big batch. Restore after.
     order = sorted(range(len(premises)), key=lambda k: len(premises[k]) + len(hyps[k]))
     inv = np.empty(len(order), dtype=np.int64)
     for rank, idx in enumerate(order):

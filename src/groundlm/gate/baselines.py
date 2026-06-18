@@ -41,9 +41,12 @@ def nli_entailment_scores(contexts, answers, model_id: str,
         with torch.no_grad():
             probs = model(**enc).logits.softmax(-1)[:, ent_idx]
         out.extend(probs.float().cpu().tolist())
-        if device == "mps" and b % 16 == 15:   # release MPS fragmentation periodically
+        if b % 16 == 15:   # release accelerator fragmentation periodically
             try:
-                torch.mps.empty_cache()
+                if torch.cuda.is_available():
+                    torch.cuda.empty_cache()
+                elif getattr(torch.backends, "mps", None) and torch.backends.mps.is_available():
+                    torch.mps.empty_cache()
             except Exception:
                 pass
     return np.asarray(out, dtype=np.float64)

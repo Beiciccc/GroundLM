@@ -8,8 +8,8 @@
 # If supp_O1 (A-vs-C) stays high under no_context, the signal is NOT grounding.
 # If it drops toward chance vs the normal run, the signal genuinely uses the context.
 #
-# Needs a GPU (4x A100-40G plenty; one GPU fine). China-network box: set
-#   export HF_ENDPOINT=https://hf-mirror.com
+# Needs a GPU (4x A100-40G plenty; one GPU fine). If huggingface.co is unreachable, set
+#   export HF_ENDPOINT=<your-mirror-endpoint>
 # and point HF_HOME/caches/runs at the big data disk first (see scripts/run_strengthen.sh).
 set -euo pipefail
 cd "$(dirname "$0")/.."

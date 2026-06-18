@@ -79,7 +79,7 @@ GROUPS = [
 ]
 
 out = ["% References for the GroundLM paper.",
-       "% Verified against ACL Anthology / arXiv / OpenReview / Cambridge Core (2026-06); per-entry sources in runs/cite_verified.json.", ""]
+       "% Verified against ACL Anthology / arXiv / OpenReview / Cambridge Core; per-entry sources in runs/cite_verified.json.", ""]
 n = 0
 for gtitle, keys in GROUPS:
     out.append(f"% ---- {gtitle} ----")

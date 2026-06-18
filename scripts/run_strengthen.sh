@@ -42,7 +42,7 @@ for entry in "${MODELS[@]}"; do
     echo "### SKIP $short (extract failed — gated/OOM) ###"
   fi
   # free this model's weights from the 49G data disk before the next one
-  rm -rf "${HF_HOME:-/root/rivermind-data/hf}/hub/models--${mid//\//--}" 2>/dev/null && echo "freed cache: $short"
+  rm -rf "${HF_HOME:-$HOME/.cache/huggingface}/hub/models--${mid//\//--}" 2>/dev/null && echo "freed cache: $short"
 done
 
 if [ "${#CP_DIRS[@]}" -ge 2 ]; then
