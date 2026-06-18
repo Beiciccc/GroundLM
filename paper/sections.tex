@@ -20,9 +20,10 @@ In the standard extractive QA setup used to build such probes (e.g.\ entity-swap
 contexts \citep{longpre2021nqswap}), an answer is context-faithful \emph{iff} the
 answer string occurs in the context. Faithfulness is therefore almost perfectly
 correlated with \emph{lexical overlap} ($r{=}0.99$ in our data), and a probe that
-appears to read ``grounding'' may simply detect string copying. Indeed, after
-regressing out lexical overlap, an apparently excellent grounding probe collapses
-to chance.
+appears to read ``grounding'' may simply detect string copying: because faithfulness
+and overlap nearly coincide, a near-ceiling probe \emph{could} be reading either, and
+telling them apart is what our matched construction (\S\ref{sec:construction}) is built
+to do.
 
 \paragraph{A matched control.}
 We introduce a \textsc{Support}$\times$\textsc{Overlap} construction
