@@ -25,7 +25,7 @@ A Matched-Pair Study of Internals-Based Faithfulness Probes}
 \begin{abstract}
 We provide a confound-controlled methodology and a released ``wrong-question''
 diagnostic for internals-based, reference-free hallucination detection, which treats
-\emph{context-faithfulness}---is an answer entailed by the context?---as a linear
+\emph{context-faithfulness} (is an answer entailed by the context?) as a linear
 residual-stream direction. In the standard extractive setup, faithfulness is almost
 perfectly correlated with \emph{lexical overlap} ($r{=}0.99$), so an apparent
 ``grounding probe'' may be a string-matching detector. Our matched
@@ -36,7 +36,7 @@ overlap-controlled stratum a support contrast is linearly decodable, but a
 \emph{no-context ablation} shows it reflects question--answer compatibility rather than
 context use, and is inseparable from factoid-correctness by construction; (ii)~it aligns
 across families up to a linear map, yet answer-length, overlap, and factuality
-directions align equally well---a generic matched-stimulus property, not
+directions align equally well, a generic matched-stimulus property, not
 grounding-specific; (iii)~the synthetic direction does not transfer to real
 hallucinations, scoring below NLI, confidence, and lexical overlap on RAGTruth, where
 only an in-domain probe trained on human labels recovers a usable signal.

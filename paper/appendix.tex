@@ -8,9 +8,9 @@ reader would need to re-run the study.
 \paragraph{Prompt and answer span.}
 Activations are extracted from a raw template (no chat formatting):
 \texttt{"\{context\}$\backslash$n$\backslash$nQuestion: \{question\}$\backslash$nAnswer:"},
-to which the \emph{asserted answer}---a teacher-forced gold surface string (NQ-Swap
+to which the \emph{asserted answer}, a teacher-forced gold surface string (NQ-Swap
 $a_{\text{true}}/a_{\text{swap}}$ for CtrlPairs; the model-generated response for
-RAGTruth)---is appended with a single leading space and no special tokens. Inputs are
+RAGTruth), is appended with a single leading space and no special tokens. Inputs are
 \emph{left}-padded, so the answer occupies the final positions. The probe feature
 $\texttt{last}_L$ is the last-token residual state at layer $L$ (under left padding,
 the final answer token); we also cache $\texttt{mean}_L$ (mean over the answer span)
@@ -37,7 +37,7 @@ a_{\text{true}})$ with $q'$ a donor question from another item;
 D$=(q, c_{\text{sub}}, a_{\text{true}})$ with an entity-swapped context. Cell~B
 $=(q, \text{paraphrase}(c_{\text{org}}), a_{\text{true}})$ would be supported but
 answer-absent; it is produced only when a paraphraser is supplied and an item passes a
-\emph{dual} filter---token-overlap of the answer with the rewrite $\le 0.34$
+\emph{dual} filter: token-overlap of the answer with the rewrite $\le 0.34$
 \emph{and} NLI entailment of the answer by the rewrite $\ge 0.5$. Greedy rewrites that
 remove the answer string tend to fall below the entailment threshold, while those that
 stay entailed tend to retain the answer tokens; the released build supplies no
@@ -61,7 +61,7 @@ Directions are mass-mean (difference of class means). Within-stratum decodabilit
 $5$-fold \textsc{GroupKFold} grouped by source item: for CtrlPairs the group is the
 NQ-Swap item, holding all of its cells out together; for the in-domain RAGTruth probe
 the group is the response id. Distinct RAGTruth responses can share a source passage,
-which our grouping does \emph{not} hold out together---so the in-domain probe's
+which our grouping does \emph{not} hold out together, so the in-domain probe's
 $0.77$--$0.82$ is, if anything, an optimistic ceiling. Confidence purging removes the
 component of the hidden states linearly predictable from the confound set before
 fitting. Cross-family transfer fits an orthogonal Procrustes map on shared stimuli at
@@ -73,8 +73,8 @@ Grouping on \textsc{item\_id} changes estimates negligibly from the ungrouped nu
 positive findings are not leakage artifacts. We resolve axis polarity on the train (or
 calibration) fold only; the test-fold $\max(\mathrm{AUC},1{-}\mathrm{AUC})$ convention
 floors a non-predictive direction above $0.5$ (it inflates a true-chance random
-direction to $\approx0.54$--$0.59$), which matters for the \emph{weak} numbers---the C3
-map-aware nulls and the synthetic axis on RAGTruth---so we report those without the
+direction to $\approx0.54$--$0.59$), which matters for the \emph{weak} numbers (the C3
+map-aware nulls and the synthetic axis on RAGTruth), so we report those without the
 flip. The C1 analysis layer is fixed a priori at relative depth $0.5$ (as C3/C4 already
 do) rather than argmax-selected on the reported metric. All confound-controlled
 estimates (confidence-purge, cross-strata, in-domain) and the C3 cosine and nulls are
