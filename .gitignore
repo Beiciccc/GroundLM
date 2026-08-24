@@ -20,3 +20,7 @@ paper/*.out
 paper/*.fdb_latexmk
 paper/*.fls
 paper/*.synctex.gz
+
+# submitted supplement archive (kept on disk, not in VCS)
+groundlm_supplementary.zip
+*.zip
