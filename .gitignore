@@ -36,3 +36,6 @@ paper/REVIEWER_RISK_NOTES.md
 runs/results_summary.txt
 runs/*.log
 errors-main.json
+
+# stray root-level LaTeX log from a failed root-relative build
+/main.log
