@@ -15,13 +15,13 @@ $0.4$--$0.6$ band gives supp$_{O=1}$ of $0.990{\pm}0.004$ (Qwen, $5$ layers),
 $0.996{\pm}0.002$ (Mistral, $7$), $0.997{\pm}0.001$ (Llama, $7$) and
 $0.998{\pm}0.001$ (Gemma, $9$), and confidence-purged values of $0.761{\pm}0.016$,
 $0.876{\pm}0.003$, $0.786{\pm}0.003$ and $0.803{\pm}0.009$: the result is not a
-single-layer artifact. Separately, \texttt{GroupKFold} assigns folds by sorting group
-sizes, and our group sizes are almost all tied ($1193/1200$ CtrlPairs items have three
-rows; every RAGTruth item is a singleton), so the split depends on library-level
-tie-breaking. Repeating the in-domain RAGTruth probe under ten explicitly seeded group
-splits gives $0.770{\pm}0.007$ (Qwen), $0.817{\pm}0.004$ (Llama) and
-$0.805{\pm}0.004$ (Gemma), bracketing the single-split values in Table~\ref{tab:c4};
-the released \texttt{scripts/cr\_*.py} use the seeded splitter throughout.
+single-layer artifact. We also avoid \texttt{GroupKFold}, which assigns folds by sorting
+group sizes: our group sizes are almost all tied ($1193/1200$ CtrlPairs items have three
+rows; every RAGTruth response is its own record), so its split depends on
+\texttt{numpy}'s \texttt{argsort} tie-breaking and changes with the library version --
+enough to move the in-domain probe by $0.009$. All reported estimates instead use an
+explicitly seeded group splitter and are means over ten splits; the split-to-split sd is
+$\le0.002$ for Table~\ref{tab:c1} and $\le0.007$ for Table~\ref{tab:c4}.
 
 \paragraph{Parametric-belief check.}
 Before probing we verify closed-book that each model actually prefers the gold answer:
@@ -39,7 +39,7 @@ The probed checkpoints are Qwen2.5-7B-Instruct and Mistral-7B-Instruct-v0.3
 (Apache-2.0), Llama-3.1-8B-Instruct (Llama~3.1 Community License; this work is
 ``Built with Llama'') and Gemma-2-9B-it (Gemma Terms of Use). All use is
 non-commercial academic research, consistent with the intended use each artifact
-states. Our code is released under \texttt{TODO-CODE-LICENSE}; the constructed
+states. Our code is released under the MIT license; the constructed
 CtrlPairs data derives from NQ-Swap and inherits its terms. The redistributed RAGTruth
 subset contains third-party source text that we did not filter for incidental contact
 details already present upstream.
@@ -131,8 +131,13 @@ All activation extraction runs on a single A100-40G; per-model batch sizes are r
 for large-vocabulary models to avoid OOM (Qwen $4$, Gemma $2$, Llama $6$, Mistral
 $16$). Parameter counts are $7.6$B (Qwen2.5-7B-Instruct), $7.2$B
 (Mistral-7B-Instruct-v0.3), $8.0$B (Llama-3.1-8B-Instruct) and $9.2$B
-(Gemma-2-9B-it); no model is trained or fine-tuned, so training cost is zero and the
-budget is inference only, approximately TODO-GPU-HOURS GPU-hours in total.
+(Gemma-2-9B-it); no model is trained or fine-tuned, so the budget is inference only.
+It totals $58{,}716$ forward passes: per family, $3{,}593$ CtrlPairs statements,
+$2{,}400$ closed-book parametric-belief scorings ($1{,}200$ items $\times$ two candidate
+answers) and $3{,}593$ each for the no-context and shuffled-context ablations, plus
+$2{,}000$ RAGTruth responses for three families. The whole campaign ran on one
+A100-40G within a single day; our extraction logs do not instrument per-run wall-clock,
+so we report the forward-pass budget rather than a GPU-hour figure.
 All analyses, the sentence-level NLI baseline, and figures run on CPU/Apple-MPS
 without a GPU. The Mistral RAGTruth extraction was the one run that did not complete:
 it reuses the batch size tuned for the shorter CtrlPairs prompts ($16$) at the longer

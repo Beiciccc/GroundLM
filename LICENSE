@@ -1,0 +1,37 @@
+MIT License
+
+Copyright (c) 2026 Kun Zhang
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+This licence covers the code in this repository (src/, scripts/, deploy/).
+
+The constructed datasets in data/ are derived from third-party corpora and
+inherit their terms: data/ctrlpairs_v2.jsonl and data/belief_items.jsonl derive
+from NQ-Swap (MIT, via pminervini/NQ-Swap, itself derived from Natural
+Questions), and data/ragtruth.jsonl derives from RAGTruth (MIT, via
+wandb/RAGTruth-processed).
+
+This work is "Built with Llama": Llama-3.1-8B-Instruct is used under the Llama
+3.1 Community License. Gemma-2-9B-it is used under the Gemma Terms of Use.
+Qwen2.5-7B-Instruct and Mistral-7B-Instruct-v0.3 are Apache-2.0. The
+DeBERTaV3 MNLI/FEVER/ANLI checkpoint is MIT. No model weights are redistributed
+here.
