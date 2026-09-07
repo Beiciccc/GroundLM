@@ -33,7 +33,8 @@ from groundlm.probe.directions import fit_direction, project, _unit   # noqa: E4
 from groundlm.probe.confidence import purge                           # noqa: E402
 from groundlm.transfer.procrustes import fit_map, transport_direction # noqa: E402
 from _cr_common import (load, apriori_layer, band_layers, auroc,      # noqa: E402
-                        seeded_group_folds, collision_map, stat)
+                        seeded_group_folds, collision_map, stat,
+                        source_groups, passage_groups)
 
 MODELS4 = ["qwen25_7b", "mistral7b_v03", "llama31_8b", "gemma2_9b"]
 RT_MODELS = ["qwen25_7b", "llama31_8b", "gemma2_9b"]
@@ -46,11 +47,36 @@ out = {"nseed": NSEED, "n_boot": NBOOT, "numpy": np.__version__,
 t0 = time.time()
 
 
-def cv_massmean_seeded(X, y, groups, seed):
+def purge_fit(X_tr, C_tr):
+    """Fit the residualiser on the TRAINING fold only (never on all rows)."""
+    C = np.asarray(C_tr, float)
+    if C.ndim == 1:
+        C = C[:, None]
+    mu, sd = C.mean(0), C.std(0) + 1e-8
+    A = np.concatenate([np.ones((len(C), 1)), (C - mu) / sd], 1)
+    beta, *_ = np.linalg.lstsq(A, np.asarray(X_tr, float), rcond=None)
+    return beta, mu, sd
+
+
+def purge_apply(X, C, fit):
+    beta, mu, sd = fit
+    C = np.asarray(C, float)
+    if C.ndim == 1:
+        C = C[:, None]
+    A = np.concatenate([np.ones((len(C), 1)), (C - mu) / sd], 1)
+    return np.asarray(X, float) - A @ beta
+
+
+def cv_massmean_seeded(X, y, groups, seed, C=None):
     y = np.asarray(y).astype(int)
     oof = np.zeros(len(y))
     for tr, te in seeded_group_folds(groups, 5, seed):
-        oof[te] = project(X[te], fit_direction(X[tr], y[tr]))
+        if C is None:
+            Xtr, Xte = X[tr], X[te]
+        else:
+            f = purge_fit(X[tr], C[tr])
+            Xtr, Xte = purge_apply(X[tr], C[tr], f), purge_apply(X[te], C[te], f)
+        oof[te] = project(Xte, fit_direction(Xtr, y[tr]))
     return auroc(oof, y)
 
 
@@ -66,7 +92,7 @@ for m in MODELS4:
     keep = ~((cell == "C") & is_coll)
     m1 = (O == 1) & keep
     S = data["support"].astype(int)[m1]
-    g = item[m1]
+    g = source_groups(item)[m1]   # same grouping as Table 1
     confs = np.stack([data["mean_logprob"], data["mean_maxsoftmax"],
                       data["first_maxsoftmax"]], 1)[m1]      # the 3 scalars used for Table 1
     band = band_layers(meta)
@@ -75,7 +101,7 @@ for m in MODELS4:
     for L in band:
         X = data.layer(L)[m1]
         r = float(np.mean([cv_massmean_seeded(X, S, g, s) for s in range(NSEED)]))
-        p = float(np.mean([cv_massmean_seeded(purge(X, confs), S, g, s) for s in range(NSEED)]))
+        p = float(np.mean([cv_massmean_seeded(X, S, g, s, C=confs) for s in range(NSEED)]))
         raws.append(r); purs.append(p)
         data.drop(f"last_{L}")
         print(f"  {m:15s} L{L:>2} (d={L/meta['n_layers']:.2f}) raw={r:.4f} purged={p:.4f} "
@@ -117,7 +143,7 @@ for m in RT_MODELS:
     d_sup = fit_direction(cp.layer(L), cp["support"].astype(int))
     Xrt = rt.layer(L)
     faith = rt["faithful"].astype(int)
-    item = rt["item_id"]
+    item = passage_groups()   # cluster on source passage; item_id is a per-response counter
     synth = project(Xrt, d_sup)
     base = {"lexical_overlap": rt["lexical_overlap"].astype(np.float64),
             "confidence": rt["mean_maxsoftmax"].astype(np.float64)}
@@ -143,7 +169,7 @@ for m in MODELS4:
     ln = data[lenk].astype(float)
     RUN[m] = {
         "X": X,
-        "item": data["item_id"],
+        "item": source_groups(data["item_id"]),   # source-QA grouping, as everywhere else
         "axes": {
             "support":    data["support"].astype(int),
             "factuality": data["factuality"].astype(int),

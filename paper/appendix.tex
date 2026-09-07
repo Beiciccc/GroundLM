@@ -12,18 +12,19 @@ re-run the study.
 
 \paragraph{Layer choice and fold-split sensitivity.}
 Table~\ref{tab:c1} fixes the analysis layer a priori at relative depth $0.5$. Averaging
-the same collision-free, item-grouped estimate over every cached layer in the
+the same collision-free, source-grouped estimate over every cached layer in the
 $0.4$--$0.6$ band gives supp$_{O=1}$ of $0.990{\pm}0.004$ (Qwen, $5$ layers),
-$0.996{\pm}0.002$ (Mistral, $7$), $0.997{\pm}0.001$ (Llama, $7$) and
-$0.998{\pm}0.001$ (Gemma, $9$), and confidence-purged values of $0.761{\pm}0.016$,
-$0.876{\pm}0.003$, $0.786{\pm}0.003$ and $0.803{\pm}0.009$: the result is not a
+$0.996{\pm}0.002$ (Mistral, $7$), $0.996{\pm}0.001$ (Llama, $7$) and
+$0.998{\pm}0.001$ (Gemma, $9$), and confidence-purged values of $0.765{\pm}0.016$,
+$0.877{\pm}0.003$, $0.792{\pm}0.003$ and $0.809{\pm}0.008$: the result is not a
 single-layer artifact. We also avoid \texttt{GroupKFold}, which assigns folds by sorting
 group sizes: our group sizes are almost all tied ($1193/1200$ CtrlPairs items have three
 rows; every RAGTruth response is its own record), so its split depends on
 \texttt{numpy}'s \texttt{argsort} tie-breaking and changes with the library version --
-enough to move the in-domain probe by $0.009$. All reported estimates instead use an
-explicitly seeded group splitter and are means over ten splits; the split-to-split sd is
-$\le0.002$ for Table~\ref{tab:c1} and $\le0.007$ for Table~\ref{tab:c4}.
+enough to move the in-domain probe by $0.009$. Every reported estimate instead uses an
+explicitly seeded group splitter over source groups and is a mean over ten splits; the
+split-to-split sd is $\le0.002$ for Table~\ref{tab:c1} and $\le0.007$ for
+Table~\ref{tab:c4}.
 
 \paragraph{Parametric-belief check.}
 Before probing we verify closed-book that each model actually prefers the gold answer:
@@ -123,10 +124,10 @@ fold only and score the test projection as-is: the test-fold
 $\max(\mathrm{AUC},1{-}\mathrm{AUC})$ convention floors a non-predictive direction above
 $0.5$ (it inflates a true-chance random direction to $\approx0.54$--$0.59$), so we use
 it nowhere. The C1 analysis layer is fixed a priori at relative depth $0.5$ (as C3/C4
-already do) rather than argmax-selected on the reported metric. Every reported number is
-produced by a single script, \texttt{scripts/cr\_final\_tables.py}, under this one
-protocol; \texttt{MANIFEST.md} maps each table, figure and quoted value to its producer
-and inputs.
+already do) rather than argmax-selected on the reported metric. Tables~\ref{tab:c1}, \ref{tab:c4} and \ref{tab:c4_pertask} are produced by
+\texttt{scripts/cr\_final\_tables.py}; the remaining reported quantities come from the
+scripts listed in \texttt{MANIFEST.md}, which maps each table, figure and quoted value
+to its producer and inputs.
 
 \paragraph{Compute.}
 All activation extraction runs on a single A100-40G; per-model batch sizes are reduced

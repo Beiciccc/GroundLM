@@ -32,10 +32,10 @@ to do.
 \paragraph{A matched control.}
 We introduce a \textsc{Support}$\times$\textsc{Overlap} construction
 (\S\ref{sec:construction}) that crosses semantic support with lexical presence in a
-balanced $2\times2$. Two cells are model-free: a \emph{wrong-question trap}, where
-the answer is present but answers a different question (supported${=}$no,
-overlap${=}$yes), and the usual unsupported-absent cell; a paraphrase cell closes
-the design. This drops $\mathrm{corr}(\textsc{support},\textsc{overlap})$ from
+$2\times2$ of which we realize three cells. Two are model-free: a \emph{wrong-question
+trap}, where the answer is present but answers a different question (supported${=}$no,
+overlap${=}$yes), and the usual unsupported-absent cell. A paraphrase cell would close
+the design but has zero yield in this release (\S\ref{sec:construction}). This drops $\mathrm{corr}(\textsc{support},\textsc{overlap})$ from
 $0.99$ to $0.50$, and, tellingly, an off-the-shelf NLI model is fooled by the
 clean wrong-question trap ${\sim}25\%$ of the time, confirming that lexical overlap
 misleads even ``gold'' entailment checks.
@@ -71,7 +71,7 @@ the apparent ``grounding'' signal to factors other than context use.
     beyond these four $7$--$9$B models \citep{puri2025atlas}.
   \item \textbf{The confidence asymmetry runs the wrong way (\S\ref{sec:c2}).}
     Contrary to a natural hypothesis, confidence absorbs the \emph{support} axis
-    somewhat more than the factuality axis (mean $-0.095$ over $71$ layer-tests), so
+    more than the factuality axis at every one of $71$ layer-tests (mean $-0.142$), so
     confidence-purging does not separate the two notions.
   \item \textbf{Synthetic axes do not transfer to real hallucinations
     (\S\ref{sec:c4}).} Applied to RAGTruth \citep{niu2024ragtruth}, the
@@ -231,7 +231,7 @@ probe signal absorbed per axis.
 Families differ in hidden size, so we fit a semi-orthogonal Procrustes map between
 two models' residual spaces on a shared calibration split, transport a
 source-trained probe, and measure target AUROC. The calibration/evaluation split
-is a \emph{GroupKFold on \textsc{item\_id}} (items in the calibration set are
+is a seeded half-split over source-QA groups (items in the calibration set are
 disjoint from the evaluation set), so the map is never fit and tested on
 near-duplicate rows of the same item; transported-probe polarity is fixed on the
 target calibration fold. We compare to the
@@ -366,13 +366,13 @@ $\mathrm{corr}(S,F){=}0.50$ by construction, and inside the overlap-controlled s
 the labels coincide exactly, so the angle cannot establish an overlap-independent axis.
 
 We also hypothesized that confidence absorbs factuality more than faithfulness, which
-would separate them. It does not. Over every cached layer of all four families
-($71$ tests), $\mathrm{absorbed}(F){-}\mathrm{absorbed}(S)$ averages $-0.095$
-(sd $0.102$): $57/71$ are negative and $54$ are one-sided significant \emph{opposite}
-to the hypothesis, against $10$ favouring factuality (per-family means $+0.002$,
-$-0.083$, $-0.070$, $-0.190$; Gemma is negative at all $22$ layers). Confidence
-absorbs the support axis somewhat \emph{more}, so purging it is not a route to
-distinguishing the two notions.
+would separate them. It does not, and the effect runs the other way at every layer we
+measured. Over all four families ($71$ layer-tests),
+$\mathrm{absorbed}(F){-}\mathrm{absorbed}(S)$ averages $-0.142$ (sd $0.062$):
+\emph{all} $71$ are negative, $70$ are one-sided significant in the direction
+\emph{opposite} to the hypothesis, and none favours factuality (per-family means
+$-0.104$, $-0.122$, $-0.131$, $-0.193$). Confidence absorbs the support axis
+\emph{more}, so purging it is not a route to distinguishing the two notions.
 
 \subsection{Matched-stimulus contrasts align across families up to a linear map}
 \label{sec:c3}
@@ -381,28 +381,28 @@ families up to a linear map. The direct evidence is geometric: the Procrustes-ma
 source direction is nearly collinear with the target family's \emph{native} direction
 (transported-to-native cosine $0.976$, range $0.95$--$0.99$ over the $12$ ordered
 pairs; Table~\ref{tab:c3}); anchor projection reaches only $0.67$ transfer AUROC
-against Procrustes' $0.906$ (the two are not comparable in cosine, as ACS has no
+against Procrustes' $0.901$ (the two are not comparable in cosine, as ACS has no
 target-space direction). The cosine is far above its
 null: a random or label-shuffled source direction transported through the \emph{same}
-fitted map is essentially orthogonal to the native direction (cosine $0.01$ and $0.10$
+fitted map is essentially orthogonal to the native direction (cosine $0.01$ and $0.13$
 respectively), so $0.976$ is not an artifact of the shared-stimulus geometry. It is
 also not an artifact of fitting the map and the directions on the same items: with the
 map fit on a calibration split and the target's \emph{native} direction re-estimated on
-a disjoint, item-grouped held-out split, the transported-to-native cosine is
+a disjoint, source-grouped held-out split, the transported-to-native cosine is
 $0.971{\pm}0.014$ (mean over $12$ pairs ${\times}\,10$ splits; $0.970$ with both source
 and target directions held out from the map), essentially unchanged from the in-sample
 value (Table~\ref{tab:c3}); the ${\sim}0.006$ drop matches the native direction's own
 cross-split self-consistency loss ($0.994$), so
 the Procrustes map adds no measurable inflation (factuality behaves identically,
 $0.990{\to}0.982$). We
-deliberately do \emph{not} headline the transferred-probe AUROC ($0.906$): it equals
-the within-family bound ($0.905$) and is therefore ceiling-saturated; scored with
+deliberately do \emph{not} headline the transferred-probe AUROC ($0.901$): it equals
+the within-family bound ($0.900$) and is therefore ceiling-saturated; scored with
 polarity-honest (signed) AUROC, random and shuffled-label directions through the map
-sit at chance ($0.52$/$0.51$). \textbf{This alignment is not specific to grounding.}
+sit near chance ($0.51$/$0.54$). \textbf{This alignment is not specific to grounding.}
 Transporting the \emph{factuality}, \emph{answer-length}, and \emph{lexical-overlap}
 directions through the same maps gives cosines of $0.99$/$0.98$/$0.99$, as high as
 support, whereas a purely model-internal \emph{confidence} direction transports at
-only $0.50$ (and unstably, $0.04$--$0.90$ across pairs). So what aligns is any contrast
+only $0.56$ (and unstably, $0.11$--$0.86$ across pairs). So what aligns is any contrast
 \emph{derived from the shared input stimuli}, a shared low-rank stimulus geometry, not
 a grounding-specific axis; that confidence does \emph{not} align shows the alignment is
 non-trivial but also that it carries no grounding-specific content. We therefore
@@ -416,17 +416,17 @@ grounding-specific or near-lossless transfer.
 \toprule
 axis & cosine & AUROC & within & rand-map & rand-lab \\
 \midrule
-\textsc{Support}    & \textbf{0.976} & 0.906 & 0.905 & 0.519 & 0.506 \\
-\textsc{Factuality} & 0.989 & 0.915 & 0.911 & --- & --- \\
+\textsc{Support}    & \textbf{0.976} & 0.901 & 0.900 & 0.509 & 0.543 \\
+\textsc{Factuality} & 0.990 & 0.914 & 0.910 & --- & --- \\
 \midrule
 \multicolumn{6}{@{}l}{\footnotesize\itshape nuisance directions:}\\
-length     & 0.976 & --- & --- & --- & --- \\
-overlap    & 0.992 & --- & --- & --- & --- \\
-confidence & 0.504 & --- & --- & --- & --- \\
+length     & 0.980 & --- & --- & --- & --- \\
+overlap    & 0.990 & --- & --- & --- & --- \\
+confidence & 0.557 & --- & --- & --- & --- \\
 \bottomrule
 \end{tabular}
 \caption{\textbf{C3 (cosine-based, leakage-controlled).} Mean over the $12$
-cross-family ordered pairs, GroupKFold on \textsc{item\_id}. \emph{cosine}:
+cross-family ordered pairs and ten seeded source-grouped splits. \emph{cosine}:
 transported-to-native cosine (the alignment evidence; non-saturating); shown in-sample,
 it stays at $0.971$ when the native direction is re-estimated on an item-grouped
 held-out split (\S\ref{sec:c3}), so it is not a map-fitting artifact. A random /
@@ -480,8 +480,8 @@ states, target${=}$human faithfulness label) does recover a usable signal:
 AUROC $0.77$/$0.81$/$0.80$ for Qwen/Llama/Gemma (passage-cluster $95\%$ CIs in
 Table~\ref{tab:c4}). It exceeds our NLI baseline ($0.673$) on all three families (a conservative
 whole-response check, \S\ref{sec:experiments}); against the strong overlap
-baseline ($0.753$) it wins on Llama and Gemma (paired bootstrap $p{<}0.001$) but only
-ties on Qwen ($+0.01$, $p{=}0.17$). Residualizing lexical overlap and answer length out of the
+baseline ($0.753$) it wins on Llama ($p{=}0.002$) and Gemma ($p{<}0.001$, paired
+source-passage cluster bootstraps) but only ties on Qwen ($+0.01$, $p{=}0.27$). Residualizing lexical overlap and answer length out of the
 features first, within each training fold, leaves $0.68$--$0.73$: some of this signal is
 overlap, but a substantial internal component is not. A
 real support signal therefore exists in the internals, but it is a \emph{different
@@ -515,8 +515,9 @@ $[0.776,0.820]$.}
 \includegraphics[width=0.92\columnwidth]{figs/fig_c4_ragtruth.pdf}
 \caption{\textbf{The synthetic axis does not transfer to real hallucinations.}
 On RAGTruth, the label-free synthetic support axis (ours) sits below NLI and below
-plain lexical overlap, the strongest baseline; only an in-domain probe trained on
-human labels beats NLI. Axis starts at chance ($0.5$).}
+plain lexical overlap, the strongest baseline. Among the \emph{internals}-based scores
+only the in-domain probe, which uses RAGTruth human labels, clears NLI. Axis starts at
+chance ($0.5$).}
 \label{fig:c4}
 \end{figure}
 

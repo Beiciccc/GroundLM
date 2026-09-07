@@ -13,6 +13,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 from groundlm.probe.directions import fit_direction, project, _unit          # noqa: E402
 from groundlm.probe.confidence import purge                                  # noqa: E402
 from groundlm.transfer.procrustes import fit_map, transport_direction        # noqa: E402
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from _cr_common import source_groups                                         # noqa: E402
 
 MODELS4 = ["qwen25_7b", "mistral7b_v03", "llama31_8b", "gemma2_9b"]
 RT_MODELS = ["qwen25_7b", "llama31_8b", "gemma2_9b"]
@@ -137,25 +139,31 @@ for m, L in CP.items():
     print(f"  {m}: raw={raw:.3f} conf-purged={purged:.3f} logp={logp:.3f} nli={nli:.3f} ov|O1={ov_o1:.3f} "
           f"S==F={sf_ident} cross-strata={cross:.3f}")
 
-# ============ C. C3 cosine + map-aware/shuffled nulls (item-grouped) ============
-print("=== C. C3 alignment (cosine + nulls, item-grouped) ===")
+# ============ C. C3 cosine + map-aware/shuffled nulls (source-QA-grouped) ============
+# The calibration/evaluation split is grouped by the normalised source QA triple, not by
+# item_id: item_id indexes a swap record, and 903 of the 1,200 cell-A rows have a
+# byte-identical twin under a different item_id, so an item_id split leaves those twins
+# on both sides of the boundary. Same grouping as every other reported estimate.
+print("=== C. C3 alignment (cosine + nulls, source-QA-grouped) ===")
 def c3_runs():
     R = {}
     for m, L in CP.items():
         data, meta = load(f"{m}_v2")
         Lm = min(meta["layers"], key=lambda x: abs(x - 0.5 * meta["n_layers"]))
         R[m] = {"X": data[f"last_{Lm}"].astype(np.float64), "S": data["support"].astype(int),
-                "F": data["factuality"].astype(int), "item": data["item_id"]}
+                "F": data["factuality"].astype(int),
+                "item": source_groups(data["item_id"])}
     return R
 RUN = c3_runs(); names = list(RUN.keys())
 def split(item, seed):
+    """Seeded half-split over unique GROUPS (not rows, not GroupKFold's size-sorted folds)."""
     u = np.unique(item); r = np.random.default_rng(seed); r.shuffle(u)
     cal = set(u[: len(u) // 2].tolist()); mask = np.array([i in cal for i in item])
     return mask, ~mask
 agg = {k: [] for k in ["cos", "auroc", "within", "rand_map", "rand_lab", "rand_cos",
                         "rand_lab_cos", "cos_fac", "auroc_fac", "within_fac"]}
 for s, t in itertools.permutations(names, 2):
-    for seed in range(3):
+    for seed in range(10):
         Sd, Td = RUN[s], RUN[t]
         cal, ev = split(Sd["item"], seed)
         dS = fit_direction(Sd["X"][cal], Sd["S"][cal])

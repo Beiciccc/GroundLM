@@ -15,7 +15,16 @@ from _cr_common import source_groups, seeded_group_folds                # noqa: 
 from groundlm.probe.directions import project                           # noqa: E402
 
 
-def gcv_auroc(X, y, groups, folds=5, seed=0):
+def _purge_fold(Xtr, Xte, Ctr, Cte):
+    """Residualise with the regression fitted on the training fold only."""
+    mu, sd = Ctr.mean(0), Ctr.std(0) + 1e-8
+    Atr = np.concatenate([np.ones((len(Ctr), 1)), (Ctr - mu) / sd], 1)
+    beta, *_ = np.linalg.lstsq(Atr, Xtr, rcond=None)
+    Ate = np.concatenate([np.ones((len(Cte), 1)), (Cte - mu) / sd], 1)
+    return Xtr - Atr @ beta, Xte - Ate @ beta
+
+
+def gcv_auroc(X, y, groups, folds=5, seed=0, C=None):
     """Grouped, signed cross-validated AUROC.
 
     Replaces cv_auroc, which shuffles rows and np.array_splits them: that is a row-level
@@ -25,7 +34,8 @@ def gcv_auroc(X, y, groups, folds=5, seed=0):
     y = np.asarray(y).astype(int)
     oof = np.zeros(len(y))
     for tr, te in seeded_group_folds(groups, folds, seed):
-        oof[te] = project(X[te], fit_direction(X[tr], y[tr]))
+        Xtr, Xte = (X[tr], X[te]) if C is None else _purge_fold(X[tr], X[te], C[tr], C[te])
+        oof[te] = project(Xte, fit_direction(Xtr, y[tr]))
     return auroc_(oof, y)
 
 mpl.rcParams.update({
@@ -131,7 +141,7 @@ def fig_c1_layers():
         raw, pur = [], []
         for L in layers:
             X = data[f"last_{L}"].astype(np.float64)[m1]
-            raw.append(gcv_auroc(X, S[m1], g1)); pur.append(gcv_auroc(purge(X, conf), S[m1], g1))
+            raw.append(gcv_auroc(X, S[m1], g1)); pur.append(gcv_auroc(X, S[m1], g1, C=conf))
         FIG2_DUMP[d].update({"raw": [float(v) for v in raw], "purged": [float(v) for v in pur],
                              "logprob_baseline": float(logp)})
         ax.plot(xs, raw, "-o", color=BLUE, ms=2, lw=1.1, label=r"support$|_{O=1}$ (with context)")
@@ -214,7 +224,14 @@ def fig_c3_heatmap():
 def fig_c4_ragtruth():
     # all values read from the committed gate JSONs (no hardcoded literals)
     fams = [("qwen25_7b", "Qwen2.5-7B"), ("llama31_8b", "Llama-3.1-8B"), ("gemma2_9b", "Gemma-2-9B")]
-    def g(m, k): return json.load(open(f"runs/{m}_rt/report_gate_ragtruth.json"))["metrics"][k]["auroc"]
+    # Read the SAME source as Table 3 so the bars and the table cannot diverge.
+    _T3 = json.load(open("runs/cr_final_tables.json"))["table3"]
+    _KEY = {"support_axis_raw": "synth_dS", "conf": "confidence",
+            "nli": "nli", "lexical_overlap": "lexical_overlap"}
+    def g(m, k):
+        if k == "in_domain":
+            return _T3[m]["in_domain"]["mean"]
+        return _T3[m][_KEY[k]]
     synth = [g(m, "support_axis_raw") for m, _ in fams]
     nli = [g(m, "nli") for m, _ in fams]
     overlap = [g(m, "lexical_overlap") for m, _ in fams]
@@ -230,7 +247,7 @@ def fig_c4_ragtruth():
     ax.axhline(0.5, ls="--", lw=0.7, color="k")
     ax.text(2.5, 0.506, "chance", fontsize=7, ha="left", va="bottom", color="0.3")
     ax.set_xticks(x); ax.set_xticklabels([f.split("-")[0] for f in fams])
-    ax.set_ylabel("hallucination-detection AUROC"); ax.set_ylim(0.46, 0.83); ax.set_xlim(-0.55, 3.0)
+    ax.set_ylabel("hallucination-detection AUROC"); ax.set_ylim(0.5, 0.85); ax.set_xlim(-0.55, 3.0)
     ax.legend(loc="upper center", bbox_to_anchor=(0.5, 1.34), ncol=2, fontsize=7, handlelength=1.3)
     save(fig, "fig_c4_ragtruth")
 
