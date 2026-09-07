@@ -60,15 +60,17 @@ def project(X: ArrayF, d: ArrayF) -> ArrayF:
 def probe_auroc(X: ArrayF, y: ArrayF, d: ArrayF) -> float:
     """AUROC of the signed projection onto d as a classifier for y.
 
-    Direction polarity is resolved by taking max(auc, 1-auc) so a sign flip in
-    the estimated axis does not register as a failure.
+    Polarity comes from the direction, which is estimated on the training fold; the
+    test projection is scored as-is. This previously returned max(auc, 1-auc), which
+    resolves polarity on the *test* fold and so floors a non-predictive direction
+    above 0.5 (a true-chance random direction is lifted to about 0.54-0.59), inflating
+    precisely the near-chance quantities the paper's negative results rest on.
     """
     s = project(X, d)
     y = np.asarray(y).astype(int)
     if len(np.unique(y)) < 2:
         return float("nan")
-    auc = roc_auc_score(y, s)
-    return float(max(auc, 1.0 - auc))
+    return float(roc_auc_score(y, s))
 
 
 def cv_auroc(X: ArrayF, y: ArrayF, method: str = "mass_mean", folds: int = 5,

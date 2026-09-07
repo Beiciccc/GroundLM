@@ -1,66 +1,0 @@
-### BUILD v2 (paraphraser='', max_items=1200) ###
-Generating dev split:   0%|          | 0/4746 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 4746/4746 [00:00<00:00, 116770.20 examples/s]
-Loading weights:   0%|          | 0/202 [00:00<?, ?it/s]Loading weights: 100%|██████████| 202/202 [00:00<00:00, 7408.94it/s]
-scored NLI entailment for 3593 statements (the C4 baseline)
-saved 3593 statements -> data/ctrlpairs_v2.jsonl
-{
-  "n": 3593,
-  "cell_counts": {
-    "A": 1200,
-    "C": 1200,
-    "D": 1193
-  },
-  "corr_support_overlapbin": 0.49926816479332675,
-  "corr_support_overlapfrac": 0.467069721714334,
-  "support_rate": 0.3339827442248817,
-  "overlap_rate": 0.6679654884497634
-}
-saved 1200 belief items -> data/belief_items.jsonl
-### EXTRACT qwen25_7b (Qwen/Qwen2.5-7B-Instruct) ###
-[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
-Qwen/Qwen2.5-7B-Instruct: 3593 statements
-Fetching 4 files:   0%|          | 0/4 [00:00<?, ?it/s]Fetching 4 files:  25%|██▌       | 1/4 [05:31<16:35, 331.85s/it]Fetching 4 files: 100%|██████████| 4/4 [05:46<00:00, 66.78s/it] Fetching 4 files: 100%|██████████| 4/4 [05:46<00:00, 86.66s/it]
-[transformers] The following generation flags are not valid and may be ignored: ['output_hidden_states']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
-Loading weights:   0%|          | 0/339 [00:00<?, ?it/s]Loading weights: 100%|██████████| 339/339 [00:00<00:00, 8133.42it/s]
-Traceback (most recent call last):
-  File "/root/GroundLM/scripts/run_extract.py", line 49, in <module>
-    main()
-  File "/root/GroundLM/scripts/run_extract.py", line 34, in main
-    feats = extract(args.model, stmts, layers=args.layers, pooling=(args.pooling,),
-            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/root/GroundLM/scripts/../src/groundlm/extract/activations.py", line 110, in extract
-    out = model(input_ids=input_ids, attention_mask=attn)
-          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1779, in _wrapped_call_impl
-    return self._call_impl(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1790, in _call_impl
-    return forward_call(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/local/lib/python3.12/dist-packages/transformers/utils/generic.py", line 907, in wrapper
-    output = func(self, *args, **kwargs)
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/local/lib/python3.12/dist-packages/transformers/models/qwen2/modeling_qwen2.py", line 475, in forward
-    logits = self.lm_head(hidden_states[:, slice_indices, :])
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1779, in _wrapped_call_impl
-    return self._call_impl(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1790, in _call_impl
-    return forward_call(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/linear.py", line 134, in forward
-    return F.linear(input, self.weight, self.bias)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 4.64 GiB. GPU 0 has a total capacity of 39.49 GiB of which 2.13 GiB is free. Including non-PyTorch memory, this process has 37.35 GiB memory in use. Of the allocated memory 26.83 GiB is allocated by PyTorch, and 10.02 GiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://docs.pytorch.org/docs/stable/notes/cuda.html#optimizing-memory-usage-with-pytorch-cuda-alloc-conf)
-### SKIP qwen25_7b (extract/download failed — likely gated) ###
-### EXTRACT mistral7b_v03 (mistralai/Mistral-7B-Instruct-v0.3) ###
-[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
-mistralai/Mistral-7B-Instruct-v0.3: 3593 statements
-Fetching 3 files:   0%|          | 0/3 [00:00<?, ?it/s]Fetching 3 files:  33%|███▎      | 1/3 [06:23<12:47, 383.64s/it]Fetching 3 files: 100%|██████████| 3/3 [06:23<00:00, 127.88s/it]
-[transformers] The following generation flags are not valid and may be ignored: ['output_hidden_states']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
-Loading weights:   0%|          | 0/291 [00:00<?, ?it/s]Loading weights: 100%|██████████| 291/291 [00:00<00:00, 7109.40it/s]
-  extracted features: last_9 shape (3593, 4096), layers=[9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]
-  parametric knows-gold: 92.6% of 1200 items
-  saved -> runs/mistral7b_v03_v2
-### ANALYZE C1/C2 mistral7b_v03 ###

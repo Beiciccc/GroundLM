@@ -5,11 +5,28 @@ import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 
+sys.path.insert(0, os.path.dirname(__file__))
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 from groundlm.probe.directions import cv_auroc, fit_direction          # noqa: E402
 from groundlm.probe.confidence import purge                            # noqa: E402
 from groundlm.analyze import build_confounds                           # noqa: E402
 from groundlm.transfer import transfer_auroc                           # noqa: E402
+from _cr_common import source_groups, seeded_group_folds                # noqa: E402
+from groundlm.probe.directions import project                           # noqa: E402
+
+
+def gcv_auroc(X, y, groups, folds=5, seed=0):
+    """Grouped, signed cross-validated AUROC.
+
+    Replaces cv_auroc, which shuffles rows and np.array_splits them: that is a row-level
+    split, so byte-identical statements of one source QA land on both sides of the fold
+    boundary, and it contradicted the grouped protocol the paper states.
+    """
+    y = np.asarray(y).astype(int)
+    oof = np.zeros(len(y))
+    for tr, te in seeded_group_folds(groups, folds, seed):
+        oof[te] = project(X[te], fit_direction(X[tr], y[tr]))
+    return auroc_(oof, y)
 
 mpl.rcParams.update({
     "font.family": "sans-serif",
@@ -32,11 +49,13 @@ MODELS = [("qwen25_7b", "Qwen2.5-7B"), ("mistral7b_v03", "Mistral-7B"),
 
 from sklearn.metrics import roc_auc_score                              # noqa: E402
 def auroc_(s, y):
-    y = np.asarray(y).astype(int); a = roc_auc_score(y, s); return float(max(a, 1 - a))
+    """Signed AUROC. Polarity is fixed by the training fold, never by the test fold."""
+    y = np.asarray(y).astype(int)
+    return float(roc_auc_score(y, s))
 
 
 def load(d):
-    data = dict(np.load(f"runs/{d}/features.npz", allow_pickle=True))
+    data = np.load(f"runs/{d}/features.npz", allow_pickle=True)
     meta = json.load(open(f"runs/{d}/features.meta.json"))
     return data, meta
 
@@ -94,6 +113,9 @@ def fig_decoupling():
     save(fig, "fig_decoupling")
 
 
+FIG2_DUMP = {}
+
+
 def fig_c1_layers():
     fig, axes = plt.subplots(2, 2, figsize=(5.6, 4.3), sharex=False)
     handles_labels = None
@@ -101,13 +123,17 @@ def fig_c1_layers():
         data, meta = load(f"{d}_v2")
         S = data["support"].astype(int); O = data["overlap_measured"].astype(int)
         m1 = O == 1
+        g1 = source_groups(data["item_id"])[m1]
         conf = np.stack([data["mean_logprob"], data["mean_maxsoftmax"], data["first_maxsoftmax"]], 1)[m1]
         logp = auroc_(data["mean_logprob"].astype(float)[m1], S[m1])   # layer-independent
+        FIG2_DUMP[d] = {"layers": list(map(int, meta["layers"])), "n_layers": int(meta["n_layers"])}
         layers = meta["layers"]; nL = meta["n_layers"]; xs = [L / nL for L in layers]
         raw, pur = [], []
         for L in layers:
             X = data[f"last_{L}"].astype(np.float64)[m1]
-            raw.append(cv_auroc(X, S[m1])); pur.append(cv_auroc(purge(X, conf), S[m1]))
+            raw.append(gcv_auroc(X, S[m1], g1)); pur.append(gcv_auroc(purge(X, conf), S[m1], g1))
+        FIG2_DUMP[d].update({"raw": [float(v) for v in raw], "purged": [float(v) for v in pur],
+                             "logprob_baseline": float(logp)})
         ax.plot(xs, raw, "-o", color=BLUE, ms=2, lw=1.1, label=r"support$|_{O=1}$ (with context)")
         ax.plot(xs, pur, "--s", color=VERM, ms=2, lw=1.0, label="$+$confidence-purge")
         ax.axhline(logp, ls="-", lw=0.7, color=GRAY, label="log-prob baseline")
@@ -116,11 +142,13 @@ def fig_c1_layers():
         # at the a-priori mid layer (the only layer cached for the ablation run).
         La = int(list(json.load(open(f"runs/{d}_v2_nc/features.meta.json"))["layers"])[0])
         nc = dict(np.load(f"runs/{d}_v2_nc/features.npz", allow_pickle=True))
-        raw_nc = cv_auroc(nc[f"last_{La}"].astype(np.float64)[m1], S[m1])
+        raw_nc = gcv_auroc(nc[f"last_{La}"].astype(np.float64)[m1], S[m1], g1)
         xa = La / nL; raw_ctx_a = raw[layers.index(La)]
         ax.plot([xa, xa], [raw_ctx_a, raw_nc], color=GREEN, lw=0.8, zorder=4)
         ax.plot([xa], [raw_nc], marker="*", ms=8, color=GREEN, mec="k", mew=0.4,
                 ls="none", zorder=5, label="context removed (mid-layer)")
+        FIG2_DUMP[d].update({"apriori_layer": int(La), "raw_no_context": float(raw_nc),
+                             "raw_with_context_at_apriori": float(raw_ctx_a)})
         ax.annotate(f"$-{raw_ctx_a - raw_nc:.2f}$", xy=(xa, raw_nc),
                     xytext=(xa + 0.015, raw_nc - 0.006), fontsize=7, color=GREEN, va="top")
         ax.set_title(title, fontsize=9, fontweight="bold")
@@ -132,6 +160,7 @@ def fig_c1_layers():
     fig.subplots_adjust(bottom=0.14)
     fig.legend(*handles_labels, loc="lower center", ncol=4, fontsize=7.5,
                handlelength=1.5, columnspacing=1.1, bbox_to_anchor=(0.5, 0.01))
+    json.dump(FIG2_DUMP, open("runs/fig_c1_layers_values.json", "w"), indent=2, default=float)
     save(fig, "fig_c1_layers")
 
 
@@ -142,12 +171,19 @@ def _transfer_mat(mode_off):
         L = min(meta["layers"], key=lambda L: abs(L - 0.5 * meta["n_layers"]))
         X = data[f"last_{L}"].astype(np.float64)
         runs.append({"name": name, "X": X, "y": data["support"].astype(int),
-                     "conf": build_confounds(data, X, "confidence")})
+                     "conf": build_confounds(data, X, "confidence"),
+                     "groups": source_groups(data["item_id"])})
     n = len(runs); M = np.zeros((n, n))
+    purged = "purged" in mode_off
     for i, s in enumerate(runs):
         for j, t in enumerate(runs):
-            mode = "within_target" if i == j else mode_off
-            M[i, j] = transfer_auroc(s["X"], s["y"], s["conf"], t["X"], t["y"], t["conf"], mode=mode)["auroc"]
+            # Every cell, diagonal included, uses THIS panel's estimator. Previously the
+            # diagonal silently fell back to `within_target` -- an ordinary within-family
+            # probe scored raw -- so panel (b)'s diagonal was not ACS at all and was
+            # preprocessed differently from its own off-diagonal.
+            M[i, j] = transfer_auroc(s["X"], s["y"], s["conf"], t["X"], t["y"], t["conf"],
+                                     mode=mode_off, purged=purged,
+                                     groups=s["groups"])["auroc"]
     return M, [r["name"] for r in runs]
 
 
@@ -170,6 +206,8 @@ def fig_c3_heatmap():
                         color="white" if M[i, j] < 0.78 else "black")
     cb = fig.colorbar(im, ax=[a1, a2], fraction=0.025, pad=0.02)
     cb.set_label("transfer AUROC (support axis)", fontsize=8)
+    json.dump({"models": names, "procrustes_raw": Mp.tolist(), "acs_purged": Ma.tolist()},
+              open("runs/fig_c3_heatmap_values.json", "w"), indent=2)
     save(fig, "fig_c3_heatmap")
 
 

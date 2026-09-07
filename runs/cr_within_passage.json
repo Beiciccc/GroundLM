@@ -1,0 +1,101 @@
+{
+  "qwen25_7b": {
+    "item_id": {
+      "within_passage_mean": 0.6632812499999999,
+      "per_seed": [
+        0.64765625,
+        0.66796875,
+        0.67421875
+      ]
+    },
+    "passage": {
+      "within_passage_mean": 0.7002604166666666,
+      "per_seed": [
+        0.69609375,
+        0.7015625,
+        0.703125
+      ]
+    },
+    "lexical_overlap": {
+      "pooled": 0.7532694768836985,
+      "within_passage": 0.69453125,
+      "pairs": 1280
+    },
+    "nli": {
+      "pooled": 0.6731189676318455,
+      "within_passage": 0.628125,
+      "pairs": 1280
+    },
+    "max_softmax": {
+      "pooled": 0.7230432019765727,
+      "within_passage": 0.63203125,
+      "pairs": 1280
+    }
+  },
+  "llama31_8b": {
+    "item_id": {
+      "within_passage_mean": 0.7307291666666665,
+      "per_seed": [
+        0.73515625,
+        0.72109375,
+        0.7359375
+      ]
+    },
+    "passage": {
+      "within_passage_mean": 0.7781250000000001,
+      "per_seed": [
+        0.7796875,
+        0.76328125,
+        0.79140625
+      ]
+    },
+    "lexical_overlap": {
+      "pooled": 0.7532694768836985,
+      "within_passage": 0.69453125,
+      "pairs": 1280
+    },
+    "nli": {
+      "pooled": 0.6731189676318455,
+      "within_passage": 0.628125,
+      "pairs": 1280
+    },
+    "max_softmax": {
+      "pooled": 0.623349153024405,
+      "within_passage": 0.55078125,
+      "pairs": 1280
+    }
+  },
+  "gemma2_9b": {
+    "item_id": {
+      "within_passage_mean": 0.7174479166666666,
+      "per_seed": [
+        0.71875,
+        0.7203125,
+        0.71328125
+      ]
+    },
+    "passage": {
+      "within_passage_mean": 0.75,
+      "per_seed": [
+        0.73984375,
+        0.76484375,
+        0.7453125
+      ]
+    },
+    "lexical_overlap": {
+      "pooled": 0.7532694768836985,
+      "within_passage": 0.69453125,
+      "pairs": 1280
+    },
+    "nli": {
+      "pooled": 0.6731189676318455,
+      "within_passage": 0.628125,
+      "pairs": 1280
+    },
+    "max_softmax": {
+      "pooled": 0.6861518823654882,
+      "within_passage": 0.653515625,
+      "pairs": 1280
+    }
+  }
+}

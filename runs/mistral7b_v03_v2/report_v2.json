@@ -205,17 +205,5 @@
       "conf_asym_p": 1.0
     }
   ],
-  "best": {
-    "layer": 12,
-    "support_auroc_all": 0.8981239361328311,
-    "support_auroc_O1": 0.8763856912926922,
-    "support_auroc_O0": NaN,
-    "support_auroc_purged_surface": 0.9100023616239004,
-    "fact_auroc": 0.9110220033701626,
-    "support_vs_fact_angle": 57.83060684745744,
-    "separable_p": 0.0,
-    "conf_asym_fact_minus_support": -0.09732485698261151,
-    "conf_asym_p": 1.0
-  },
-  "verdict": "SEMANTIC GROUNDING AXIS EXISTS beyond overlap"
+  "note": "exploratory per-layer sweep; reported numbers come from scripts/cr_final_tables.py at the a-priori depth-0.5 layer"
 }

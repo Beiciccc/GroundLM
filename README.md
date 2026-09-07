@@ -1,63 +1,91 @@
-# Faithfulness Axis — GroundLM @ EMNLP 2026
+# Grounding or Lexical Overlap?
 
-Disentangling **context-faithfulness** from **parametric-factuality** in the
-residual stream, with a matched-pair identification test, a confidence asymmetry,
-cross-family transfer, and a one-pass two-axis conformal grounding gate.
-**API-free, no human annotation, ≤4×A100-40G, <1 day.** Full plan: [`DESIGN_DOC.md`](DESIGN_DOC.md).
+Code and data for *Grounding or Lexical Overlap? A Matched-Pair Study of
+Internals-Based Faithfulness Probes* (GroundLM 2026 workshop, EMNLP).
+
+Reference-free hallucination detectors increasingly read a linear
+"context-faithfulness" direction out of the residual stream. In the standard extractive
+QA setup that direction is almost perfectly confounded with **lexical overlap**
+(*r* = 0.99): an answer is context-faithful essentially *iff* its string occurs in the
+context, so an apparent grounding probe may be a string-matching detector.
+
+We build a matched **Support × Overlap** construction that halves the confound, and
+then ask, control by control, whether anything grounding-specific is left. The answer is
+no:
+
+- Within the overlap-controlled stratum a support contrast is decodable (≈0.99 raw,
+  0.76–0.88 after purging confidence), but a **no-context ablation** leaves it almost
+  unchanged — the probe is reading question–answer compatibility, not the context.
+- The direction aligns across four model families up to a linear map, but answer-length,
+  overlap and factuality directions align just as well: a generic matched-stimulus
+  property, not a grounding axis.
+- The synthetic direction does **not** transfer to real hallucinations. On RAGTruth it
+  scores below NLI, below model confidence, and below plain lexical overlap. Only an
+  in-domain probe trained on human labels recovers a usable signal.
+
+The reusable contribution is the construction itself, in particular the **wrong-question
+trap** (cell C): the answer is present in the context but answers a *different*
+question. An off-the-shelf NLI model is fooled by ~25% of clean cell-C items.
 
 ## Layout
+
 ```
-DESIGN_DOC.md              locked blueprint (sections 1–10)
+paper/                     main.tex, sections.tex, appendix.tex, references.bib, figs/
+MANIFEST.md                every paper number -> its producer script and files
+reproduce.sh               two-stage reproduction (CPU analysis / GPU extraction)
+
 src/groundlm/
-  data/build_ctrlpairs.py  Stage 0: matched 2×2 CtrlPairs from NQ-Swap
-  data/surface_stats.py    Stage 0: surface-balance audit + matched guarantees
-  extract/activations.py   Stage 1: residual-stream + confidence extraction; parametric-belief
-  probe/directions.py      Stage 2: mass-mean / logistic probes
-  probe/identification.py  Stage 3: null-calibrated separability test (C1)
-  probe/confidence.py      Stage 4: confidence-asymmetry test (C2)
-  analyze.py               Stage 3/4 driver over cached features
+  data/build_ctrlpairs_v2.py   the Support x Overlap construction (cells A/C/D)
+  data/build_ragtruth.py       the RAGTruth evaluation subset
+  extract/activations.py       residual-stream + confidence extraction (GPU)
+  probe/directions.py          mass-mean / logistic directions, signed AUROC
+  probe/identification.py      null-calibrated separability
+  probe/confidence.py          confidence purge and the asymmetry test
+  transfer/procrustes.py       cross-family orthogonal Procrustes, ACS baseline
+
 scripts/
-  synth_validation.py      CPU method-validation on known geometry (C1+C2)
-  test_ctrlpairs.py        CPU validation of the 2×2 construction
-  run_pilot.py             one-model pilot: build→extract→belief→sweep→report
-  run_pilot.sh             all families, one model per GPU
-paper/                     main.tex, sections.tex (Intro/Related/Method), references.bib
-configs/                   pilot.yaml, models.yaml
+  cr_final_tables.py       every reported table number, one protocol
+  _cr_common.py            grouping, seeded folds, lazy feature loading
+  make_figures.py          Figures 1-4
+  harden_analyses.py       C3 cosine, cell-C contamination, per-task C4
+  analyze_nocontext.py     the no-context / shuffled-context ablation
+  cr_*.py                  the audit analyses released with the camera-ready
 ```
-Stages 5–6 (cross-family Procrustes + ACS baseline; two-axis conformal gate) are next.
 
-## Install
+## Reproducing
+
 ```bash
-pip install -r requirements.txt          # CPU analysis needs only numpy/scipy/sklearn
+pip install -r requirements.txt
+bash reproduce.sh
 ```
 
-## Validate the method locally (no GPU, no downloads)
-```bash
-python scripts/test_ctrlpairs.py         # 2×2 construction + matched guarantees
-python scripts/synth_validation.py       # C1 rejects iff separable; C2 recovers asymmetry
-```
-Both should print `ALL ... PASS`. `synth_validation.py` doubles as the paper's
-"method on known ground-truth" sanity figure.
+Stage B (the default) recomputes every number, table and figure on CPU from cached
+residual-stream features. Those caches are 2.4 GB and live in a separate archive, named
+in the paper's appendix; `reproduce.sh` checks for them and tells you what to do if they
+are missing. `bash reproduce.sh extract` regenerates them from scratch on one A100-40G.
 
-## Run the pilot on the cluster
-```bash
-# single model
-PYTHONPATH=src python scripts/run_pilot.py \
-  --model meta-llama/Llama-3.1-8B-Instruct --source auto \
-  --max-items 1500 --layers mid --out-dir runs/llama31_8b
+`MANIFEST.md` maps each table, figure and quoted number to the script that produces it.
 
-# all four families + scale control, one model per GPU
-bash scripts/run_pilot.sh
-```
-`--source auto` tries known NQ-Swap HF mirrors; if none resolve, pass a local
-NQ-Swap `.jsonl` (fields: `question`, `org_answer`, `sub_answer`, `org_context`,
-`sub_context`) — source: github.com/apple/ml-knowledge-conflicts.
+## Evaluation protocol
 
-The go/no-go signal lands in `runs/<model>/report.json`: per-layer cross-notion
-angle vs within-notion null (C1) and confidence asymmetry (C2). Use
-`--knows-gold-only` to condition C2/C3 on the per-model parametric-belief check.
+Every reported estimate uses one protocol, and it is worth stating because two earlier
+choices were wrong:
 
-## Build the paper
-Add the ACL style files (`acl.sty`, `acl_natbib.bst`) from
-github.com/acl-org/acl-style-files into `paper/`, then `latexmk -pdf paper/main.tex`.
-Open reviewer risks tracked in `paper/REVIEWER_RISK_NOTES.md`.
+- **Grouping is by source, not by record.** CtrlPairs folds are grouped by the source QA
+  triple, not by `item_id`: `item_id` indexes an NQ-Swap *swap record*, and several
+  records share one source QA, so the 1,200 cell-A rows cover only 555 distinct triples.
+  RAGTruth folds are grouped by source passage (2,000 responses over 450 passages), not
+  by response id.
+- **Residualization is fold-local**, fitted on the training fold and applied to its test
+  rows.
+- **AUROC is signed.** Polarity is fixed on the training fold; `max(AUC, 1-AUC)` is used
+  nowhere, since it floors a non-predictive direction above 0.5.
+- Folds come from an explicitly seeded splitter rather than `GroupKFold`, whose fold
+  assignment depends on `np.argsort` tie-breaking and therefore on the numpy version.
+
+## Data
+
+`data/ctrlpairs_v2.jsonl` (3,593 statements over 1,200 NQ-Swap records / 555 source QAs)
+and `data/ragtruth.jsonl` (2,000 responses over 450 passages) are released. Cell B of the
+2×2, the paraphrase cell, has zero yield in this release, so the realized design is the
+three model-free cells A/C/D.

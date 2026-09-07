@@ -1,0 +1,23 @@
+{
+  "qwen25_7b": {
+    "layer": 14,
+    "no_overlap_transductive_flipped": 0.5964012424678717,
+    "no_overlap_transductive_signed": 0.5964012424678717,
+    "no_overlap_inductive_flipped": 0.6886431504292646,
+    "no_overlap_inductive_signed": 0.6886431504292646
+  },
+  "llama31_8b": {
+    "layer": 16,
+    "no_overlap_transductive_flipped": 0.6661411951865479,
+    "no_overlap_transductive_signed": 0.6661411951865479,
+    "no_overlap_inductive_flipped": 0.7507054426847259,
+    "no_overlap_inductive_signed": 0.7507054426847259
+  },
+  "gemma2_9b": {
+    "layer": 21,
+    "no_overlap_transductive_flipped": 0.6332842300787429,
+    "no_overlap_transductive_signed": 0.6332842300787429,
+    "no_overlap_inductive_flipped": 0.7212868163316091,
+    "no_overlap_inductive_signed": 0.7212868163316091
+  }
+}

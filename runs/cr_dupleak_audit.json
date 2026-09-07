@@ -1,0 +1,9 @@
+{
+  "a_unique_triples": 555,
+  "b_rows_in_dup_groups": 941,
+  "dup_groups": 296,
+  "c_groups_spanning": 278,
+  "c_rows_spanning": 903,
+  "d_source_qa_groups": 555,
+  "d_distinct_questions": 418
+}

@@ -9,9 +9,19 @@ export PYTHONPATH=src
 STAGE="${1:-analysis}"   # 'extract' (GPU, from scratch) or 'analysis' (default, from cached runs/*/features.npz)
 
 if [ "$STAGE" = "extract" ]; then
-  echo "### STAGE A: GPU extraction (build datasets + extract 4 families + RAGTruth) ###"
+  echo "### STAGE A: GPU extraction (datasets + 4 families + RAGTruth + no-context/shuffled) ###"
   # If huggingface.co is unreachable, set HF_ENDPOINT to a mirror and point the HF caches at a large disk first.
-  bash scripts/run_strengthen.sh   # build_v2 + build_ragtruth + run_extract per model (+disk cleanup)
+  bash scripts/run_strengthen.sh          # build_v2 + build_ragtruth + run_extract per model (+disk cleanup)
+  bash scripts/run_nocontext_ablation.sh  # runs/*_v2_nc + runs/*_v2_shuf, needed by analyze_nocontext.py
+fi
+
+# Stage B consumes runs/*/features.npz (~2.4 GB), which are too large for the source
+# repository. Fail loudly rather than half-way through if they are absent.
+if [ "$STAGE" != "extract" ] && ! ls runs/*/features.npz >/dev/null 2>&1; then
+  echo "ERROR: no runs/*/features.npz found." >&2
+  echo "  Download the cached features from the archive named in the paper appendix," >&2
+  echo "  or regenerate them with:  bash reproduce.sh extract   (needs one A100-40G)." >&2
+  exit 1
 fi
 
 echo "### STAGE B: analysis from cached features (no GPU) ###"
@@ -32,6 +42,15 @@ python3 scripts/v1_corr.py                # -> runs/v1_corr.json
 #     Uses the small DeBERTa-MNLI model only (no LLM); ~30 min on CPU,
 #     checkpoints to runs/_nli_sent_cache/ and resumes if interrupted.
 python3 scripts/nli_sentence_ragtruth.py  # -> runs/nli_sentence_ragtruth.json
+# 2d. CANONICAL: every reported table number under one source-grouped, fold-local,
+#     signed-AUROC protocol. Tables 1, 3 and 4 come from here.
+python3 scripts/cr_final_tables.py               # -> runs/cr_final_tables.json
+python3 scripts/cr_joint_grouped_foldlocal.py    # -> runs/cr_joint_grouped_foldlocal.json
+# 2e. Supporting analyses released with the camera-ready (see MANIFEST.md).
+python3 scripts/cr_signed_auroc_ragtruth.py     # -> runs/cr_signed_auroc_ragtruth.json
+python3 scripts/cr_estimator_domain_control.py  # -> runs/cr_estimator_domain_control.json
+python3 scripts/cr_c2_and_separability.py       # -> runs/cr_c2_and_separability.json
+python3 scripts/cr_band_and_pairs.py            # -> runs/cr_band_and_pairs.json
 # 3. Figures (read the JSONs above; no hardcoded results).
 python3 scripts/make_figures.py           # -> paper/figs/*.pdf
 # 4. Paper (needs the ACL style files acl.sty + acl_natbib.bst already in paper/).

@@ -30,11 +30,13 @@ def _load(d):
 
 
 def _auroc(score, y):
+    """Signed AUROC. Polarity is fixed by the training/calibration fold, never by the
+    test fold: max(AUC, 1-AUC) floors a non-predictive direction above 0.5 and so
+    inflates exactly the near-chance quantities this paper relies on."""
     y = np.asarray(y).astype(int)
     if len(np.unique(y)) < 2:
         return float("nan")
-    a = roc_auc_score(y, score)
-    return float(max(a, 1.0 - a))
+    return float(roc_auc_score(y, score))
 
 
 def main():

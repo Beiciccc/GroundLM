@@ -72,13 +72,19 @@ def main():
               f"| angle={r['support_vs_fact_angle']:.0f}(p={r['separable_p']:.2f}) "
               f"| confasym={r['conf_asym_fact_minus_support']:+.2f}")
 
-    best = max(rows, key=lambda r: (r["support_auroc_O1"] if not np.isnan(r["support_auroc_O1"]) else 0))
-    verdict = ("SEMANTIC GROUNDING AXIS EXISTS beyond overlap"
-               if best["support_auroc_O1"] > 0.65 else
-               "grounding largely reduces to overlap (diagnostic-paper territory)")
-    print(f"\nbest O=1 support AUROC (grounding beyond overlap): "
-          f"L{best['layer']} = {best['support_auroc_O1']:.3f}  ->  {verdict}")
-    json.dump({"rows": rows, "best": best, "verdict": verdict},
+    # This used to select the argmax layer and print a hardcoded verdict string
+    # ("SEMANTIC GROUNDING AXIS EXISTS beyond overlap" above a bare 0.65 threshold).
+    # That is post-hoc layer selection, and the paper's conclusion is the opposite:
+    # the within-stratum contrast is question-answer compatibility, not grounding.
+    # Reported numbers come from the a-priori depth-0.5 layer via
+    # scripts/cr_final_tables.py; this sweep is exploratory only.
+    ap_layer = min(layers, key=lambda L: abs(L - 0.5 * meta["n_layers"]))
+    ap = next(r for r in rows if r["layer"] == ap_layer)
+    print(f"\na-priori layer L{ap_layer}: supp_O1 = {ap['support_auroc_O1']:.3f} "
+          f"(exploratory per-layer sweep; see runs/cr_final_tables.json for reported values)")
+    json.dump({"rows": rows, "apriori_layer": ap_layer, "apriori": ap,
+               "note": "exploratory per-layer sweep; reported numbers come from "
+                       "scripts/cr_final_tables.py at the a-priori depth-0.5 layer"},
               open(os.path.join(args.dir, "report_v2.json"), "w"), indent=2, default=float)
 
 

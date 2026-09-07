@@ -68,11 +68,22 @@ def acs_features(X: ArrayF, anchors: ArrayF) -> ArrayF:
 
 
 def _auroc(scores: ArrayF, y: ArrayF) -> float:
+    """Signed AUROC: polarity is fixed by the calibration fold, never by the test fold.
+
+    This used to return max(a, 1-a), which floors a non-predictive direction above 0.5
+    and so inflates exactly the near-chance quantities (the map-aware nulls) that the
+    transfer analysis relies on. Use _auroc_maxflip only to demonstrate that inflation.
+    """
     y = np.asarray(y).astype(int)
     if len(np.unique(y)) < 2:
         return float("nan")
-    a = roc_auc_score(y, scores)
-    return float(max(a, 1.0 - a))
+    return float(roc_auc_score(y, scores))
+
+
+def _auroc_maxflip(scores: ArrayF, y: ArrayF) -> float:
+    """The max(AUC, 1-AUC) convention, kept only for the appendix's inflation demo."""
+    a = _auroc(scores, y)
+    return a if a != a else float(max(a, 1.0 - a))
 
 
 def purged_direction(X: ArrayF, y: ArrayF, confounds: ArrayF, method="mass_mean") -> ArrayF:
@@ -84,20 +95,37 @@ def transfer_auroc(
     X_tgt: ArrayF, y_tgt: ArrayF, conf_tgt: ArrayF,
     *, mode: str = "procrustes_purged", cal_frac: float = 0.5,
     method: str = "mass_mean", seed: int = 0,
+    groups: ArrayF | None = None, purged: bool | None = None,
 ) -> dict:
     """Train a probe on SOURCE, transport to TARGET, report target AUROC.
 
     mode: 'procrustes_purged' | 'procrustes_raw' | 'ridge_purged' | 'acs_purged'
           | 'within_target' (upper bound, no transfer) | 'random' (lower-bound null)
+
+    groups: split calibration/evaluation by these group ids instead of by row, so
+        near-duplicate statements of one source item cannot straddle the boundary.
+    purged: override the preprocessing, which is otherwise inferred from the mode
+        string. Needed because 'within_target' and 'random' contain no 'purged'
+        token and would silently be scored raw while the mode they are compared
+        against is purged.
     """
     rng = np.random.default_rng(seed)
     n = len(y_src)
-    idx = rng.permutation(n)
-    ncal = int(cal_frac * n)
-    cal, ev = idx[:ncal], idx[ncal:]
+    if groups is None:
+        idx = rng.permutation(n)
+        ncal = int(cal_frac * n)
+        cal, ev = idx[:ncal], idx[ncal:]
+    else:
+        g = np.asarray(groups)
+        uniq = np.unique(g)
+        perm = rng.permutation(len(uniq))
+        cal_groups = set(uniq[perm[: int(cal_frac * len(uniq))]].tolist())
+        in_cal = np.array([x in cal_groups for x in g])
+        cal, ev = np.where(in_cal)[0], np.where(~in_cal)[0]
 
     Xs, Xt = np.asarray(X_src, float), np.asarray(X_tgt, float)
-    purged = "purged" in mode
+    if purged is None:
+        purged = "purged" in mode
     Xs_use = purge(Xs, conf_src) if purged else Xs
 
     if mode == "within_target":

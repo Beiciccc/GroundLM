@@ -37,9 +37,11 @@ CP = {m: apriori_layer(m) for m in MODELS4}
 
 
 def auroc(s, y):
+    """Signed AUROC (polarity fixed on the train fold). The former max(AUC, 1-AUC)
+    convention floored non-predictive directions above 0.5."""
     y = np.asarray(y).astype(int)
     if len(np.unique(y)) < 2: return float("nan")
-    a = roc_auc_score(y, s); return float(max(a, 1 - a))
+    return float(roc_auc_score(y, s))
 
 
 def auroc_signed(s, y):

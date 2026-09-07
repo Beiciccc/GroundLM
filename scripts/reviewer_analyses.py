@@ -45,11 +45,13 @@ def apriori_layer(m):
 
 
 def auroc(s, y):
+    """Signed AUROC. Polarity is fixed by the training fold, never by the test fold:
+    max(AUC, 1-AUC) floors a non-predictive direction above 0.5 and so inflates
+    exactly the near-chance quantities this paper relies on."""
     y = np.asarray(y).astype(int)
     if len(np.unique(y)) < 2:
         return float("nan")
-    a = roc_auc_score(y, s)
-    return float(max(a, 1 - a))
+    return float(roc_auc_score(y, s))
 
 
 def gcv_massmean(X, y, groups, folds=5):

@@ -1,0 +1,503 @@
+{
+  "numpy": "2.1.3",
+  "n_boot": 2000,
+  "models": [
+    "qwen25_7b",
+    "llama31_8b",
+    "gemma2_9b"
+  ],
+  "per_model": {
+    "qwen25_7b": {
+      "layer": 14,
+      "n": 2000,
+      "faithful_rate": 0.658,
+      "pooled": {
+        "synth_dS_raw": {
+          "signed": 0.6568415720151443,
+          "flipped_as_published": 0.6568415720151443,
+          "signed_ci": [
+            0.6335637792717708,
+            0.6814183498267745
+          ]
+        },
+        "synth_dS_purged": {
+          "signed": 0.5611068895643363,
+          "flipped_as_published": 0.5611068895643363,
+          "signed_ci": [
+            0.5364152036092991,
+            0.5866202092279933
+          ]
+        },
+        "confidence_maxsoftmax": {
+          "signed": 0.7230432019765727,
+          "flipped_as_published": 0.7230432019765727,
+          "signed_ci": [
+            0.7006303401830188,
+            0.7451763958414371
+          ]
+        },
+        "lexical_overlap": {
+          "signed": 0.7532694768836985,
+          "flipped_as_published": 0.7532694768836985,
+          "signed_ci": [
+            0.7316917091309181,
+            0.7756007904863264
+          ]
+        },
+        "nli_entail": {
+          "signed": 0.6731189676318455,
+          "flipped_as_published": 0.6731189676318455,
+          "signed_ci": [
+            0.6487650488593083,
+            0.6970290036812599
+          ]
+        }
+      },
+      "per_task": {
+        "Data2txt": {
+          "synth_dS_raw": {
+            "signed": 0.5416152474976005,
+            "flipped_as_published": 0.5416152474976005,
+            "n": 667
+          },
+          "synth_dS_purged": {
+            "signed": 0.5303324126853539,
+            "flipped_as_published": 0.5303324126853539,
+            "n": 667
+          },
+          "confidence_maxsoftmax": {
+            "signed": 0.6075003427944604,
+            "flipped_as_published": 0.6075003427944604,
+            "n": 667
+          },
+          "lexical_overlap": {
+            "signed": 0.6047237076648841,
+            "flipped_as_published": 0.6047237076648841,
+            "n": 667
+          },
+          "nli_entail": {
+            "signed": 0.5469677381442087,
+            "flipped_as_published": 0.5469677381442087,
+            "n": 667
+          }
+        },
+        "QA": {
+          "synth_dS_raw": {
+            "signed": 0.6417790424347396,
+            "flipped_as_published": 0.6417790424347396,
+            "n": 666
+          },
+          "synth_dS_purged": {
+            "signed": 0.6060249907212669,
+            "flipped_as_published": 0.6060249907212669,
+            "n": 666
+          },
+          "confidence_maxsoftmax": {
+            "signed": 0.5907769392552271,
+            "flipped_as_published": 0.5907769392552271,
+            "n": 666
+          },
+          "lexical_overlap": {
+            "signed": 0.6856751824817517,
+            "flipped_as_published": 0.6856751824817517,
+            "n": 666
+          },
+          "nli_entail": {
+            "signed": 0.5666831621922553,
+            "flipped_as_published": 0.5666831621922553,
+            "n": 666
+          }
+        },
+        "Summary": {
+          "synth_dS_raw": {
+            "signed": 0.6421567277234541,
+            "flipped_as_published": 0.6421567277234541,
+            "n": 667
+          },
+          "synth_dS_purged": {
+            "signed": 0.5560942019005647,
+            "flipped_as_published": 0.5560942019005647,
+            "n": 667
+          },
+          "confidence_maxsoftmax": {
+            "signed": 0.6770417297892852,
+            "flipped_as_published": 0.6770417297892852,
+            "n": 667
+          },
+          "lexical_overlap": {
+            "signed": 0.6494353394849194,
+            "flipped_as_published": 0.6494353394849194,
+            "n": 667
+          },
+          "nli_entail": {
+            "signed": 0.6330670706514254,
+            "flipped_as_published": 0.6330670706514254,
+            "n": 667
+          }
+        }
+      }
+    },
+    "llama31_8b": {
+      "layer": 16,
+      "n": 2000,
+      "faithful_rate": 0.658,
+      "pooled": {
+        "synth_dS_raw": {
+          "signed": 0.5910087719298246,
+          "flipped_as_published": 0.5910087719298246,
+          "signed_ci": [
+            0.5642437783005725,
+            0.6173901625113105
+          ]
+        },
+        "synth_dS_purged": {
+          "signed": 0.5450705664871398,
+          "flipped_as_published": 0.5450705664871398,
+          "signed_ci": [
+            0.5180695575726957,
+            0.5727468642991425
+          ]
+        },
+        "confidence_maxsoftmax": {
+          "signed": 0.623349153024405,
+          "flipped_as_published": 0.623349153024405,
+          "signed_ci": [
+            0.5989470281488299,
+            0.6467006899058094
+          ]
+        },
+        "lexical_overlap": {
+          "signed": 0.7532694768836985,
+          "flipped_as_published": 0.7532694768836985,
+          "signed_ci": [
+            0.7316917091309181,
+            0.7756007904863264
+          ]
+        },
+        "nli_entail": {
+          "signed": 0.6731189676318455,
+          "flipped_as_published": 0.6731189676318455,
+          "signed_ci": [
+            0.6487650488593083,
+            0.6970290036812599
+          ]
+        }
+      },
+      "per_task": {
+        "Data2txt": {
+          "synth_dS_raw": {
+            "signed": 0.4782570370805665,
+            "flipped_as_published": 0.5217429629194335,
+            "n": 667
+          },
+          "synth_dS_purged": {
+            "signed": 0.5076883900413313,
+            "flipped_as_published": 0.5076883900413313,
+            "n": 667
+          },
+          "confidence_maxsoftmax": {
+            "signed": 0.47713071242483013,
+            "flipped_as_published": 0.5228692875751699,
+            "n": 667
+          },
+          "lexical_overlap": {
+            "signed": 0.6047237076648841,
+            "flipped_as_published": 0.6047237076648841,
+            "n": 667
+          },
+          "nli_entail": {
+            "signed": 0.5469677381442087,
+            "flipped_as_published": 0.5469677381442087,
+            "n": 667
+          }
+        },
+        "QA": {
+          "synth_dS_raw": {
+            "signed": 0.6208091055301249,
+            "flipped_as_published": 0.6208091055301249,
+            "n": 666
+          },
+          "synth_dS_purged": {
+            "signed": 0.6854045527650625,
+            "flipped_as_published": 0.6854045527650625,
+            "n": 666
+          },
+          "confidence_maxsoftmax": {
+            "signed": 0.515170728689843,
+            "flipped_as_published": 0.515170728689843,
+            "n": 666
+          },
+          "lexical_overlap": {
+            "signed": 0.6856751824817517,
+            "flipped_as_published": 0.6856751824817517,
+            "n": 666
+          },
+          "nli_entail": {
+            "signed": 0.5666831621922553,
+            "flipped_as_published": 0.5666831621922553,
+            "n": 666
+          }
+        },
+        "Summary": {
+          "synth_dS_raw": {
+            "signed": 0.66114860212092,
+            "flipped_as_published": 0.66114860212092,
+            "n": 667
+          },
+          "synth_dS_purged": {
+            "signed": 0.6080154248726071,
+            "flipped_as_published": 0.6080154248726071,
+            "n": 667
+          },
+          "confidence_maxsoftmax": {
+            "signed": 0.6921636138272964,
+            "flipped_as_published": 0.6921636138272964,
+            "n": 667
+          },
+          "lexical_overlap": {
+            "signed": 0.6494353394849194,
+            "flipped_as_published": 0.6494353394849194,
+            "n": 667
+          },
+          "nli_entail": {
+            "signed": 0.6330670706514254,
+            "flipped_as_published": 0.6330670706514254,
+            "n": 667
+          }
+        }
+      }
+    },
+    "gemma2_9b": {
+      "layer": 21,
+      "n": 2000,
+      "faithful_rate": 0.658,
+      "pooled": {
+        "synth_dS_raw": {
+          "signed": 0.5407579231767361,
+          "flipped_as_published": 0.5407579231767361,
+          "signed_ci": [
+            0.5154434962030056,
+            0.5674252045006059
+          ]
+        },
+        "synth_dS_purged": {
+          "signed": 0.616495805115626,
+          "flipped_as_published": 0.616495805115626,
+          "signed_ci": [
+            0.5920796529018052,
+            0.641884060784639
+          ]
+        },
+        "confidence_maxsoftmax": {
+          "signed": 0.6861518823654882,
+          "flipped_as_published": 0.6861518823654882,
+          "signed_ci": [
+            0.6627169953665926,
+            0.7100549393364022
+          ]
+        },
+        "lexical_overlap": {
+          "signed": 0.7532694768836985,
+          "flipped_as_published": 0.7532694768836985,
+          "signed_ci": [
+            0.7316917091309181,
+            0.7756007904863264
+          ]
+        },
+        "nli_entail": {
+          "signed": 0.6731189676318455,
+          "flipped_as_published": 0.6731189676318455,
+          "signed_ci": [
+            0.6487650488593083,
+            0.6970290036812599
+          ]
+        }
+      },
+      "per_task": {
+        "Data2txt": {
+          "synth_dS_raw": {
+            "signed": 0.4399032340208811,
+            "flipped_as_published": 0.560096765979119,
+            "n": 667
+          },
+          "synth_dS_purged": {
+            "signed": 0.5528589058000823,
+            "flipped_as_published": 0.5528589058000823,
+            "n": 667
+          },
+          "confidence_maxsoftmax": {
+            "signed": 0.6430040547687607,
+            "flipped_as_published": 0.6430040547687607,
+            "n": 667
+          },
+          "lexical_overlap": {
+            "signed": 0.6047237076648841,
+            "flipped_as_published": 0.6047237076648841,
+            "n": 667
+          },
+          "nli_entail": {
+            "signed": 0.5469677381442087,
+            "flipped_as_published": 0.5469677381442087,
+            "n": 667
+          }
+        },
+        "QA": {
+          "synth_dS_raw": {
+            "signed": 0.5710132376592849,
+            "flipped_as_published": 0.5710132376592849,
+            "n": 666
+          },
+          "synth_dS_purged": {
+            "signed": 0.6542744030681678,
+            "flipped_as_published": 0.6542744030681678,
+            "n": 666
+          },
+          "confidence_maxsoftmax": {
+            "signed": 0.5268773970060621,
+            "flipped_as_published": 0.5268773970060621,
+            "n": 666
+          },
+          "lexical_overlap": {
+            "signed": 0.6856751824817517,
+            "flipped_as_published": 0.6856751824817517,
+            "n": 666
+          },
+          "nli_entail": {
+            "signed": 0.5666831621922553,
+            "flipped_as_published": 0.5666831621922553,
+            "n": 666
+          }
+        },
+        "Summary": {
+          "synth_dS_raw": {
+            "signed": 0.671587935546068,
+            "flipped_as_published": 0.671587935546068,
+            "n": 667
+          },
+          "synth_dS_purged": {
+            "signed": 0.6385897259330671,
+            "flipped_as_published": 0.6385897259330671,
+            "n": 667
+          },
+          "confidence_maxsoftmax": {
+            "signed": 0.6677386034981407,
+            "flipped_as_published": 0.6677386034981407,
+            "n": 667
+          },
+          "lexical_overlap": {
+            "signed": 0.6494353394849194,
+            "flipped_as_published": 0.6494353394849194,
+            "n": 667
+          },
+          "nli_entail": {
+            "signed": 0.6330670706514254,
+            "flipped_as_published": 0.6330670706514254,
+            "n": 667
+          }
+        }
+      }
+    }
+  },
+  "summary": {
+    "synth_dS_raw": {
+      "pooled_signed_per_model": [
+        0.6568415720151443,
+        0.5910087719298246,
+        0.5407579231767361
+      ],
+      "pooled_flipped_per_model": [
+        0.6568415720151443,
+        0.5910087719298246,
+        0.5407579231767361
+      ],
+      "pooled_signed_mean": 0.596202755707235,
+      "pooled_flipped_mean": 0.596202755707235,
+      "within_task_macro_signed_per_model": [
+        0.6085170058852648,
+        0.5867382482438704,
+        0.5608348024087446
+      ],
+      "within_task_macro_signed_mean": 0.5853633521792933
+    },
+    "synth_dS_purged": {
+      "pooled_signed_per_model": [
+        0.5611068895643363,
+        0.5450705664871398,
+        0.616495805115626
+      ],
+      "pooled_flipped_per_model": [
+        0.5611068895643363,
+        0.5450705664871398,
+        0.616495805115626
+      ],
+      "pooled_signed_mean": 0.574224420389034,
+      "pooled_flipped_mean": 0.574224420389034,
+      "within_task_macro_signed_per_model": [
+        0.5641505351023951,
+        0.6003694558930003,
+        0.6152410116004391
+      ],
+      "within_task_macro_signed_mean": 0.5932536675319448
+    },
+    "confidence_maxsoftmax": {
+      "pooled_signed_per_model": [
+        0.7230432019765727,
+        0.623349153024405,
+        0.6861518823654882
+      ],
+      "pooled_flipped_per_model": [
+        0.7230432019765727,
+        0.623349153024405,
+        0.6861518823654882
+      ],
+      "pooled_signed_mean": 0.6775147457888219,
+      "pooled_flipped_mean": 0.6775147457888219,
+      "within_task_macro_signed_per_model": [
+        0.6251063372796576,
+        0.5614883516473231,
+        0.6125400184243212
+      ],
+      "within_task_macro_signed_mean": 0.5997115691171007
+    },
+    "lexical_overlap": {
+      "pooled_signed_per_model": [
+        0.7532694768836985,
+        0.7532694768836985,
+        0.7532694768836985
+      ],
+      "pooled_flipped_per_model": [
+        0.7532694768836985,
+        0.7532694768836985,
+        0.7532694768836985
+      ],
+      "pooled_signed_mean": 0.7532694768836986,
+      "pooled_flipped_mean": 0.7532694768836986,
+      "within_task_macro_signed_per_model": [
+        0.6466114098771851,
+        0.6466114098771851,
+        0.6466114098771851
+      ],
+      "within_task_macro_signed_mean": 0.6466114098771851
+    },
+    "nli_entail": {
+      "pooled_signed_per_model": [
+        0.6731189676318455,
+        0.6731189676318455,
+        0.6731189676318455
+      ],
+      "pooled_flipped_per_model": [
+        0.6731189676318455,
+        0.6731189676318455,
+        0.6731189676318455
+      ],
+      "pooled_signed_mean": 0.6731189676318455,
+      "pooled_flipped_mean": 0.6731189676318455,
+      "within_task_macro_signed_per_model": [
+        0.5822393236626299,
+        0.5822393236626299,
+        0.5822393236626299
+      ],
+      "within_task_macro_signed_mean": 0.5822393236626299
+    }
+  }
+}

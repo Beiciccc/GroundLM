@@ -24,3 +24,15 @@ paper/*.synctex.gz
 # submitted supplement archive (kept on disk, not in VCS)
 groundlm_supplementary.zip
 *.zip
+
+# local analysis virtualenv
+.venv/
+venv/
+
+# internal working documents, not part of the release
+DESIGN_DOC.md
+paper/REVIEWER_RISK_NOTES.md
+*.bak
+runs/results_summary.txt
+runs/*.log
+errors-main.json

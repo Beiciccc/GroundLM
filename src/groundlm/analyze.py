@@ -20,7 +20,11 @@ from .probe import separability_test, asymmetry_test
 # wrong reason. The C2 confidence-asymmetry test uses CONFIDENCE only; overlap/length
 # are a separate surface control.
 CONFOUND_GROUPS = {
-    "confidence": ["mean_maxsoftmax", "first_maxsoftmax", "mean_logprob", "_norm"],
+    # The three teacher-forced confidence scalars. Activation L2 norm was previously
+    # included here, which disagreed with the manuscript and with the scripts that
+    # produce Table 1 (they stack exactly these three); it is excluded so every
+    # confidence purge in the paper uses one definition.
+    "confidence": ["mean_maxsoftmax", "first_maxsoftmax", "mean_logprob"],
     "surface": ["lexical_overlap", "_len"],
     "all": ["mean_maxsoftmax", "first_maxsoftmax", "mean_logprob", "_norm",
             "lexical_overlap", "_len"],
