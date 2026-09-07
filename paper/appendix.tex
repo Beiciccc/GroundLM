@@ -1,12 +1,14 @@
 \section{Implementation Details and Reproducibility}
 \label{app:impl}
-Code, the constructed datasets and all result JSONs are available at
-\url{https://github.com/Beiciccc/GroundLM}; the $2.4$\,GB of cached residual-stream features that the analysis
-scripts consume are archived separately at \url{TODO-ARCHIVE-DOI}, since they exceed
-what a source repository can hold. With those features in place,
-\texttt{reproduce.sh} regenerates every number, table and figure on CPU;
-\texttt{reproduce.sh extract} regenerates the features themselves on one A100-40G.
-Below we fix every choice a reader would need to re-run the study.
+Code, the constructed datasets, every result JSON and the figures are available at
+\url{https://github.com/Beiciccc/GroundLM}, together with a manifest mapping each
+number, table and figure in this paper to the script that produces it and the files
+that script reads and writes. The $2.4$\,GB of cached residual-stream features the
+analysis consumes are too large to distribute with the source and are not
+redistributed: \texttt{reproduce.sh extract} regenerates them from the released
+datasets on one A100-40G, after which \texttt{reproduce.sh} recomputes every reported
+number, table and figure on CPU. Below we fix every choice a reader would need to
+re-run the study.
 
 \paragraph{Layer choice and fold-split sensitivity.}
 Table~\ref{tab:c1} fixes the analysis layer a priori at relative depth $0.5$. Averaging
