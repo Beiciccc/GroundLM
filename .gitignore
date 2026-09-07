@@ -39,3 +39,6 @@ errors-main.json
 
 # stray root-level LaTeX log from a failed root-relative build
 /main.log
+
+# personal deployment helper for a rented GPU box; not needed to reproduce anything
+deploy/remote.py
