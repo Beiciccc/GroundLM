@@ -14,6 +14,9 @@ Writes runs/heldout_procrustes.json.
 from __future__ import annotations
 import json, os, sys, itertools
 import numpy as np
+import os as _os, sys as _sys
+_sys.path.insert(0, _os.path.dirname(_os.path.abspath(__file__)))
+from _cr_common import source_groups   # noqa: E402
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 from groundlm.transfer.procrustes import fit_map, transport_direction   # noqa: E402
@@ -29,7 +32,7 @@ def load(m):
     meta = json.load(open(f"runs/{m}_v2/features.meta.json"))
     L = min(meta["layers"], key=lambda x: abs(x - 0.5 * meta["n_layers"]))
     return {"X": npz[f"last_{L}"].astype(np.float64), "S": npz["support"].astype(int),
-            "F": npz["factuality"].astype(int), "item": npz["item_id"]}
+            "F": npz["factuality"].astype(int), "item": source_groups(npz["item_id"])}
 
 
 def split(item, seed):

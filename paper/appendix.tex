@@ -124,8 +124,8 @@ fold only and score the test projection as-is: the test-fold
 $\max(\mathrm{AUC},1{-}\mathrm{AUC})$ convention floors a non-predictive direction above
 $0.5$ (it inflates a true-chance random direction to $\approx0.54$--$0.59$), so we use
 it nowhere. The C1 analysis layer is fixed a priori at relative depth $0.5$ (as C3/C4
-already do) rather than argmax-selected on the reported metric. Tables~\ref{tab:c1}, \ref{tab:c4} and \ref{tab:c4_pertask} are produced by
-\texttt{scripts/cr\_final\_tables.py}; the remaining reported quantities come from the
+already do) rather than argmax-selected on the reported metric. Tables~\ref{tab:c1}, \ref{tab:c4} and \ref{tab:c4_pertask} (bar its Sent-NLI rows) are
+produced by \texttt{scripts/cr\_final\_tables.py}; the remaining reported quantities come from the
 scripts listed in \texttt{MANIFEST.md}, which maps each table, figure and quoted value
 to its producer and inputs.
 
