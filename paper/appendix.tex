@@ -36,14 +36,16 @@ the \texttt{parametric\_belief.npz} caches and the analysis library accepts a kn
 mask, but no script in the released pipeline conditions on it.
 
 \paragraph{Artifacts and licenses.}
-We use NQ-Swap \citep{longpre2021nqswap} and RAGTruth \citep{niu2024ragtruth} under the
-MIT license, and the DeBERTaV3 MNLI/FEVER/ANLI checkpoint \citep{he2023debertav3} (MIT).
+We build on the entity-substitution framework of \citet{longpre2021nqswap}, whose own
+release is under the Apple Sample Code License, via the \texttt{pminervini/NQ-Swap}
+distribution (MIT) that our build script loads; RAGTruth \citep{niu2024ragtruth} and the
+DeBERTaV3 MNLI/FEVER/ANLI checkpoint \citep{nli_checkpoint,he2023debertav3} are MIT.
 The probed checkpoints are Qwen2.5-7B-Instruct and Mistral-7B-Instruct-v0.3
 (Apache-2.0), Llama-3.1-8B-Instruct (Llama~3.1 Community License; this work is
 ``Built with Llama'') and Gemma-2-9B-it (Gemma Terms of Use). All use is
 non-commercial academic research, consistent with the intended use each artifact
 states. Our code is released under the MIT license; the constructed
-CtrlPairs data derives from NQ-Swap and inherits its terms. The redistributed RAGTruth
+CtrlPairs data derives from that NQ-Swap distribution and inherits its terms. The redistributed RAGTruth
 subset contains third-party source text that we did not filter for incidental contact
 details already present upstream.
 

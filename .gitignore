@@ -46,3 +46,6 @@ deploy/remote.py
 # ACL PubCheck output
 errors-main*.json
 errors-main*.png
+
+# scratch output of scripts/generate_bib.py (references.bib is hand-maintained)
+paper/references.bib.generated

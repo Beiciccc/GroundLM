@@ -1,7 +1,12 @@
-"""Regenerate paper/references.bib from the verified citation data (runs/cite_verified.json).
-verified_venue -> formal booktitle/journal + pages; arxiv_only -> arXiv preprint.
-adarsh/gao2026 future venues unconfirmed -> conservatively arXiv. Drops [V] and method
-acronyms from notes. See runs/cite_verified.json for per-entry source URLs."""
+"""Draft paper/references.bib from the verified citation data (runs/cite_verified.json).
+
+Superseded: paper/references.bib is now maintained by hand. The camera-ready reference
+audit fixed things this generator cannot reproduce -- brace-protected acronyms (acl_natbib
+lowercases unprotected capitals, so an unprotected title renders as "Debertav3"),
+LaTeX-escaped diacritics, and three 2026 venue upgrades verified against the ACL
+Anthology. Re-running this would revert them, so it writes to references.bib.generated
+and leaves references.bib alone; diff the two if you want to see what the ledger holds.
+"""
 import json, os
 
 c = json.load(open(os.path.join(os.path.dirname(__file__), "..", "runs", "cite_verified.json")))
@@ -15,16 +20,12 @@ SHORT = {
     "burger2024truthuniversal": ("inproceedings", "NeurIPS"),
     "bao2025probing": ("inproceedings", "Findings of ACL"),
     "ming2025faitheval": ("inproceedings", "ICLR"),
-    "gao2023alce": ("inproceedings", "EMNLP"),
+    "manakul2023selfcheckgpt": ("inproceedings", "EMNLP"),
     "shi2024cad": ("inproceedings", "NAACL"),
     "zha2023alignscore": ("inproceedings", "ACL"),
-    "cohenwang2024contextcite": ("inproceedings", "NeurIPS"),
-    "xiao2024bge": ("inproceedings", "SIGIR"),
     "he2023debertav3": ("inproceedings", "ICLR"),
     "sun2025redeep": ("inproceedings", "ICLR"),
     "wang2025space": ("inproceedings", "NeurIPS"),
-    "lee2024sgen": ("inproceedings", "NeurIPS"),
-    "chuang2025selfcite": ("inproceedings", "ICML"),
     "zhao2024residualconflict": ("inproceedings", "NeurIPS Workshop on Foundation Model Interventions"),
     "mnli": ("inproceedings", "NAACL-HLT"),
     "fever": ("inproceedings", "NAACL-HLT"),
@@ -66,15 +67,15 @@ def gen(k, d):
 
 
 GROUPS = [
-    ("datasets / benchmarks", ["longpre2021nqswap", "ming2025faitheval", "niu2024ragtruth", "gao2023alce"]),
+    ("datasets / benchmarks", ["longpre2021nqswap", "ming2025faitheval", "niu2024ragtruth"]),
     ("truth / factuality geometry", ["azaria2023saplma", "marks2024geometry", "burger2024truthuniversal",
                                      "azizian2025orthogonal", "bao2025probing", "cho2026confidencemanifold", "noanswer2025"]),
     ("faithfulness/factuality as joint geometric objects", ["wang2025space", "adarsh2026context", "gao2026proberag"]),
     ("residual stream / knowledge conflict / attribution", ["zhao2024residualconflict", "sun2025redeep", "brink2026attribution"]),
     ("cross-family transfer (orthogonal Procrustes + anchor projection)", ["schonemann1966", "puri2025atlas", "kim2026crossfamily"]),
-    ("faithfulness-vs-factuality gates / contextual probes", ["fadeeva2025franq", "zhu2026saber", "oneill2025singledirection", "lee2024sgen"]),
+    ("faithfulness-vs-factuality gates / contextual probes", ["fadeeva2025franq", "zhu2026saber", "oneill2025singledirection"]),
     ("NLI baseline: DeBERTaV3 checkpoint + training data + related scorers", ["he2023debertav3", "nli_checkpoint", "mnli", "fever", "anli", "laban2022summac", "zha2023alignscore"]),
-    ("other tools / baselines", ["shi2024cad", "cohenwang2024contextcite", "chuang2025selfcite", "wang2022e5", "xiao2024bge"]),
+    ("other tools / baselines", ["manakul2023selfcheckgpt", "shi2024cad"]),
     ("probed model families", ["llama31", "qwen25", "mistral7b", "gemma2"]),
 ]
 
@@ -87,5 +88,7 @@ for gtitle, keys in GROUPS:
         out.append(LABAN if k == "laban2022summac" else gen(k, c[k]))
         out.append("")
         n += 1
-open(os.path.join(os.path.dirname(__file__), "..", "paper", "references.bib"), "w").write("\n".join(out))
-print(f"wrote {n} entries to paper/references.bib")
+dest = os.path.join(os.path.dirname(__file__), "..", "paper", "references.bib.generated")
+open(dest, "w").write("\n".join(out))
+print(f"wrote {n} entries to {dest}")
+print("references.bib is hand-maintained and was not touched; diff against it if needed.")

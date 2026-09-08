@@ -7,7 +7,7 @@ operationalize this by reading a linear direction from the residual stream: much
 work decodes a ``truth'' or ``lying'' direction
 \citep{azaria2023saplma,marks2024geometry,burger2024truthuniversal}, and more recent
 work extends this style of analysis to a \emph{contextual} faithfulness direction
-\citep{oneill2025singledirection}, an attractive recipe because it needs no external
+\citep{oneill2025singledirection,gao2026proberag}, an attractive recipe because it needs no external
 judge and costs roughly one forward pass. We interrogate this recipe \emph{family}
 rather than any single system: we probe a representative mass-mean direction rather than
 reproducing a specific observer-model detector, so our negatives bound \emph{this}
@@ -54,22 +54,20 @@ the apparent ``grounding'' signal to factors other than context use.
     purging model confidence). But a \emph{no-context ablation} shows it is mostly
     question--answer compatibility: removing the context barely changes it (raw
     $0.95$--$0.98$, confidence-purged does not collapse), so the probe separates the matched
-    answer from the wrong-question answer \emph{without reading the context}. Together
-    with the fact that support coincides with our \emph{synthetic} factuality label
-    here by construction, this attributes the overlap-controlled contrast to
-    question--answer compatibility and factoid-correctness rather than
-    context-grounding.
+    answer from the wrong-question answer \emph{without reading the context}. Support
+    also coincides with our \emph{synthetic} factuality label here by construction, so
+    factoid-correctness is not excluded either.
   \item \textbf{Cross-family alignment up to a linear map (\S\ref{sec:c3}).} An
     orthogonal-Procrustes map carries the support direction between families so the
     transported direction is nearly collinear with the target family's \emph{native}
     direction (cosine ${\approx}0.98$, vs.\ ${\approx}0.01$ for a random direction
-    through the same map), whereas an anchor-projection transfer reaches only $0.76$
-    AUROC \citep{kim2026crossfamily}. The transferred-probe AUROC ($0.901$) equals the
+    through the same map), whereas anchor-projection transfer
+    \citep{kim2026crossfamily} reaches only $0.76$ AUROC here. The transferred-probe AUROC ($0.901$) equals the
     within-family bound but is ceiling-saturated, and signed map-aware nulls sit at
     chance ($0.51$/$0.54$); we therefore rest the claim on the cosine. Factuality, answer-length and overlap directions transport identically while a
     confidence direction does not, indicating a shared stimulus-derived contrast
     rather than a grounding-specific axis; we do not generalize
-    beyond these four $7$--$9$B models \citep{puri2025atlas}.
+    beyond these four $7$--$9$B models.
   \item \textbf{The confidence asymmetry runs the wrong way (\S\ref{sec:c2}).}
     Contrary to a natural hypothesis, confidence absorbs the \emph{support} axis
     more than the factuality axis at every one of $71$ layer-tests (mean $-0.142$), so
@@ -97,10 +95,12 @@ overlap still dominates.
 \label{sec:related}
 
 \paragraph{Geometry of truth and faithfulness.}
-Linear ``truth'' directions are decodable from activations
-\citep{azaria2023saplma,marks2024geometry} and partly shared across models
-\citep{burger2024truthuniversal}, but are task-dependent and often fail to transfer
-across tasks \citep{azizian2025orthogonal,bao2025probing}. \citet{wang2025space}
+Truthfulness is decodable from activations \citep{azaria2023saplma}, largely
+linearly \citep{marks2024geometry}, and partly shared across models
+\citep{burger2024truthuniversal}; how far such a direction transfers is contested.
+\citet{azizian2025orthogonal} find the geometries of truth near-orthogonal across
+tasks, whereas \citet{bao2025probing} report generalization from atomic statements to
+question answering in the more capable models they test. \citet{wang2025space}
 treat factuality and faithfulness hallucinations as activation subspaces and argue
 they overlap; crucially they draw the two notions from different corpora, leaving
 the geometry confounded with surface form. \citet{adarsh2026context} study how a
@@ -112,7 +112,8 @@ claiming to adjudicate whether factuality and faithfulness share a direction.
 
 \paragraph{Knowledge conflict and source attribution.}
 Probes can detect knowledge conflict and predict which source a model follows
-\citep{zhao2024residualconflict,sun2025redeep,brink2026attribution}, and benchmarks
+\citep{zhao2024residualconflict,sun2025redeep,brink2026attribution}, decoding-time
+interventions can steer a model toward the context \citep{shi2024cad}, and benchmarks
 such as FaithEval \citep{ming2025faitheval} score context-versus-parametric
 faithfulness behaviorally. These are
 behavioral/source signals; we ask whether a \emph{content} grounding axis exists
@@ -261,8 +262,7 @@ that entailment-checks each response sentence against every context sentence, ta
 max over context, and aggregates over response sentences by mean (SummaC-ZS) or min
 (for tractability we cap context at $60$ sentences and pairs at $256$ tokens, which can
 only lower SummaC and is thus conservative), plus max-softmax confidence and lexical
-overlap. Everything is API-free; the NLI baselines use the small DeBERTa model and all
-activation extraction runs on one A100-40G.
+overlap. Everything is API-free.
 
 \subsection{The within-stratum signal is question--answer compatibility, not grounding}
 \label{sec:c1}
@@ -274,14 +274,12 @@ fold. We group by the source QA triple instead
 ($555$ groups), for the C1 cross-validation, the Procrustes calibration split
 (\S\ref{sec:c3}) and the cross-strata control, which is additionally evaluated on
 \emph{held-out} groups. Regrouping moves every C1 estimate by at most $0.007$
-(App.~\ref{app:impl}): the leak is real but inert, since a difference of class means in
-${\sim}3500$ dimensions barely shifts under a few duplicated rows. To avoid selecting the
+(App.~\ref{app:impl}): the leak is real but inert. To avoid selecting the
 layer on the very number we report, we fix the analysis layer \emph{a priori} at
 relative depth $0.5$ (the nearest cached layer to $0.5\,L_{\mathrm{tot}}$:
 $L{=}14/16/16/21$ for Qwen/Mistral/Llama/Gemma), matching the relative-depth
 convention already used for C3/C4 and for Fig.~\ref{fig:c1layers}; App.~\ref{app:impl}
-reports the mean$\pm$sd across the mid-layer band ($0.4$--$0.6$ depth), showing the
-result is not a single-layer artifact.
+reports the mean$\pm$sd across the mid-layer band ($0.4$--$0.6$ depth).
 
 Table~\ref{tab:c1} reports support decodability within the answer-present stratum
 $O{=}1$ (cells A vs.\ C), where lexical overlap is held constant, on the
@@ -312,10 +310,7 @@ answer-absent; evaluate $A$ vs.\ $C$) does transfer at $0.66$--$0.88$, so \emph{
 context-sensitive component exists, but it is an upper bound and not separable from the
 dominant compatibility signal here. Finally, support and our
 \emph{synthetic} factuality label are \emph{identical} within $O{=}1$ by construction
-(they diverge only in the answer-absent cell~D). We therefore do \emph{not} claim a
-context-grounding signal: within the overlap-controlled stratum the decodable contrast
-is question--answer compatibility, not isolated from factoid-correctness, and not shown
-to use the context at all.
+(they diverge only in the answer-absent cell~D). We therefore make no context-grounding claim within this stratum.
 
 \begin{table}[t]\centering\small
 \setlength{\tabcolsep}{3.5pt}
@@ -345,7 +340,7 @@ make no distinctness claim.}
 \end{table}
 
 \begin{figure*}[t]\centering
-\includegraphics[width=0.9\textwidth]{figs/fig_c1_layers.pdf}
+\includegraphics[width=0.84\textwidth]{figs/fig_c1_layers.pdf}
 \caption{\textbf{The within-stratum contrast peaks mid-layer, but it is not grounding.}
 Cross-validated AUROC vs.\ relative layer depth for the support contrast within the
 answer-present stratum ($O{=}1$, where overlap is uninformative): raw, and after
@@ -475,8 +470,7 @@ the single best predictor on RAGTruth (Fig.~\ref{fig:c4}). Paired source-passage
 ordering against overlap ($\Delta{=}{-}0.097/{-}0.163/{-}0.212$) and confidence
 ($p{<}0.001$, $p{=}0.028$, $p{<}0.001$), though against whole-response NLI only Llama and Gemma separate
 ($p{<}0.001$); Qwen ties ($\Delta{=}{-}0.017$, CI $[-0.051,+0.017]$). Removing the polarity flip
-can only lower these numbers, so the negative is if anything understated; on real data
-overlap still dominates.
+can only lower these numbers, so the negative is if anything understated.
 A more sophisticated sentence-level NLI baseline (SummaC-style, max entailment over
 context sentences) does no better: pooled $0.614$/$0.664$ and within-task macro
 $0.596$/$0.579$ (mean/min), essentially tied with the whole-response NLI ($0.582$) and
@@ -561,7 +555,7 @@ merely the least-bad. $^{\dagger}$uses RAGTruth human labels ($0.706$ macro).}
 Our results separate two questions usually merged. \emph{Does} a non-overlap signal
 exist in the internals? Within the overlap-controlled stratum a contrast is decodable
 ($0.76$--$0.88$ purged) and aligns across four families up to a linear map, but a
-no-context ablation shows this within-stratum contrast is mostly \emph{question--answer
+no-context ablation shows it is mostly \emph{question--answer
 compatibility}, not context use, and the alignment is a generic matched-stimulus
 property (length and overlap directions align equally well). An apparent ``grounding''
 signal thus survives an overlap control yet is still not grounding. \emph{Is} that
@@ -570,8 +564,8 @@ RAGTruth, where lexical overlap remains the strongest single-pass baseline (and 
 that edge is largely a between-task base-rate artifact: Table~\ref{tab:c4_pertask}).
 The gap between a clean controlled signal and real-world utility is the main lesson, and
 it cautions against reading deployment claims from synthetic-stimulus probes; whether
-any label-free signal can decisively beat lexical overlap on real hallucinations is the
-natural next question.
+any label-free signal can beat lexical overlap on real hallucinations is the natural
+next question.
 
 \section*{Limitations}
 We are explicit about what we do \emph{not} show. (i)~Within the answer-present stratum
@@ -601,7 +595,8 @@ instruction-tuned models are also probed with a single raw completion template r
 than their chat templates; this sensitivity is untested. (vi)~Support labels are validated
 automatically and by a $40$-item manual audit of clean cell~C ($0/40$ mislabelled), not
 by a multi-annotator study with agreement statistics. (vii)~Stronger internals
-detectors (e.g.\ ReDeEP \citep{sun2025redeep}) and sampling-based methods are out of
+detectors (e.g.\ ReDeEP \citep{sun2025redeep}) and sampling-based methods
+\citep{manakul2023selfcheckgpt} are out of
 our single-A100 budget, so we show that \emph{this} synthetic axis fails, not that
 internals cannot work.
 
