@@ -4,8 +4,8 @@ Code, the constructed datasets, every result JSON and the figures are available 
 \url{https://github.com/Beiciccc/GroundLM}, together with a manifest mapping each
 number, table and figure in this paper to the script that produces it and the files
 that script reads and writes. The $2.4$\,GB of cached residual-stream features the
-analysis consumes are too large to distribute with the source and are not
-redistributed: \texttt{reproduce.sh extract} regenerates them from the released
+analysis consumes are too large to distribute with the source:
+\texttt{reproduce.sh extract} regenerates them from the released
 datasets on one A100-40G, after which \texttt{reproduce.sh} recomputes every reported
 number, table and figure on CPU. Below we fix every choice a reader would need to
 re-run the study.
@@ -20,7 +20,7 @@ $0.877{\pm}0.003$, $0.792{\pm}0.003$ and $0.809{\pm}0.008$: the result is not a
 single-layer artifact. We also avoid \texttt{GroupKFold}, which assigns folds by sorting
 group sizes: our group sizes are almost all tied ($1193/1200$ CtrlPairs items have three
 rows; every RAGTruth response is its own record), so its split depends on
-\texttt{numpy}'s \texttt{argsort} tie-breaking and changes with the library version --
+\texttt{numpy}'s \texttt{argsort} tie-breaking and changes with the library version,
 enough to move the in-domain probe by $0.009$. Every reported estimate instead uses an
 explicitly seeded group splitter over source groups and is a mean over ten splits; the
 split-to-split sd is $\le0.002$ for Table~\ref{tab:c1} and $\le0.007$ for
@@ -138,7 +138,7 @@ $16$). Parameter counts are $7.6$B (Qwen2.5-7B-Instruct), $7.2$B
 It totals $58{,}716$ forward passes: per family, $3{,}593$ CtrlPairs statements,
 $2{,}400$ closed-book parametric-belief scorings ($1{,}200$ items $\times$ two candidate
 answers) and $3{,}593$ each for the no-context and shuffled-context ablations, plus
-$2{,}000$ RAGTruth responses for three families. The whole campaign ran on one
+$2{,}000$ RAGTruth responses for three families. All extraction ran on one
 A100-40G within a single day; our extraction logs do not instrument per-run wall-clock,
 so we report the forward-pass budget rather than a GPU-hour figure.
 All analyses, the sentence-level NLI baseline, and figures run on CPU/Apple-MPS
