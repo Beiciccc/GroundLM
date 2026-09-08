@@ -46,7 +46,7 @@ for it and exits with instructions rather than failing part-way.
 | Figure 1 (decoupling) | `scripts/make_figures.py::fig_decoupling` | `data/ctrlpairs_v2.jsonl`, `runs/v1_corr.json` | `paper/figs/fig_decoupling.pdf` |
 | Figure 2 (C1 by layer) | `scripts/make_figures.py::fig_c1_layers` | `runs/*_v2/features.npz`, `runs/*_v2_nc/features.npz` | `paper/figs/fig_c1_layers.pdf`, `runs/fig_c1_layers_values.json` |
 | Figure 3 (C3 transfer heatmaps) | `scripts/make_figures.py::fig_c3_heatmap` | `runs/*_v2/features.npz` | `paper/figs/fig_c3_heatmap.pdf`, `runs/fig_c3_heatmap_values.json` |
-| Figure 4 (C4 RAGTruth) | `scripts/make_figures.py::fig_c4_ragtruth` | `runs/*_rt/report_gate_ragtruth.json` | `paper/figs/fig_c4_ragtruth.pdf` |
+| Figure 4 (C4 RAGTruth) | `scripts/make_figures.py::fig_c4_ragtruth` | `runs/cr_final_tables.json` (same source as Table 3, so bars and table cannot diverge) | `paper/figs/fig_c4_ragtruth.pdf` |
 | §3 construction counts, corr(S,O), donor collisions | `scripts/cr_dupleak_audit.py`, `scripts/harden_analyses.py` | `data/ctrlpairs_v2.jsonl` | `runs/cr_dupleak_audit.json`, `runs/hardened.json` → `cellC` |
 | §3 NLI fooled rate on clean cell C | `scripts/harden_analyses.py` | `data/ctrlpairs_v2.jsonl` | `runs/hardened.json` → `cellC` |
 | §5.1 no-context / shuffled ablation | `scripts/analyze_nocontext.py` | `runs/*_v2{,_nc,_shuf}/features.npz` | `runs/nocontext_ablation.json` |

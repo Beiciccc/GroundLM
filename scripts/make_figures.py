@@ -85,7 +85,7 @@ def fig_decoupling():
     v1 = json.load(open("runs/v1_corr.json"))   # committed; produced by scripts/v1_corr.py
     corr_v1 = abs(v1["corr_support_overlap_exactstring"])
     corrs = [corr_v1, corr_v2, 0.0]
-    clabs = ["v1\n(NQ-Swap)", "v2 cells\nA/C/D", "$+$cell B\n(projected)"]
+    clabs = ["extractive\n(NQ-Swap)", "cells\nA/C/D", "$+$cell B\n(projected)"]
     # NLI by cell — exclude donor-collision (q'==q) cell-C items
     byitem = {}
     for r in rows: byitem.setdefault(r["item_id"], {})[r["cell"]] = r
@@ -167,9 +167,9 @@ def fig_c1_layers():
         if handles_labels is None:
             handles_labels = ax.get_legend_handles_labels()
     fig.tight_layout(pad=0.5)
-    fig.subplots_adjust(bottom=0.14)
+    fig.subplots_adjust(bottom=0.21)
     fig.legend(*handles_labels, loc="lower center", ncol=4, fontsize=7.5,
-               handlelength=1.5, columnspacing=1.1, bbox_to_anchor=(0.5, 0.01))
+               handlelength=1.5, columnspacing=1.1, bbox_to_anchor=(0.5, -0.004))
     json.dump(FIG2_DUMP, open("runs/fig_c1_layers_values.json", "w"), indent=2, default=float)
     save(fig, "fig_c1_layers")
 
@@ -199,7 +199,7 @@ def _transfer_mat(mode_off):
 
 def fig_c3_heatmap():
     Mp, names = _transfer_mat("procrustes_raw")
-    Ma, _ = _transfer_mat("acs_purged")
+    Ma, _ = _transfer_mat("acs")   # raw, matching panel (a); mixing raw vs purged is not a fair comparison
     fig, (a1, a2) = plt.subplots(1, 2, figsize=(3.6, 2.0), gridspec_kw={"wspace": 0.18})
     for ax, M, ttl in [(a1, Mp, "(a) Procrustes"), (a2, Ma, "(b) anchor (ACS)")]:
         im = ax.imshow(M, vmin=0.5, vmax=0.92, cmap="viridis", aspect="equal")
@@ -216,7 +216,7 @@ def fig_c3_heatmap():
                         color="white" if M[i, j] < 0.78 else "black")
     cb = fig.colorbar(im, ax=[a1, a2], fraction=0.025, pad=0.02)
     cb.set_label("transfer AUROC (support axis)", fontsize=8)
-    json.dump({"models": names, "procrustes_raw": Mp.tolist(), "acs_purged": Ma.tolist()},
+    json.dump({"models": names, "procrustes_raw": Mp.tolist(), "acs_raw": Ma.tolist()},
               open("runs/fig_c3_heatmap_values.json", "w"), indent=2)
     save(fig, "fig_c3_heatmap")
 

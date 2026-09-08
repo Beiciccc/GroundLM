@@ -32,7 +32,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 from groundlm.probe.directions import fit_direction, project, _unit   # noqa: E402
 from groundlm.probe.confidence import purge                           # noqa: E402
 from groundlm.transfer.procrustes import fit_map, transport_direction # noqa: E402
-from _cr_common import (load, apriori_layer, band_layers, auroc,      # noqa: E402
+from _cr_common import (load, apriori_layer, band_layers,             # noqa: E402
+                        auroc_signed as auroc,
                         seeded_group_folds, collision_map, stat,
                         source_groups, passage_groups)
 
@@ -196,16 +197,21 @@ acs_cos = []
 pairs = []
 for s, t in itertools.permutations(MODELS4, 2):
     Sd, Td = RUN[s], RUN[t]
-    cal, _ = split_items(Sd["item"], seed=0)
-    A = fit_map(Td["X"][cal], Sd["X"][cal], orthogonal=True)     # target -> source convention
     rec = {"pair": f"{s}->{t}"}
+    # Mean over the same ten seeded source-grouped splits used everywhere else.
     for k in per_pair:
-        d_src = fit_direction(Sd["X"][cal], Sd["axes"][k][cal])
-        d_tgt_native = fit_direction(Td["X"][cal], Td["axes"][k][cal])
-        d_moved = transport_direction(A, d_src)
-        c = float(abs(np.dot(_unit(d_moved), _unit(d_tgt_native))))
+        cs = []
+        for seed in range(NSEED):
+            cal, _ = split_items(Sd["item"], seed=seed)
+            A = fit_map(Td["X"][cal], Sd["X"][cal], orthogonal=True)  # target -> source
+            d_src = fit_direction(Sd["X"][cal], Sd["axes"][k][cal])
+            d_tgt_native = fit_direction(Td["X"][cal], Td["axes"][k][cal])
+            cs.append(float(abs(np.dot(_unit(transport_direction(A, d_src)), _unit(d_tgt_native)))))
+        c = float(np.mean(cs))
         per_pair[k].append(c)
         rec[k] = c
+    cal, _ = split_items(Sd["item"], seed=0)
+    A = fit_map(Td["X"][cal], Sd["X"][cal], orthogonal=True)
     # --- ACS / anchor projection: represent each row by similarity to shared anchors ---
     rng = np.random.default_rng(7)
     n_anchor = 256

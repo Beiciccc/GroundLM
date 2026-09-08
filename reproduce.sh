@@ -51,6 +51,11 @@ python3 scripts/cr_signed_auroc_ragtruth.py     # -> runs/cr_signed_auroc_ragtru
 python3 scripts/cr_estimator_domain_control.py  # -> runs/cr_estimator_domain_control.json
 python3 scripts/cr_c2_and_separability.py       # -> runs/cr_c2_and_separability.json
 python3 scripts/cr_band_and_pairs.py            # -> runs/cr_band_and_pairs.json
+python3 scripts/heldout_procrustes.py           # -> runs/heldout_procrustes.json
+# 2f. Leakage audits released in response to review (cheap; no features needed for the first two).
+python3 scripts/cr_dupleak_audit.py             # -> runs/cr_dupleak_audit.json
+python3 scripts/cr_dupleak_table1.py            # -> runs/cr_dupleak_table1.json
+python3 scripts/cr_passage_leakage.py           # -> runs/cr_passage_leakage.json
 # 3. Figures (read the JSONs above; no hardcoded results).
 python3 scripts/make_figures.py           # -> paper/figs/*.pdf
 # 4. Paper (needs the ACL style files acl.sty + acl_natbib.bst already in paper/).

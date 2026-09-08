@@ -52,7 +52,7 @@ the apparent ``grounding'' signal to factors other than context use.
     (collision-free raw AUROC near-ceiling, ${\approx}0.99$; $0.76$--$0.88$ after
     purging model confidence). But a \emph{no-context ablation} shows it is mostly
     question--answer compatibility: removing the context barely changes it (raw
-    $0.95$--$0.98$, confidence-purged unchanged), so the probe separates the matched
+    $0.95$--$0.98$, confidence-purged does not collapse), so the probe separates the matched
     answer from the wrong-question answer \emph{without reading the context}. Together
     with the fact that support coincides with our \emph{synthetic} factuality label
     here by construction, this attributes the overlap-controlled contrast to
@@ -62,7 +62,7 @@ the apparent ``grounding'' signal to factors other than context use.
     orthogonal-Procrustes map carries the support direction between families so the
     transported direction is nearly collinear with the target family's \emph{native}
     direction (cosine ${\approx}0.98$, vs.\ ${\approx}0.01$ for a random direction
-    through the same map), whereas an anchor-projection transfer reaches only $0.69$
+    through the same map), whereas an anchor-projection transfer reaches only $0.76$
     AUROC \citep{kim2026crossfamily}. The transferred-probe AUROC ($0.901$) equals the
     within-family bound but is ceiling-saturated, and signed map-aware nulls sit at
     chance ($0.51$/$0.54$); we therefore rest the claim on the cosine. Factuality, answer-length and overlap directions transport identically while a
@@ -81,7 +81,7 @@ the apparent ``grounding'' signal to factors other than context use.
     SummaC-style NLI baseline, exceeds
     ${\approx}0.6$ AUROC, and even lexical overlap, the strongest baseline, reaches only
     macro $0.647$. An in-domain probe trained on RAGTruth human
-    labels recovers a usable signal ($0.77$--$0.81$ on the three RAGTruth families;
+    labels recovers a usable signal ($0.76$--$0.81$ on the three RAGTruth families;
     exceeds a conservative single-hypothesis NLI baseline but ties lexical overlap on
     Qwen), so a real support signal exists in the internals but is a \emph{different
     direction} from the synthetic axis and needs in-domain annotation.
@@ -225,8 +225,11 @@ posed \emph{within} the overlap-controlled stratum, where $S$ and $F$ coincide e
 
 \paragraph{Confidence purge.}
 We regress each hidden dimension on three confidence covariates (mean log-prob, mean
-max-softmax, first max-softmax) and re-probe the residual, reporting the fraction of
-probe signal absorbed per axis.
+max-softmax, first max-softmax) and re-probe the residual. For the asymmetry test
+(\S\ref{sec:c2}) we quantify how much of an axis \emph{is} confidence as
+$\mathrm{absorbed}$, the adjusted $R^2$ of that axis's projection regressed on the same
+three covariates; unlike a purge-then-re-probe AUROC delta this is not confounded by the
+denoising side effect of residualizing.
 
 \paragraph{Cross-family transfer.}
 Families differ in hidden size, so we fit a semi-orthogonal Procrustes map between
@@ -264,8 +267,9 @@ activation extraction runs on one A100-40G.
 \label{sec:c1}
 \paragraph{Leakage control.}
 Grouping on \textsc{item\_id} is not sufficient: it isolates swap records, not source
-QAs, and $903$ of the $1{,}200$ cell-A rows have a byte-identical twin under a different
-\textsc{item\_id} (mid-layer cosine $0.9999$). We group by the source QA triple instead
+QAs: $941$ of the $1{,}200$ cell-A rows have a byte-identical twin under a different
+\textsc{item\_id} (mid-layer cosine $0.9999$), and $903$ of them landed in a different
+fold. We group by the source QA triple instead
 ($555$ groups), for the C1 cross-validation, the Procrustes calibration split
 (\S\ref{sec:c3}) and the cross-strata control, which is additionally evaluated on
 \emph{held-out} groups. Regrouping moves every C1 estimate by at most $0.007$
@@ -297,7 +301,7 @@ Third, and decisively, a \emph{no-context ablation} settles what the signal is:
 re-extracting the $A$/$C$ activations with the context \emph{removed}
 (question$+$answer only) leaves supp$_{O=1}$ almost unchanged (raw $0.95$--$0.98$ vs.\
 $0.99$ with context; the confidence-purged estimate does not collapse either,
-$0.80$--$0.83$, rising for two families and falling only ${\sim}0.08$ for Mistral),
+$0.81$--$0.84$, rising for two families and falling only ${\sim}0.07$ for Mistral),
 and replacing the context with an unrelated passage gives the same ($0.94$--$0.98$).
 The within-$O{=}1$ contrast is therefore mostly \emph{question--answer compatibility}:
 the probe separates $A$ (whose question the answer fits) from $C$ (whose donor question
@@ -381,8 +385,8 @@ We ask whether the support direction occupies the \emph{same} geometry across
 families up to a linear map. The direct evidence is geometric: the Procrustes-mapped
 source direction is nearly collinear with the target family's \emph{native} direction
 (transported-to-native cosine $0.976$, range $0.95$--$0.99$ over the $12$ ordered
-pairs; Table~\ref{tab:c3}); anchor projection reaches only $0.69$ transfer AUROC
-against Procrustes' $0.900$ (the two are not comparable in cosine, as ACS has no
+pairs; Table~\ref{tab:c3}); anchor projection reaches only $0.76$ transfer AUROC
+against Procrustes' $0.901$ (the two are not comparable in cosine, as ACS has no
 target-space direction). The cosine is far above its
 null: a random or label-shuffled source direction transported through the \emph{same}
 fitted map is essentially orthogonal to the native direction (cosine $0.01$ and $0.13$
@@ -403,7 +407,7 @@ sit near chance ($0.51$/$0.54$). \textbf{This alignment is not specific to groun
 Transporting the \emph{factuality}, \emph{answer-length}, and \emph{lexical-overlap}
 directions through the same maps gives cosines of $0.99$/$0.98$/$0.99$, as high as
 support, whereas a purely model-internal \emph{confidence} direction transports at
-only $0.56$ (and unstably, $0.10$--$0.86$ across pairs). So what aligns is any contrast
+only $0.51$ (and unstably, $0.08$--$0.87$ across pairs). So what aligns is any contrast
 \emph{derived from the shared input stimuli}, a shared low-rank stimulus geometry, not
 a grounding-specific axis; that confidence does \emph{not} align shows the alignment is
 non-trivial but also that it carries no grounding-specific content. We therefore
@@ -421,9 +425,9 @@ axis & cosine & AUROC & within & rand-map & rand-lab \\
 \textsc{Factuality} & 0.990 & 0.914 & 0.910 & --- & --- \\
 \midrule
 \multicolumn{6}{@{}l}{\footnotesize\itshape nuisance directions:}\\
-length     & 0.980 & --- & --- & --- & --- \\
-overlap    & 0.990 & --- & --- & --- & --- \\
-confidence & 0.557 & --- & --- & --- & --- \\
+length     & 0.977 & --- & --- & --- & --- \\
+overlap    & 0.991 & --- & --- & --- & --- \\
+confidence & 0.509 & --- & --- & --- & --- \\
 \bottomrule
 \end{tabular}
 \caption{\textbf{C3 (cosine-based, leakage-controlled).} Mean over the $12$
@@ -436,7 +440,7 @@ $0.13$ with the native direction. \emph{AUROC}/\emph{within}: transferred-probe 
 within-family AUROC: equal, hence ceiling-saturated. \emph{rand-map}/\emph{rand-lab}:
 random / shuffled-label directions through the map, signed AUROC, at chance. Support,
 factuality, answer-length and overlap directions all align at ${\approx}0.98$, while a
-model-internal confidence direction does not ($0.56$): alignment is a generic property
+model-internal confidence direction does not ($0.51$): alignment is a generic property
 of contrasts derived from the shared stimuli, not a grounding-specific axis.}
 \label{tab:c3}
 \end{table}
@@ -448,9 +452,9 @@ Source$\to$target transfer AUROC of the support direction; every cell, diagonal
 included, uses that panel's own estimator, source-grouped. (a)~Orthogonal Procrustes is
 uniformly high on- and off-diagonal ($0.89$--$0.91$); we read this as alignment (cosine
 $0.98$, Table~\ref{tab:c3}), not lossless transfer, since the AUROC is
-ceiling-saturated. (b)~Anchor projection (ACS) is uniformly lower ($0.57$--$0.80$) and
-no better on its own diagonal ($0.62$--$0.80$) than across families, so its gap to
-Procrustes is not a transfer effect.}
+ceiling-saturated. (b)~Anchor projection (ACS), scored the same way, is uniformly lower
+($0.68$--$0.86$) and its own diagonal ($0.69$--$0.86$) stays well below Procrustes'
+$0.89$--$0.91$, so its gap to Procrustes is not a transfer effect.}
 \label{fig:c3heatmap}
 \end{figure}
 
@@ -478,7 +482,7 @@ still well below overlap (Table~\ref{tab:c4_pertask}); many RAGTruth hallucinati
 abstractive errors that survive sentence-level entailment.
 An \emph{in-domain} probe ($5$-fold grouped-CV $L_2$-logistic on the same mid-layer
 states, target${=}$human faithfulness label) does recover a usable signal:
-AUROC $0.77$/$0.81$/$0.80$ for Qwen/Llama/Gemma (passage-cluster $95\%$ CIs in
+AUROC $0.76$/$0.81$/$0.80$ for Qwen/Llama/Gemma (passage-cluster $95\%$ CIs in
 Table~\ref{tab:c4}). It exceeds our NLI baseline ($0.673$) on all three families (a conservative
 whole-response check, \S\ref{sec:experiments}); against the strong overlap
 baseline ($0.753$) it wins on Llama ($p{=}0.002$) and Gemma ($p{<}0.001$, paired
