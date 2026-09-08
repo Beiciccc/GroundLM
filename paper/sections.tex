@@ -32,9 +32,10 @@ to do.
 \paragraph{A matched control.}
 We introduce a \textsc{Support}$\times$\textsc{Overlap} construction
 (\S\ref{sec:construction}) that crosses semantic support with lexical presence in a
-$2\times2$ of which we realize three cells. Two are model-free: a \emph{wrong-question
-trap}, where the answer is present but answers a different question (supported${=}$no,
-overlap${=}$yes), and the usual unsupported-absent cell. A paraphrase cell would close
+$2\times2$ of which we realize three cells, all model-free: the matched
+supported-present cell, a \emph{wrong-question trap} where the answer is present but
+answers a different question (supported${=}$no, overlap${=}$yes), and the usual
+unsupported-absent cell. A paraphrase cell would close
 the design but has zero yield in this release (\S\ref{sec:construction}). This drops $\mathrm{corr}(\textsc{support},\textsc{overlap})$ from
 $0.99$ to $0.50$, and, tellingly, an off-the-shelf NLI model is fooled by the
 clean wrong-question trap ${\sim}25\%$ of the time, confirming that lexical overlap
@@ -354,7 +355,8 @@ source-grouped, signed protocol as Table~\ref{tab:c1} but \emph{retain} the
 donor-collision mislabels, hence their lower level ($\approx0.87$ raw): removing those
 items is what lifts the contrast to near-ceiling. The green star marks the same probe at
 the a-priori layer with the context \emph{removed}: the raw AUROC barely moves (drop
-annotated), and shuffled context behaves the same. The purged value even
+annotated), and shuffled context behaves the same. On the collision-free sample of
+Table~\ref{tab:c1} (not the curves plotted here) the purged value even
 \emph{rises} for Qwen ($0.760{\to}0.838$) and Llama, is flat for Gemma, and falls
 materially only for Mistral ($0.878{\to}0.805$). The contrast survives
 removing the context, so it is mostly question--answer compatibility, not context use.}
@@ -386,7 +388,7 @@ families up to a linear map. The direct evidence is geometric: the Procrustes-ma
 source direction is nearly collinear with the target family's \emph{native} direction
 (transported-to-native cosine $0.976$, range $0.95$--$0.99$ over the $12$ ordered
 pairs; Table~\ref{tab:c3}); anchor projection reaches only $0.76$ transfer AUROC
-against Procrustes' $0.901$ (the two are not comparable in cosine, as ACS has no
+against Procrustes' $0.901$ (Fig.~\ref{fig:c3heatmap}) (the two are not comparable in cosine, as ACS has no
 target-space direction). The cosine is far above its
 null: a random or label-shuffled source direction transported through the \emph{same}
 fitted map is essentially orthogonal to the native direction (cosine $0.01$ and $0.13$
@@ -469,7 +471,7 @@ and RAGTruth share no items, so there is no leakage in this transfer. Scored
 honestly, the label-free synthetic axis reaches only $0.54$--$0.66$\,AUROC
 (and drops toward chance for the weakest family), \emph{below} NLI ($0.673$),
 model confidence ($0.62$--$0.72$), and plain lexical overlap ($0.753$), which is
-the single best predictor on RAGTruth. Paired source-passage cluster-bootstraps confirm the
+the single best predictor on RAGTruth (Fig.~\ref{fig:c4}). Paired source-passage cluster-bootstraps confirm the
 ordering against overlap ($\Delta{=}{-}0.097/{-}0.163/{-}0.212$) and confidence
 ($p{<}0.001$, $p{=}0.028$, $p{<}0.001$), though against whole-response NLI only Llama and Gemma separate
 ($p{<}0.001$); Qwen ties ($\Delta{=}{-}0.017$, CI $[-0.051,+0.017]$). Removing the polarity flip
@@ -578,8 +580,9 @@ it almost unchanged, raw $0.95$--$0.98$) and coincides with our synthetic factua
 label by construction, so we cannot claim a context-grounding signal there; only a
 question-fixed cross-strata control ($0.66$--$0.88$) shows any context-sensitive
 component. (ii)~Cell~B has zero yield, so the fully-orthogonalized
-($\mathrm{corr}{\approx}0$) design is not instantiated and all analyses use cells A/C/D
-at $\mathrm{corr}{=}0.565$ (collision-free) with overlap stratification; the realized
+($\mathrm{corr}{\approx}0$) design is not instantiated and all analyses use cells A/C/D,
+where $\mathrm{corr}(S,O){=}0.50$ over all $3{,}593$ rows and $0.565$ on the
+collision-free subset that Table~\ref{tab:c1} and the mid-layer band use; the realized
 data is a three-cell partial factorial, not a balanced $2\times2$, and within $O{=}1$
 the support and synthetic factuality labels are the identical vector, so
 supp$_{O=1}$ is simultaneously a factuality AUROC. (iii)~The cosine alignment is

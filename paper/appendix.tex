@@ -31,9 +31,9 @@ Before probing we verify closed-book that each model actually prefers the gold a
 with the context removed, we compare the mean answer-token log-probability of
 $a_{\mathrm{true}}$ against $a_{\mathrm{swap}}$ per item. The gold answer wins for
 $84.0\%$ (Qwen), $92.6\%$ (Mistral), $94.8\%$ (Llama) and $95.2\%$ (Gemma) of the
-$1{,}200$ items. All reported results use the full set; the extraction code also
-supports restricting the analysis to this ``knows-gold'' subset
-(\texttt{-{}-knows-gold-only}).
+$1{,}200$ items. All reported results use the full set; the per-item flag is released in
+the \texttt{parametric\_belief.npz} caches and the analysis library accepts a knows-gold
+mask, but no script in the released pipeline conditions on it.
 
 \paragraph{Artifacts and licenses.}
 We use NQ-Swap \citep{longpre2021nqswap} and RAGTruth \citep{niu2024ragtruth} under the

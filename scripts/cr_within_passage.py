@@ -1,8 +1,10 @@
 """Strictest leakage control: AUROC computed ONLY over same-passage response pairs.
 Removes every between-passage channel, stricter than passage-grouped CV."""
 import sys, os, json, time, numpy as np
-sys.path.insert(0,'/home/kun/Desktop/GroundLM/scripts'); sys.path.insert(0,'/home/kun/Desktop/GroundLM/src')
-os.chdir('/home/kun/Desktop/GroundLM')
+_HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, _HERE)
+sys.path.insert(0, os.path.join(_HERE, "..", "src"))
+os.chdir(os.path.join(_HERE, ".."))
 from _cr_common import load, apriori_layer, auroc, seeded_group_folds
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler

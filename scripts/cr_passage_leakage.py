@@ -1,8 +1,9 @@
 """Passage-leakage audit of the RAGTruth in-domain probe (reviewer En8z, claims a-d)."""
 import sys, os, json, time, numpy as np
-sys.path.insert(0, '/home/kun/Desktop/GroundLM/scripts')
-sys.path.insert(0, '/home/kun/Desktop/GroundLM/src')
-os.chdir('/home/kun/Desktop/GroundLM')
+_HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, _HERE)
+sys.path.insert(0, os.path.join(_HERE, "..", "src"))
+os.chdir(os.path.join(_HERE, ".."))
 from _cr_common import load, apriori_layer, auroc, seeded_group_folds, stat
 from groundlm.probe.confidence import purge
 from sklearn.linear_model import LogisticRegression
