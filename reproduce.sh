@@ -19,8 +19,8 @@ fi
 # repository. Fail loudly rather than half-way through if they are absent.
 if [ "$STAGE" != "extract" ] && ! ls runs/*/features.npz >/dev/null 2>&1; then
   echo "ERROR: no runs/*/features.npz found." >&2
-  echo "  Download the cached features from the archive named in the paper appendix," >&2
-  echo "  or regenerate them with:  bash reproduce.sh extract   (needs one A100-40G)." >&2
+  echo "  The 2.4 GB caches are not redistributed; regenerate them with:" >&2
+  echo "    bash reproduce.sh extract     (needs one A100-40G)" >&2
   exit 1
 fi
 

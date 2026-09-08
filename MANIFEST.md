@@ -30,7 +30,7 @@ bash reproduce.sh extract    # regenerate the features on one A100-40G
 ```
 
 Stage B needs `runs/*/features.npz` (2.4 GB), which is too large for the repository and
-is archived separately; the paper's appendix names the archive. `reproduce.sh` checks
+is not redistributed; `bash reproduce.sh extract` regenerates it. `reproduce.sh` checks
 for it and exits with instructions rather than failing part-way.
 
 ## Paper → producer

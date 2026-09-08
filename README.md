@@ -60,9 +60,9 @@ bash reproduce.sh
 ```
 
 Stage B (the default) recomputes every number, table and figure on CPU from cached
-residual-stream features. Those caches are 2.4 GB and live in a separate archive, named
-in the paper's appendix; `reproduce.sh` checks for them and tells you what to do if they
-are missing. `bash reproduce.sh extract` regenerates them from scratch on one A100-40G.
+residual-stream features. Those caches are 2.4 GB and are not redistributed;
+`bash reproduce.sh extract` regenerates them from the released datasets on one
+A100-40G, and `reproduce.sh` checks for them and says so if they are missing.
 
 `MANIFEST.md` maps each table, figure and quoted number to the script that produces it.
 
