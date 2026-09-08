@@ -12,7 +12,7 @@ and the shared helpers in `scripts/_cr_common.py`:
 |---|---|
 | Grouping | **source**, not record. CtrlPairs: normalized `(question, context, answer)` triple of the underlying NQ-Swap QA (1,200 cell-A rows → 555 groups). RAGTruth: normalized source passage (2,000 responses → 450 groups). `item_id` indexes a swap record / a single response and does **not** isolate sources. |
 | Residualization | fitted inside each training fold, applied to that fold's test rows |
-| Scoring | signed AUROC; polarity fixed on the training fold; no `max(AUC, 1-AUC)` anywhere |
+| Scoring | signed AUROC; polarity fixed on the training fold. No reported number uses `max(AUC, 1-AUC)`: the helper is named `auroc_maxflip` and is imported only by the `cr_protocol_audit_*` scripts, whose job is to report what the flip cost. |
 | Folds | explicitly seeded group splitter (`seeded_group_folds`), mean ± sd over 10 splits |
 | Intervals | cluster bootstrap over source groups, B = 2000 |
 | Layer | fixed a priori at relative depth 0.5, never argmax-selected |
@@ -54,9 +54,8 @@ for it and exits with instructions rather than failing part-way.
 | §5.4 paired baseline tests | `scripts/cr_final_tables.py`, `scripts/cr_band_and_pairs.py` | `runs/*_rt/features.npz` | `runs/cr_final_tables.json` → `table3`, `runs/cr_band_and_pairs.json` → `c4_paired` |
 | §5.4 in-domain with overlap residualized | `scripts/cr_joint_grouped_foldlocal.py` | `runs/*_rt/features.npz`, `data/ragtruth.jsonl` | `runs/cr_joint_grouped_foldlocal.json` |
 | App. mid-layer band | `scripts/cr_band_and_pairs.py` | `runs/*_v2/features.npz` | `runs/cr_band_and_pairs.json` → `band` |
-| App. fold-split sensitivity | `scripts/cr_estimator_domain_control.py` | `runs/*_rt/features.npz` | `runs/cr_estimator_domain_control.json` |
-| App. parametric-belief rates | extraction stage | `runs/*_v2/parametric_belief.npz` | — |
-| App. estimator × domain control | `scripts/cr_estimator_domain_control.py` | `runs/*_v2/features.npz`, `runs/*_rt/features.npz` | `runs/cr_estimator_domain_control.json` |
+| App. fold-split sensitivity (split-to-split sd) | `scripts/cr_final_tables.py` | `runs/*_v2/features.npz`, `runs/*_rt/features.npz` | `runs/cr_final_tables.json` → `table1`/`table3` `sd` |
+| App. parametric-belief rates | extraction stage (`scripts/run_extract.py`) | — | `runs/*_v2/parametric_belief.npz` (released) |
 
 ## Audit artifacts
 
@@ -72,6 +71,12 @@ checks can be repeated:
 | Does the probe survive a within-passage-only comparison? | `scripts/cr_within_passage.py` | `runs/cr_within_passage.json` |
 | Where did `max(AUC, 1-AUC)` actually bind? | `scripts/cr_protocol_audit_flip.py` | `runs/cr_protocol_audit_flip.json` |
 | Signed RAGTruth AUROCs, pooled and per task | `scripts/cr_signed_auroc_ragtruth.py` | `runs/cr_signed_auroc_ragtruth.json` |
+| Is the RAGTruth gap the training domain or the estimator? | `scripts/cr_estimator_domain_control.py` | `runs/cr_estimator_domain_control.json` |
+
+`runs/*_rt/report_gate_ragtruth.json` and `runs/c1_apriori.json` are the **pre-correction**
+record (GroupKFold over `item_id`, transductive purge). They are cited nowhere in the paper
+and their values deliberately differ from Tables 1 and 3; `scripts/cr_final_tables.py` is the
+producer of record.
 
 ## Data
 

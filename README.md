@@ -44,7 +44,7 @@ src/groundlm/
   transfer/procrustes.py       cross-family orthogonal Procrustes, ACS baseline
 
 scripts/
-  cr_final_tables.py       every reported table number, one protocol
+  cr_final_tables.py       every number in Tables 1, 3 and 4, one protocol
   _cr_common.py            grouping, seeded folds, lazy feature loading
   make_figures.py          Figures 1-4
   harden_analyses.py       C3 cosine, cell-C contamination, per-task C4
@@ -78,8 +78,10 @@ choices were wrong:
   by response id.
 - **Residualization is fold-local**, fitted on the training fold and applied to its test
   rows.
-- **AUROC is signed.** Polarity is fixed on the training fold; `max(AUC, 1-AUC)` is used
-  nowhere, since it floors a non-predictive direction above 0.5.
+- **AUROC is signed.** Polarity is fixed on the training fold. No reported number uses
+  `max(AUC, 1-AUC)`, since it floors a non-predictive direction above 0.5; the helper is
+  named `auroc_maxflip` and only the `cr_protocol_audit_*` scripts call it, to report
+  what the old convention cost.
 - Folds come from an explicitly seeded splitter rather than `GroupKFold`, whose fold
   assignment depends on `np.argsort` tie-breaking and therefore on the numpy version.
 

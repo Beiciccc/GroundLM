@@ -106,7 +106,11 @@ for m in RT_MODELS:
     out["in_domain"][m] = {"layer": int(L), "auroc": a_in, "ci": ci, "auroc_no_overlap": a_no,
                            "overlap_auroc": auroc(ov, y), "vs_overlap_diff": dmean, "vs_overlap_ci": dci, "vs_overlap_p": p}
     print(f"  {m}: in-dom={a_in:.3f} CI[{ci[0]:.3f},{ci[1]:.3f}] -ov={a_no:.3f} | vs overlap d={dmean:+.3f} p={p:.3f}")
-    # wire into gate json
+    # Wire into the gate json. NOTE: this block predates the corrected protocol -- it uses
+    # GroupKFold over item_id (row-level on RAGTruth) rather than a seeded splitter over
+    # source passages, so `in_domain` here (0.767/0.824/0.799) is NOT Table 3's
+    # 0.765/0.814/0.797. Table 3 comes from scripts/cr_final_tables.py; these gate reports
+    # are kept as the pre-correction record and are cited nowhere in the paper.
     gp = f"runs/{m}_rt/report_gate_ragtruth.json"
     rep = json.load(open(gp)) if os.path.exists(gp) else {}
     rep.setdefault("metrics", {})["in_domain"] = {"auroc": a_in, "ci": ci}
@@ -141,8 +145,9 @@ for m, L in CP.items():
 
 # ============ C. C3 cosine + map-aware/shuffled nulls (source-QA-grouped) ============
 # The calibration/evaluation split is grouped by the normalised source QA triple, not by
-# item_id: item_id indexes a swap record, and 903 of the 1,200 cell-A rows have a
-# byte-identical twin under a different item_id, so an item_id split leaves those twins
+# item_id: item_id indexes a swap record, and 903 of the 1,200 cell-A rows have an
+# identical twin (after case/whitespace normalization) under a different item_id, so an
+# item_id split leaves those twins
 # on both sides of the boundary. Same grouping as every other reported estimate.
 print("=== C. C3 alignment (cosine + nulls, source-QA-grouped) ===")
 def c3_runs():
@@ -240,7 +245,8 @@ print(f"  overlap pooled={out['c4_pertask']['overlap_pooled']:.3f} macro={out['c
 print("  faithful-rate:", {k: round(v, 3) for k, v in pt["faithful_rate"].items()})
 
 json.dump(out, open("runs/hardened.json", "w"), indent=2, default=float)
-# c1_apriori.json is the committed producer of paper Table 1 (a-priori depth-0.5 layers).
+# Legacy pre-correction C1 estimates (item_id folds, transductive purge). Paper Table 1
+# comes from scripts/cr_final_tables.py; these values do NOT match it. Kept for the record.
 json.dump({m: {"layer": v["layer"], "raw": v["supp_O1_raw"], "purged": v["supp_O1_conf_purged"],
                "logp": v["logprob_only"], "cross": v["cross_strata_AvsC"],
                "clean": out["cellC"].get(f"supp_O1_clean_{m}")} for m, v in out["c1"].items()},

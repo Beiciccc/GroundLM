@@ -13,7 +13,7 @@ import numpy as np
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 sys.path.insert(0, os.path.dirname(__file__))
-from _cr_common import LazyNpz, load, apriori_layer, collision_map, auroc, auroc_signed  # noqa: E402
+from _cr_common import LazyNpz, load, apriori_layer, collision_map, auroc_maxflip as auroc, auroc_signed  # noqa: E402
 from groundlm.probe.directions import fit_direction, project                             # noqa: E402
 from groundlm.probe.confidence import purge                                              # noqa: E402
 from sklearn.model_selection import GroupKFold                                           # noqa: E402

@@ -9,10 +9,10 @@ cd "$(dirname "$0")/.."
 MAX_ITEMS=${MAX_ITEMS:-1200}; RT_ITEMS=${RT_ITEMS:-2000}; LAYERS=${LAYERS:-mid}
 
 echo "### BUILD datasets (CtrlPairs-v2 + RAGTruth, with NLI baselines) ###"
-[ -f data/ctrlpairs_v2.jsonl ] || PYTHONPATH=src python scripts/build_v2.py \
+[ -f data/ctrlpairs_v2.jsonl ] || PYTHONPATH=src python3 scripts/build_v2.py \
   --paraphraser "" --max-items "$MAX_ITEMS" \
   --out data/ctrlpairs_v2.jsonl --belief-out data/belief_items.jsonl || { echo BUILD_CP_FAILED; exit 1; }
-[ -f data/ragtruth.jsonl ] || PYTHONPATH=src python scripts/build_ragtruth.py \
+[ -f data/ragtruth.jsonl ] || PYTHONPATH=src python3 scripts/build_ragtruth.py \
   --max-items "$RT_ITEMS" --out data/ragtruth.jsonl || echo "RAGTruth build failed (continuing)"
 
 # short:hf_id:batch_size  (large vocab -> smaller batch; Gemma 256k vocab -> 2)
@@ -26,18 +26,18 @@ CP_DIRS=()
 for entry in "${MODELS[@]}"; do
   IFS=: read -r short mid bs <<< "$entry"
   echo "### EXTRACT $short ($mid, bs=$bs) ###"
-  if PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True PYTHONPATH=src python scripts/run_extract.py \
+  if PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True PYTHONPATH=src python3 scripts/run_extract.py \
        --model "$mid" --ctrlpairs data/ctrlpairs_v2.jsonl --belief-items data/belief_items.jsonl \
        --layers "$LAYERS" --batch-size "$bs" --out-dir "runs/${short}_v2"; then
     CP_DIRS+=("runs/${short}_v2")
     if [ -f data/ragtruth.jsonl ]; then
       echo "### EXTRACT $short RAGTruth (max-len 2048) ###"
-      PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True PYTHONPATH=src python scripts/run_extract.py \
+      PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True PYTHONPATH=src python3 scripts/run_extract.py \
         --model "$mid" --ctrlpairs data/ragtruth.jsonl --belief-items "" \
         --layers "$LAYERS" --batch-size "$bs" --max-len 2048 --out-dir "runs/${short}_rt" \
-        && PYTHONPATH=src python scripts/analyze_gate_ragtruth.py --cp-dir "runs/${short}_v2" --rt-dir "runs/${short}_rt" || echo "rt failed $short"
+        && PYTHONPATH=src python3 scripts/analyze_gate_ragtruth.py --cp-dir "runs/${short}_v2" --rt-dir "runs/${short}_rt" || echo "rt failed $short"
     fi
-    PYTHONPATH=src python scripts/analyze_v2.py --dir "runs/${short}_v2" || true
+    PYTHONPATH=src python3 scripts/analyze_v2.py --dir "runs/${short}_v2" || true
   else
     echo "### SKIP $short (extract failed — gated/OOM) ###"
   fi
@@ -47,6 +47,6 @@ done
 
 if [ "${#CP_DIRS[@]}" -ge 2 ]; then
   echo "### C3 TRANSFER across ${CP_DIRS[*]} ###"
-  PYTHONPATH=src python scripts/analyze_transfer_v2.py --dirs "${CP_DIRS[@]}" || true
+  PYTHONPATH=src python3 scripts/analyze_transfer_v2.py --dirs "${CP_DIRS[@]}" || true
 fi
 echo "### STRENGTHEN_DONE (models ok: ${CP_DIRS[*]:-none}) ###"

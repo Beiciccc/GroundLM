@@ -29,7 +29,7 @@ from sklearn.preprocessing import StandardScaler
 sys.path.insert(0, os.path.dirname(__file__))
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 from groundlm.probe.directions import fit_direction, project        # noqa: E402
-from _cr_common import (load, apriori_layer, auroc, auroc_signed,    # noqa: E402
+from _cr_common import (load, apriori_layer, auroc_signed as auroc,    # noqa: E402
                         seeded_group_folds, collision_map, stat)
 
 MODELS4 = ["qwen25_7b", "mistral7b_v03", "llama31_8b", "gemma2_9b"]

@@ -22,13 +22,14 @@ SOFTWARE.
 
 ---
 
-This licence covers the code in this repository (src/, scripts/, deploy/).
+This licence covers the code in this repository (src/, scripts/).
 
 The constructed datasets in data/ are derived from third-party corpora and
 inherit their terms: data/ctrlpairs_v2.jsonl and data/belief_items.jsonl derive
-from NQ-Swap (MIT, via pminervini/NQ-Swap, itself derived from Natural
-Questions), and data/ragtruth.jsonl derives from RAGTruth (MIT, via
-wandb/RAGTruth-processed).
+from the pminervini/NQ-Swap HuggingFace distribution (MIT) of NQ-Swap (Longpre
+et al., 2021, whose own release is under the Apple Sample Code License), itself
+derived from Natural Questions; and data/ragtruth.jsonl derives from RAGTruth
+(MIT, via wandb/RAGTruth-processed).
 
 This work is "Built with Llama": Llama-3.1-8B-Instruct is used under the Llama
 3.1 Community License. Gemma-2-9B-it is used under the Gemma Terms of Use.

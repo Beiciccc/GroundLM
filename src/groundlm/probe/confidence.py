@@ -4,13 +4,13 @@ Hypothesis: softmax confidence and activation norm absorb the PARAMETRIC-
 FACTUALITY axis far more than the CONTEXT-FAITHFULNESS axis, so faithfulness is
 the confidence-independent residual.
 
-We "purge" confidence by residualizing every hidden dimension on a set of
-confound regressors (max-softmax, answer log-prob, activation L2 norm, answer
-length, context-answer lexical overlap), then refit each probe on the residual
-features. "Absorption" for an axis is the share of its above-chance probe AUROC
-that disappears under purging:
-
-    absorbed = (auroc_raw - auroc_purged) / (auroc_raw - 0.5)
+We "purge" confidence by residualizing every hidden dimension on the confound
+set passed in, then refit each probe on the residual features. Every reported
+number uses CONFOUND_GROUPS["confidence"], the three teacher-forced confidence
+scalars: mean answer log-prob, mean max-softmax, first-token max-softmax.
+"Absorption" for an axis is the adjusted R^2 of that axis's projection regressed
+on those scalars, i.e. the share of the axis coordinate confidence reproduces.
+A purge-then-refit AUROC delta is reported only as a secondary diagnostic.
 
 The headline test is the ASYMMETRY: absorbed(factuality) - absorbed(faithfulness),
 with a bootstrap CI and a one-sided p-value for "> 0".
@@ -72,12 +72,12 @@ def absorbed_fraction(X: ArrayF, y: ArrayF, confounds: ArrayF, *,
                       method: str = "mass_mean", folds: int = 5, seed: int = 0) -> dict:
     """How much of an axis is "confidence".
 
-    Primary metric ``absorbed`` = R^2 of the axis projection explained by the
-    confounds (max-softmax, log-prob, activation norm, length, lexical overlap).
-    This directly measures the share of the axis coordinate that confidence can
-    reproduce and — unlike a purge-then-refit AUROC delta — is not confounded by
-    the *denoising* side effect of residualizing on activation norm. We also
-    report raw/purged AUROC as secondary diagnostics.
+    Primary metric ``absorbed`` = adjusted R^2 of the axis projection explained
+    by whatever ``confounds`` are passed (for every reported number, the three
+    confidence scalars). This measures the share of the axis coordinate the
+    confounds reproduce and, unlike a purge-then-refit AUROC delta, is not
+    confounded by the denoising side effect of residualizing. Raw and purged
+    AUROC are also returned, as secondary diagnostics.
     """
     d = fit_direction(X, y, method=method)
     s = project(X, d)

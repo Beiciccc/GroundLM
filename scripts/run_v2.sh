@@ -14,7 +14,7 @@ PARAPHRASER="${PARAPHRASER:-Qwen/Qwen2.5-7B-Instruct}"   # '' to skip cell B (ce
 LAYERS="${LAYERS:-mid}"
 
 echo "=== Step 1: build decoupled CtrlPairs-v2 (cell-B paraphrase on GPU) ==="
-PYTHONPATH=src python scripts/build_v2.py --source "$SOURCE" --split "$SPLIT" \
+PYTHONPATH=src python3 scripts/build_v2.py --source "$SOURCE" --split "$SPLIT" \
   --max-items "$MAX_ITEMS" --paraphraser "$PARAPHRASER" --device cuda \
   --out data/ctrlpairs_v2.jsonl --belief-out data/belief_items.jsonl
 
@@ -29,7 +29,7 @@ declare -A MODELS=(
 echo "=== Step 2: extract per model (one GPU each) ==="
 n_gpu=$(nvidia-smi -L | wc -l); gpu=0
 for short in "${!MODELS[@]}"; do
-  CUDA_VISIBLE_DEVICES=$gpu PYTHONPATH=src python scripts/run_extract.py \
+  CUDA_VISIBLE_DEVICES=$gpu PYTHONPATH=src python3 scripts/run_extract.py \
     --model "${MODELS[$short]}" --ctrlpairs data/ctrlpairs_v2.jsonl \
     --belief-items data/belief_items.jsonl --layers "$LAYERS" \
     --out-dir "runs/${short}_v2" > "runs_${short}_v2.log" 2>&1 &
@@ -40,16 +40,16 @@ wait
 echo "=== Step 3: per-model C1/C2 analysis ==="
 for short in "${!MODELS[@]}"; do
   echo "--- $short ---"
-  PYTHONPATH=src python scripts/analyze_v2.py --dir "runs/${short}_v2" || true
+  PYTHONPATH=src python3 scripts/analyze_v2.py --dir "runs/${short}_v2" || true
 done
 
 echo "=== Step 4: C3 cross-family transfer (all models) ==="
-PYTHONPATH=src python scripts/analyze_transfer_v2.py --dirs runs/*_v2 || true
+PYTHONPATH=src python3 scripts/analyze_transfer_v2.py --dirs runs/*_v2 || true
 
 echo "=== Step 5: C4 two-axis conformal gate (per model) ==="
 for short in "${!MODELS[@]}"; do
   echo "--- $short ---"
-  PYTHONPATH=src python scripts/analyze_gate_v2.py --dir "runs/${short}_v2" || true
+  PYTHONPATH=src python3 scripts/analyze_gate_v2.py --dir "runs/${short}_v2" || true
 done
 
 echo "v2 done."

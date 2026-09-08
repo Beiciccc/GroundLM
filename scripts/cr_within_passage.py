@@ -5,7 +5,7 @@ _HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, _HERE)
 sys.path.insert(0, os.path.join(_HERE, "..", "src"))
 os.chdir(os.path.join(_HERE, ".."))
-from _cr_common import load, apriori_layer, auroc, seeded_group_folds
+from _cr_common import load, apriori_layer, auroc_signed as auroc, seeded_group_folds
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
 from joblib import Parallel, delayed

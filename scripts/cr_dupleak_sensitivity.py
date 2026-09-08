@@ -15,7 +15,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
-from _cr_common import load, apriori_layer, auroc, seeded_group_folds, collision_map, stat
+from _cr_common import load, apriori_layer, auroc_signed as auroc, seeded_group_folds, collision_map, stat
 from groundlm.probe.directions import fit_direction, project
 
 MODELS = ["qwen25_7b", "mistral7b_v03", "llama31_8b", "gemma2_9b"]

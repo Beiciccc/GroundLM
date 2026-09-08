@@ -36,7 +36,7 @@ $2\times2$ of which we realize three cells, all model-free: the matched
 supported-present cell, a \emph{wrong-question trap} where the answer is present but
 answers a different question (supported${=}$no, overlap${=}$yes), and the usual
 unsupported-absent cell. A paraphrase cell would close
-the design but has zero yield in this release (\S\ref{sec:construction}). This drops $\mathrm{corr}(\textsc{support},\textsc{overlap})$ from
+the design but has zero yield in this release (\S\ref{sec:construction}). This drops $\mathrm{corr}(\textsc{Support},\textsc{Overlap})$ from
 $0.99$ to $0.50$, and, tellingly, an off-the-shelf NLI model is fooled by the
 clean wrong-question trap ${\sim}25\%$ of the time, confirming that lexical overlap
 misleads even ``gold'' entailment checks.
@@ -78,7 +78,7 @@ the apparent ``grounding'' signal to factors other than context use.
     lexical overlap among single-pass API-free baselines; within a task no
     \emph{label-free} internals- or NLI-based signal, including a sentence-level
     SummaC-style NLI baseline, exceeds
-    ${\approx}0.6$ AUROC, and even lexical overlap, the strongest baseline, reaches only
+    ${\approx}0.6$ macro AUROC, and even lexical overlap, the strongest baseline, reaches only
     macro $0.647$. An in-domain probe trained on RAGTruth human
     labels recovers a usable signal ($0.76$--$0.81$ on the three RAGTruth families;
     exceeds a conservative single-hypothesis NLI baseline but ties lexical overlap on
@@ -137,7 +137,7 @@ several. We use one baseline from each family on
 RAGTruth (external NLI, model confidence, and lexical overlap), and find our
 controlled-stimulus axis does not beat them.
 
-\section{The \textsc{Support}$\times$\textsc{Overlap} Construction}
+\section{The \texorpdfstring{\textsc{Support}$\times$\textsc{Overlap}}{Support\texttimes Overlap} Construction}
 \label{sec:construction}
 
 We build matched statements from NQ-Swap \citep{longpre2021nqswap}, which provides,
@@ -183,7 +183,7 @@ label error is purged (Fig.~\ref{fig:decoupling}).
 \begin{figure*}[t]\centering
 \includegraphics[width=0.86\textwidth]{figs/fig_decoupling.pdf}
 \caption{\textbf{Partially decoupling support from lexical overlap.} (a)~The matched
-construction drops $|\mathrm{corr}(\textsc{support},\textsc{overlap})|$ from $0.99$
+construction drops $|\mathrm{corr}(\textsc{Support},\textsc{Overlap})|$ from $0.99$
 (extractive NQ-Swap) to $0.50$ (model-free cells A/C/D), and would reach $\approx 0$
 with the paraphrase cell~B (projected; cell~B has zero yield in this release).
 (b)~Mean NLI entailment by \emph{clean} cell: on the wrong-question trap~(C), where the
@@ -208,7 +208,8 @@ fitted \emph{within} each training fold. AUROC is \emph{signed}: polarity is fix
 the training fold and the test projection scored as-is, with no
 $\max(\mathrm{AUC},1{-}\mathrm{AUC})$ flip anywhere, so a non-predictive direction
 averages to $0.5$ instead of being floored above it. Folds come from a seeded group
-splitter; estimates are mean$\pm$sd over ten splits with source-cluster bootstrap CIs.
+splitter; pooled estimates are mean$\pm$sd over ten splits, with source-cluster
+bootstrap CIs on the first.
 
 \paragraph{Overlap control.}
 To test grounding \emph{beyond} overlap we (i) restrict to the answer-present
@@ -256,8 +257,7 @@ labels \citep{niu2024ragtruth}. Baselines: NLI (the \texttt{DeBERTa-v3-base-mnli
 \citep{nli_checkpoint}, DeBERTaV3 \citep{he2023debertav3} fine-tuned on MNLI, FEVER
 and ANLI \citep{mnli,fever,anli}) in two
 variants, (i)~\emph{whole-response}: a single (context, declarativized-answer)
-entailment query (deliberately simple and conservative for multi-sentence responses);
-and (ii)~\emph{sentence-level}, a SummaC-style decomposition \citep{laban2022summac}
+entailment query; and (ii)~\emph{sentence-level}, a SummaC-style decomposition \citep{laban2022summac}
 that entailment-checks each response sentence against every context sentence, takes the
 max over context, and aggregates over response sentences by mean (SummaC-ZS) or min
 (for tractability we cap context at $60$ sentences and pairs at $256$ tokens, which can
@@ -268,7 +268,8 @@ overlap. Everything is API-free.
 \label{sec:c1}
 \paragraph{Leakage control.}
 Grouping on \textsc{item\_id} is not sufficient, because it isolates swap records, not
-source QAs: $941$ of the $1{,}200$ cell-A rows have a byte-identical twin under a different
+source QAs: $941$ of the $1{,}200$ cell-A rows have an identical twin (after case/whitespace
+normalization) under a different
 \textsc{item\_id} (mid-layer cosine $0.9999$), and $903$ of them landed in a different
 fold. We group by the source QA triple instead
 ($555$ groups), for the C1 cross-validation, the Procrustes calibration split
@@ -285,7 +286,7 @@ Table~\ref{tab:c1} reports support decodability within the answer-present stratu
 $O{=}1$ (cells A vs.\ C), where lexical overlap is held constant, on the
 \emph{collision-free} cells: we drop the $23.2\%$ of cell-C items whose donor question
 is string-identical to the original (\S\ref{sec:construction}), which would otherwise
-mislabel genuinely-supported items as unsupported. Three observations bound the
+mislabel genuinely-supported items as unsupported. Four observations bound the
 interpretation. First, the raw within-stratum AUROC is \emph{near-ceiling}
 ($0.99$; $0.988$--$0.998$ across families): once mislabels are removed, $A$ and $C$ are
 almost perfectly separable. We read this less as strong grounding than as evidence
@@ -327,8 +328,8 @@ Gemma   & 21 & 0.998 & 0.811 & 0.827 \\
 \caption{\textbf{C1 (confound-controlled, collision-free).} Layer fixed a priori at
 relative depth $0.5$; folds grouped by \emph{source QA} ($555$ groups over $1{,}200$
 records); polarity resolved on the train fold and scored signed; donor-collision cell-C
-mislabels removed (\S\ref{sec:construction}; $n_A{=}1200$, $n_C{=}922$). Each entry is
-the mean over ten seeded splits (sd $\le0.002$). supp$_{O=1}$ is support AUROC within
+mislabels removed (\S\ref{sec:construction}; $n_A{=}1{,}200$, $n_C{=}922$). Each entry is
+the mean over ten seeded splits (sd $\le0.003$). supp$_{O=1}$ is support AUROC within
 the answer-present stratum, near-ceiling once mislabels are removed, because the
 contrast varies only the question (source-cluster $95\%$ CIs $[0.983,0.992]$,
 $[0.993,0.998]$, $[0.995,0.999]$, $[0.997,0.999]$). \emph{$+$conf}: hidden states
@@ -344,7 +345,7 @@ make no distinctness claim.}
 \caption{\textbf{The within-stratum contrast peaks mid-layer, but it is not grounding.}
 Cross-validated AUROC vs.\ relative layer depth for the support contrast within the
 answer-present stratum ($O{=}1$, where overlap is uninformative): raw, and after
-purging model confidence; the grey line is a log-probability baseline. The contrast is
+purging model confidence; the gray line is a log-probability baseline. The contrast is
 high and stable through mid layers on all four families. Curves use the same
 source-grouped, signed protocol as Table~\ref{tab:c1} but \emph{retain} the
 donor-collision mislabels, hence their lower level ($\approx0.87$ raw): removing those
@@ -465,12 +466,11 @@ test-fold flip, because flipping per-test inflates a near-chance axis; CtrlPairs
 and RAGTruth share no items, so there is no leakage in this transfer. Scored
 honestly, the label-free synthetic axis reaches only $0.54$--$0.66$\,AUROC
 (and drops toward chance for the weakest family), \emph{below} NLI ($0.673$),
-model confidence ($0.62$--$0.72$), and plain lexical overlap ($0.753$), which is
-the single best predictor on RAGTruth (Fig.~\ref{fig:c4}). Paired source-passage cluster-bootstraps confirm the
+model confidence ($0.62$--$0.72$), and plain lexical overlap ($0.753$), the
+strongest label-free baseline on RAGTruth (Fig.~\ref{fig:c4}). Paired source-passage cluster-bootstraps confirm the
 ordering against overlap ($\Delta{=}{-}0.097/{-}0.163/{-}0.212$) and confidence
 ($p{<}0.001$, $p{=}0.028$, $p{<}0.001$), though against whole-response NLI only Llama and Gemma separate
-($p{<}0.001$); Qwen ties ($\Delta{=}{-}0.017$, CI $[-0.051,+0.017]$). Removing the polarity flip
-can only lower these numbers, so the negative is if anything understated.
+($p{<}0.001$); Qwen ties ($\Delta{=}{-}0.017$, CI $[-0.051,+0.017]$).
 A more sophisticated sentence-level NLI baseline (SummaC-style, max entailment over
 context sentences) does no better: pooled $0.614$/$0.664$ and within-task macro
 $0.596$/$0.579$ (mean/min), essentially tied with the whole-response NLI ($0.582$) and
@@ -493,7 +493,7 @@ annotation.
 \setlength{\tabcolsep}{3.5pt}
 \begin{tabular}{@{}lccc|cc@{}}
 \toprule
- & \multicolumn{2}{c}{label-free} & labelled & NLI & overlap \\
+ & \multicolumn{2}{c}{label-free} & labeled & NLI & overlap \\
 model & synth-$d_S$ & conf & in-dom$^{\dagger}$ & & \\
 \midrule
 Qwen2.5 & 0.657 & 0.723 & 0.765 & 0.673 & 0.753 \\
@@ -593,7 +593,7 @@ extracted no other pooling and cannot test the alternative here, so the RAGTruth
 results should be read as specific to this choice. All four
 instruction-tuned models are also probed with a single raw completion template rather
 than their chat templates; this sensitivity is untested. (vi)~Support labels are validated
-automatically and by a $40$-item manual audit of clean cell~C ($0/40$ mislabelled), not
+automatically and by a $40$-item manual audit of clean cell~C ($0/40$ mislabeled), not
 by a multi-annotator study with agreement statistics. (vii)~Stronger internals
 detectors (e.g.\ ReDeEP \citep{sun2025redeep}) and sampling-based methods
 \citep{manakul2023selfcheckgpt} are out of
@@ -610,6 +610,6 @@ against a lexical-overlap baseline on in-domain human labels before claiming it 
 deployable. CtrlPairs is constructed automatically from NQ-Swap Wikipedia
 text and involves no new human subjects, no new annotation, and no personally
 identifying information beyond what the source corpora already contain; the
-``wrong-question'' items are deliberately mislabelled stimuli for probing and are not
+``wrong-question'' items are deliberately mislabeled stimuli for probing and are not
 intended as training data. All experiments are inference-only on a single A100-40G,
 with no model training or fine-tuning.

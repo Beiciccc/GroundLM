@@ -68,8 +68,10 @@ def band_layers(meta, lo=0.4, hi=0.6):
     return [L for L in meta["layers"] if lo <= L / meta["n_layers"] <= hi]
 
 
-def auroc(s, y):
-    """Polarity-corrected AUROC -- the max(AUC, 1-AUC) convention used in the paper."""
+def auroc_maxflip(s, y):
+    """max(AUC, 1-AUC). The PRE-REVISION convention. No reported number uses it:
+    it is retained only so scripts/cr_protocol_audit_flip.py can show what it cost.
+    See the protocol note at the top of this file."""
     y = np.asarray(y).astype(int)
     if len(np.unique(y)) < 2:
         return float("nan")

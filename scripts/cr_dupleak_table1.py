@@ -21,7 +21,7 @@ import json, sys, os, collections, time
 import numpy as np
 sys.path.insert(0, os.path.dirname(__file__))
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
-from _cr_common import load, apriori_layer, auroc, seeded_group_folds, collision_map, stat
+from _cr_common import load, apriori_layer, auroc_signed as auroc, seeded_group_folds, collision_map, stat
 from groundlm.probe.directions import fit_direction, project
 from groundlm.probe.confidence import purge
 

@@ -25,7 +25,7 @@ python -m groundlm.data.build_ctrlpairs --source "$SOURCE" --max-items "$MAX_ITE
 gpu=0
 for short in "${!MODELS[@]}"; do
   echo "=== $short on GPU $gpu ==="
-  CUDA_VISIBLE_DEVICES=$gpu PYTHONPATH=src python scripts/run_pilot.py \
+  CUDA_VISIBLE_DEVICES=$gpu PYTHONPATH=src python3 scripts/run_pilot.py \
     --model "${MODELS[$short]}" --source "$SOURCE" --max-items "$MAX_ITEMS" \
     --layers "$LAYERS" --pooling "$POOLING" \
     --ctrlpairs data/ctrlpairs.jsonl --out-dir "runs/$short" &

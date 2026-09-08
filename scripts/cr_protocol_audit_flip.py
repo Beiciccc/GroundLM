@@ -12,7 +12,7 @@ import numpy as np
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 sys.path.insert(0, os.path.dirname(__file__))
-from _cr_common import load, apriori_layer, auroc, auroc_signed        # noqa: E402
+from _cr_common import load, apriori_layer, auroc_maxflip as auroc, auroc_signed        # noqa: E402
 from groundlm.probe.directions import fit_direction, project, _unit    # noqa: E402
 from groundlm.probe.confidence import purge                            # noqa: E402
 from groundlm.transfer.procrustes import fit_map, transport_direction  # noqa: E402

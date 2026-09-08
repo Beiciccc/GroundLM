@@ -237,18 +237,18 @@ def fig_c4_ragtruth():
     overlap = [g(m, "lexical_overlap") for m, _ in fams]
     indom = [g(m, "in_domain") for m, _ in fams]
     fams = [n for _, n in fams]
-    methods = [("synth $d_S$ (ours, label-free)", synth, BLUE, None),
+    methods = [("synth $d_S$ (label-free)", synth, BLUE, None),
                ("NLI", nli, GRAY, None), ("lexical overlap", overlap, VERM, None),
-               ("in-domain probe (uses labels)", indom, GREEN, "//")]
-    fig, ax = plt.subplots(figsize=(3.5, 2.5))
+               ("in-domain (labeled)", indom, GREEN, "//")]
+    fig, ax = plt.subplots(figsize=(2.9, 2.25))
     x = np.arange(len(fams)); w = 0.2
     for k, (lab, vals, col, hatch) in enumerate(methods):
         ax.bar(x + (k - 1.5) * w, vals, w, label=lab, color=col, hatch=hatch, edgecolor="white", linewidth=0.3)
     ax.axhline(0.5, ls="--", lw=0.7, color="k")
-    ax.text(2.5, 0.506, "chance", fontsize=7, ha="left", va="bottom", color="0.3")
+    ax.text(2.5, 0.506, "chance", fontsize=8, ha="left", va="bottom", color="0.3")
     ax.set_xticks(x); ax.set_xticklabels([f.split("-")[0] for f in fams])
     ax.set_ylabel("hallucination-detection AUROC"); ax.set_ylim(0.5, 0.85); ax.set_xlim(-0.55, 3.0)
-    ax.legend(loc="upper center", bbox_to_anchor=(0.5, 1.34), ncol=2, fontsize=7, handlelength=1.3)
+    ax.legend(loc="upper center", bbox_to_anchor=(0.5, 1.30), ncol=2, fontsize=8.5, handlelength=1.2, columnspacing=1.0)
     save(fig, "fig_c4_ragtruth")
 
 

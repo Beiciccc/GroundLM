@@ -7,6 +7,8 @@ __pycache__/
 # JSONs in runs/ ARE tracked, so the CPU analysis/figures are reproducible.
 runs/**/features.npz
 *.npz
+# ...but the 120 KB parametric-belief caches ARE released (App. "Parametric-belief check").
+!runs/*_v2/parametric_belief.npz
 *.npz.meta.json
 # SummaC sentence-NLI checkpoint cache (rebuilt by scripts/nli_sentence_ragtruth.py)
 runs/_nli_sent_cache/
@@ -46,6 +48,7 @@ deploy/remote.py
 # ACL PubCheck output
 errors-main*.json
 errors-main*.png
+paper/main-*_*.png
 
 # scratch output of scripts/generate_bib.py (references.bib is hand-maintained)
 paper/references.bib.generated

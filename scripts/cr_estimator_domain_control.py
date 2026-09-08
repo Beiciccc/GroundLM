@@ -30,7 +30,7 @@ from sklearn.metrics import roc_auc_score
 sys.path.insert(0, os.path.dirname(__file__))
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 from groundlm.probe.directions import fit_direction, project   # noqa: E402
-from _cr_common import load, auroc, seeded_group_folds, stat     # noqa: E402
+from _cr_common import load, auroc_signed as auroc, seeded_group_folds, stat, passage_groups     # noqa: E402
 
 RT_MODELS = ["qwen25_7b", "llama31_8b", "gemma2_9b"]
 NSEED = int(os.environ.get("NSEED", "20"))
@@ -65,7 +65,9 @@ for m in RT_MODELS:
     Scp = cp["support"].astype(int)
     Xrt = rt.layer(L)
     faith = rt["faithful"].astype(int)
-    item = rt["item_id"]
+    # RAGTruth item_id is a per-response counter, so grouping on it is row-level CV.
+    # Group by normalized source passage, as every other reported RAGTruth estimate does.
+    item = passage_groups()
     ov = rt["lexical_overlap"].astype(np.float64)
 
     # --- arm 1: CtrlPairs + mass-mean -> RAGTruth (the paper's synth-d_S; deterministic) ---
