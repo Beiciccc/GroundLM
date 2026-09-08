@@ -42,3 +42,7 @@ errors-main.json
 
 # personal deployment helper for a rented GPU box; not needed to reproduce anything
 deploy/remote.py
+
+# ACL PubCheck output
+errors-main*.json
+errors-main*.png
