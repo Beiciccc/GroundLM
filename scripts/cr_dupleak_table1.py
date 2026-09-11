@@ -14,7 +14,7 @@ plus two diagnostics:
 Everything else is byte-for-byte the paper's pipeline (scripts/reviewer_analyses.py P4):
 a-priori layer at relative depth 0.5, mask (overlap_measured==1) & collision-free cell-C,
 mass-mean direction fit on train / projected on test, max(AUC,1-AUC), and purge() applied
-to the whole masked sample before CV (exactly as the paper does it).
+to the whole masked sample before CV (deliberately transductive here, to isolate grouping as the only variable; the paper uses a fold-local purge).
 """
 from __future__ import annotations
 import json, sys, os, collections, time

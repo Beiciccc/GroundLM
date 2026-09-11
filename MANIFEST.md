@@ -71,12 +71,26 @@ checks can be repeated:
 | Does the probe survive a within-passage-only comparison? | `scripts/cr_within_passage.py` | `runs/cr_within_passage.json` |
 | Where did `max(AUC, 1-AUC)` actually bind? | `scripts/cr_protocol_audit_flip.py` | `runs/cr_protocol_audit_flip.json` |
 | Signed RAGTruth AUROCs, pooled and per task | `scripts/cr_signed_auroc_ragtruth.py` | `runs/cr_signed_auroc_ragtruth.json` |
+| Reviewer-requested robustness sweep (P1-P6) | `scripts/reviewer_analyses.py` | `runs/reviewer_analyses.json` |
+| Per-layer protocol audit: signed vs flipped, C1 | `scripts/cr_protocol_audit_c1.py` | `runs/cr_protocol_audit_c1.json` |
+| Same, for Figures 2 and 3 | `scripts/cr_protocol_audit_{fig2,fig3}.py` | `runs/cr_protocol_audit_fig{2,3}.json` |
+| Same, for the RAGTruth surface purge and the C2 confound set | `scripts/cr_protocol_audit_{f,g}.py` | `runs/cr_protocol_audit_{f,g}.json` |
+| Duplicate-leakage sensitivity, variant B | `scripts/cr_dupleak_sensitivity.py` | `runs/cr_dupleak_sensitivity_b.json` |
+| Per-entry citation provenance (see note below) | `scripts/generate_bib.py` reads it | `runs/cite_verified.json` |
 | Is the RAGTruth gap the training domain or the estimator? | `scripts/cr_estimator_domain_control.py` | `runs/cr_estimator_domain_control.json` |
 
-`runs/*_rt/report_gate_ragtruth.json` and `runs/c1_apriori.json` are the **pre-correction**
-record (GroupKFold over `item_id`, transductive purge). They are cited nowhere in the paper
-and their values deliberately differ from Tables 1 and 3; `scripts/cr_final_tables.py` is the
-producer of record.
+`runs/*_rt/report_gate_ragtruth.json`, `runs/c1_apriori.json` and
+`runs/qwen25_7b/reanalyze_c2.json` are the **pre-correction** record (GroupKFold over
+`item_id`, transductive purge, and for the last one a superseded v1 pilot). They are cited
+nowhere in the paper and their values deliberately differ from Tables 1 and 3;
+`scripts/cr_final_tables.py` is the producer of record.
+
+`runs/transfer_v2.json` is a deliberate exception: its `random` entries are computed under
+the old `max(AUC, 1-AUC)` convention, and that is the point. They are the producer of the
+appendix's statement that the flip "inflates a true-chance random direction to
+$\approx0.54$--$0.59$" (`support` 0.5439, `factuality` 0.5994). Re-running it under signed
+AUROC would delete the evidence for a claim the paper makes. Every other entry in that file
+is superseded by `runs/hardened.json` and `runs/heldout_procrustes.json`.
 
 ## Data
 

@@ -15,7 +15,7 @@ norm=lambda x:" ".join(x.lower().split())
 _c={}; ctx_id=np.array([_c.setdefault(norm(r['context']),len(_c)) for r in rows])
 
 def within_auroc(s, y, g):
-    """Mann-Whitney concordance restricted to same-group pairs; polarity-flipped like the paper."""
+    """Mann-Whitney concordance restricted to same-group pairs, signed (no polarity flip)."""
     num=0.0; den=0.0
     for p in np.unique(g):
         m=g==p; sp=s[m]; yp=y[m]
@@ -24,7 +24,7 @@ def within_auroc(s, y, g):
         d=a[:,None]-b[None,:]
         num+=(d>0).sum()+0.5*(d==0).sum(); den+=d.size
     v=num/den
-    return float(max(v,1-v)), int(den)
+    return float(v), int(den)
 
 def fit_fold(X,y,tr,te):
     sc=StandardScaler().fit(X[tr])

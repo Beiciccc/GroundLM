@@ -37,7 +37,7 @@ python3 scripts/analyze_nocontext.py      # -> runs/nocontext_ablation.json
 # 2. Cross-family transfer matrix (for the C3 heatmap) and per-model C1/C2.
 python3 scripts/analyze_transfer_v2.py --dirs runs/qwen25_7b_v2 runs/mistral7b_v03_v2 runs/llama31_8b_v2 runs/gemma2_9b_v2 || true
 # 2b. v1 (extractive) confound number for the decoupling figure (CPU; no model).
-python3 scripts/v1_corr.py                # -> runs/v1_corr.json
+python3 scripts/v1_corr.py || echo "WARNING: v1_corr.py needs the HF NQ-Swap dataset (datasets + network); keeping the committed runs/v1_corr.json" >&2
 # 2c. Sentence-level (SummaC-style) NLI baseline on RAGTruth -> Table c4_pertask rows.
 #     Uses the small DeBERTa-MNLI model only (no LLM); ~30 min on CPU,
 #     checkpoints to runs/_nli_sent_cache/ and resumes if interrupted.
@@ -52,15 +52,20 @@ python3 scripts/cr_estimator_domain_control.py  # -> runs/cr_estimator_domain_co
 python3 scripts/cr_c2_and_separability.py       # -> runs/cr_c2_and_separability.json
 python3 scripts/cr_band_and_pairs.py            # -> runs/cr_band_and_pairs.json
 python3 scripts/heldout_procrustes.py           # -> runs/heldout_procrustes.json
-# 2f. Leakage audits released in response to review (cheap; no features needed for the first two).
+# 2f. Leakage audits released in response to review (cheap; only the first needs no features).
 python3 scripts/cr_dupleak_audit.py             # -> runs/cr_dupleak_audit.json
 python3 scripts/cr_dupleak_table1.py            # -> runs/cr_dupleak_table1.json
 python3 scripts/cr_passage_leakage.py           # -> runs/cr_passage_leakage.json
 # 3. Figures (read the JSONs above; no hardcoded results).
 python3 scripts/make_figures.py           # -> paper/figs/*.pdf
 # 4. Paper (needs the ACL style files acl.sty + acl_natbib.bst already in paper/).
-cd paper && pdflatex -interaction=nonstopmode main.tex >/dev/null && bibtex main >/dev/null \
-  && pdflatex -interaction=nonstopmode main.tex >/dev/null && pdflatex -interaction=nonstopmode main.tex >/dev/null
+command -v pdflatex >/dev/null || { echo "ERROR: pdflatex not found; install TeX Live (texlive-latex-recommended, texlive-fonts-recommended, texlive-bibtex-extra)." >&2; exit 1; }
+cd paper
+pdflatex -interaction=nonstopmode main.tex >/dev/null || { echo "ERROR: pdflatex failed:" >&2; sed -n '/^!/,+5p' main.log >&2; exit 1; }
+bibtex main >/dev/null
+pdflatex -interaction=nonstopmode main.tex >/dev/null
+pdflatex -interaction=nonstopmode main.tex >/dev/null
+cd ..
 echo "### DONE -> paper/main.pdf ###"
 # Local method-validation sanity checks (synthetic, fast):
-cd .. && python3 scripts/synth_validation.py >/dev/null && python3 scripts/test_ctrlpairs.py >/dev/null && echo "method-validation checks PASS"
+python3 scripts/synth_validation.py >/dev/null && python3 scripts/test_ctrlpairs.py >/dev/null && echo "method-validation checks PASS"
