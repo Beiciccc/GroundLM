@@ -540,8 +540,10 @@ annotation. That comparison changes the estimator (mass-mean to $L_2$-logistic) 
 training domain at once, so we separate them (Table~\ref{tab:estdom}): holding the
 estimator at mass-mean, the \emph{same} estimator that transfers at $0.596$ from
 CtrlPairs reaches $0.781$ fitted in-domain, whereas swapping mass-mean for
-$L_2$-logistic moves the estimate by at most $0.05$ and in both directions. What
-separates the two is the training domain, not the estimator.
+$L_2$-logistic moves it by at most $0.074$ and in both directions. The two effects do
+not overlap: every domain effect in the table ($0.131$--$0.306$) exceeds every estimator
+effect ($0.016$--$0.074$). What separates the two is the training domain, not the
+estimator.
 
 \begin{table}[t]\centering\small
 \setlength{\tabcolsep}{3.5pt}
@@ -585,8 +587,10 @@ mean    & 0.596 & 0.544 & 0.781 & 0.792 \\
 a-priori layers, scored signed. Column~1 is the synth-$d_S$ column of
 Table~\ref{tab:c4}; the other three hold one factor fixed in turn. Changing the
 training domain is worth ${\approx}0.19$ at a fixed estimator (mass-mean
-$0.596{\to}0.781$); changing the estimator is worth ${\le}0.05$ and moves in both
+$0.596{\to}0.781$); changing it is worth at most $0.074$ and moves in both
 directions --- CtrlPairs-trained logistic is \emph{worse}, and below chance on Gemma.
+The ranges are disjoint: domain effects span $0.131$--$0.306$, estimator effects
+$0.016$--$0.074$.
 The RAGTruth columns are $5$-fold passage-grouped CV over $20$ seeds (sd $\le0.006$) and
 agree with Table~\ref{tab:c4}'s in-domain column to $0.001$.}
 \label{tab:estdom}
@@ -602,7 +606,7 @@ chance ($0.5$).}
 \label{fig:c4}
 \end{figure}
 
-\begin{table}[!t]\centering\small\setlength{\tabcolsep}{3pt}
+\begin{table}[!tb]\centering\small\setlength{\tabcolsep}{3pt}
 \begin{tabular}{@{}lcccc@{}}
 \toprule
 signal & Data2txt & QA & Summary & macro \\

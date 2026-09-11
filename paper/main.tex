@@ -13,6 +13,15 @@
 \usepackage{graphicx}
 \usepackage{enumitem}
 \emergencystretch=2em   % avoid overfull hboxes in the narrow ACL columns
+% Two control tables were added late; the default float limits back the queue up by a
+% page. These affect float PLACEMENT only -- margins, fonts and spacing are untouched.
+\setcounter{topnumber}{3}
+\setcounter{bottomnumber}{2}
+\setcounter{totalnumber}{4}
+\renewcommand{\topfraction}{0.92}
+\renewcommand{\bottomfraction}{0.55}
+\renewcommand{\textfraction}{0.06}
+\renewcommand{\floatpagefraction}{0.70}
 
 \title{Grounding or Lexical Overlap?\\
 A Matched-Pair Study of Internals-Based Faithfulness Probes}
