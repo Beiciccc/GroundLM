@@ -1,6 +1,6 @@
 """Camera-ready control: disentangle TRAINING DOMAIN from ESTIMATOR CAPACITY on RAGTruth.
 
-Table 3 of the submission compares
+Table 4 of the paper compares
     synth-$d_S$  = mass-mean direction fitted on CtrlPairs-v2, applied to RAGTruth
     in-domain    = L2-logistic probe fitted on RAGTruth human labels (grouped CV)
 which changes the training domain AND the estimator at the same time, so "the

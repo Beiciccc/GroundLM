@@ -108,8 +108,8 @@ for m in RT_MODELS:
     print(f"  {m}: in-dom={a_in:.3f} CI[{ci[0]:.3f},{ci[1]:.3f}] -ov={a_no:.3f} | vs overlap d={dmean:+.3f} p={p:.3f}")
     # Wire into the gate json. NOTE: this block predates the corrected protocol -- it uses
     # GroupKFold over item_id (row-level on RAGTruth) rather than a seeded splitter over
-    # source passages, so `in_domain` here (0.767/0.824/0.799) is NOT Table 3's
-    # 0.765/0.814/0.797. Table 3 comes from scripts/cr_final_tables.py; these gate reports
+    # source passages, so `in_domain` here (0.767/0.824/0.799) is NOT Table 4's
+    # 0.765/0.814/0.797. Table 4 comes from scripts/cr_final_tables.py; these gate reports
     # are kept as the pre-correction record and are cited nowhere in the paper.
     gp = f"runs/{m}_rt/report_gate_ragtruth.json"
     rep = json.load(open(gp)) if os.path.exists(gp) else {}

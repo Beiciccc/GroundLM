@@ -83,7 +83,7 @@ checks can be repeated:
 `runs/*_rt/report_gate_ragtruth.json`, `runs/c1_apriori.json` and
 `runs/qwen25_7b/reanalyze_c2.json` are the **pre-correction** record (GroupKFold over
 `item_id`, transductive purge, and for the last one a superseded v1 pilot). They are cited
-nowhere in the paper and their values deliberately differ from Tables 1 and 3;
+nowhere in the paper and their values deliberately differ from Tables 1 and 4;
 `scripts/cr_final_tables.py` is the producer of record.
 
 `runs/transfer_v2.json` is a deliberate exception: its `random` entries are computed under

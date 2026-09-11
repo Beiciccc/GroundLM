@@ -181,7 +181,7 @@ next item's question). A realized triple:
 \end{tabular}
 \end{center}
 The donor $q'$ is unrelated in topic, so the $A$/$C$ contrast is in principle solvable
-from question--answer compatibility alone, without consulting the context at all --- a
+from question--answer compatibility alone, without consulting the context at all: a
 possibility \S\ref{sec:c1} tests directly and confirms. Cell~B would paraphrase $c_{\mathrm{org}}$ so the answer is
 entailed but not copied (open instruct model, keeping an item only if
 token-overlap${\le}0.34$ and an NLI model still entails it); the released build supplies
@@ -321,7 +321,7 @@ Third, and decisively, a \emph{no-context ablation} settles what the signal is
 (Table~\ref{tab:nocontext}): re-extracting the $A$/$C$ activations with the context
 \emph{removed} (question$+$answer only), or with it replaced by an unrelated passage,
 leaves supp$_{O=1}$ almost unchanged, and the confidence-purged estimate does not
-collapse either --- it \emph{rises} for three of four families, and rises further under
+collapse either, and it \emph{rises} for three of four families, and rises further under
 a substituted context.
 The within-$O{=}1$ contrast is therefore mostly \emph{question--answer compatibility}:
 the probe separates $A$ (whose question the answer fits) from $C$ (whose donor question
@@ -329,8 +329,8 @@ it does not) \emph{without reading the context at all}. A cross-strata control (
 $A$ vs.\ $D$, which fixes the question but also varies overlap since $D$ is
 answer-absent; evaluate $A$ vs.\ $C$) does transfer at $0.66$--$0.88$. Here $A$ and $D$
 share the question and the answer string and differ only in the context, so an
-$A$-vs-$D$ direction cannot be a question--answer compatibility axis by construction ---
-the exact complement of the ablation above --- and \emph{some}
+$A$-vs-$D$ direction cannot be a question--answer compatibility axis by construction
+(the exact complement of the ablation above), and \emph{some}
 context-sensitive component therefore exists, but it is an upper bound and not separable from the
 dominant compatibility signal here. Finally, support and our
 \emph{synthetic} factuality label are \emph{identical} within $O{=}1$ by construction
@@ -383,7 +383,7 @@ supp$_{O=1}$ re-extracted with the context removed (question$+$answer only) and 
 replaced by an unrelated passage; same a-priori layers and same collision-free sample as
 Table~\ref{tab:c1} ($n_A{=}1{,}200$, $n_C{=}922$), same source-grouped signed protocol.
 Removing the context costs at most $0.05$ raw, and the confidence-purged contrast is
-\emph{higher} without the context for three of four families --- highest of all when the
+\emph{higher} without the context for three of four families, and highest of all when the
 context is replaced by an unrelated passage (Qwen $0.760{\to}0.888$). Only Mistral falls
 ($0.878{\to}0.805$).}
 \label{tab:nocontext}
@@ -588,11 +588,12 @@ a-priori layers, scored signed. Column~1 is the synth-$d_S$ column of
 Table~\ref{tab:c4}; the other three hold one factor fixed in turn. Changing the
 training domain is worth ${\approx}0.19$ at a fixed estimator (mass-mean
 $0.596{\to}0.781$); changing it is worth at most $0.074$ and moves in both
-directions --- CtrlPairs-trained logistic is \emph{worse}, and below chance on Gemma.
+directions: CtrlPairs-trained logistic is \emph{worse}, and below chance on Gemma.
 The ranges are disjoint: domain effects span $0.131$--$0.306$, estimator effects
 $0.016$--$0.074$.
-The RAGTruth columns are $5$-fold passage-grouped CV over $20$ seeds (sd $\le0.006$) and
-agree with Table~\ref{tab:c4}'s in-domain column to $0.001$.}
+Both RAGTruth columns are $5$-fold passage-grouped CV over $20$ seeds (sd $\le0.006$);
+the logistic one is the same quantity as Table~\ref{tab:c4}'s in-domain column and
+agrees with it to $0.001$.}
 \label{tab:estdom}
 \end{table}
 

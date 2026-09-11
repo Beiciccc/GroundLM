@@ -43,7 +43,7 @@ python3 scripts/v1_corr.py || echo "WARNING: v1_corr.py needs the HF NQ-Swap dat
 #     checkpoints to runs/_nli_sent_cache/ and resumes if interrupted.
 python3 scripts/nli_sentence_ragtruth.py  # -> runs/nli_sentence_ragtruth.json
 # 2d. CANONICAL: every reported table number under one source-grouped, fold-local,
-#     signed-AUROC protocol. Tables 1, 3 and 4 come from here.
+#     signed-AUROC protocol. Tables 1, 4 and 6 come from here.
 python3 scripts/cr_final_tables.py               # -> runs/cr_final_tables.json
 python3 scripts/cr_joint_grouped_foldlocal.py    # -> runs/cr_joint_grouped_foldlocal.json
 # 2e. Supporting analyses released with the camera-ready (see MANIFEST.md).

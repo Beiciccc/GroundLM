@@ -70,6 +70,9 @@ tokens): \emph{mean log-prob} (mean gold-token log-probability), \emph{mean
 max-softmax} (mean per-position top-1 probability), and \emph{first max-softmax}
 (top-1 probability of the first answer token). The confidence confound set in the
 purge comprises three scalars: mean log-prob, mean max-softmax, and first max-softmax.
+In the no-context and shuffled-context ablations (Table~\ref{tab:nocontext}) these
+scalars are re-measured under the ablated prompt, so each $+$conf column is purged
+against the confidence the model actually expresses in that condition.
 
 \paragraph{Lexical overlap.}
 Two quantities, both case-folded. \textsc{Overlap} (continuous, \texttt{lexical\_overlap})
@@ -105,7 +108,9 @@ the context as premise; the sentence-level variant instead uses each response se
 as a hypothesis (\S\ref{sec:experiments}).
 
 \paragraph{Probing and cross-validation.}
-Directions are mass-mean (difference of class means). Within-stratum decodability uses
+Directions are mass-mean (difference of class means) unless stated otherwise; the
+in-domain RAGTruth probe and the logistic arms of Table~\ref{tab:estdom} are
+$L_2$-logistic with $C{=}0.5$ on standardized features. Within-stratum decodability uses
 $5$-fold grouped cross-validation with the groups defined by \emph{source}, not by
 record. For CtrlPairs the group is the normalized (question, context, answer) triple of
 the underlying NQ-Swap QA: \textsc{item\_id} indexes one swap record, and because

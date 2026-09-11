@@ -44,7 +44,7 @@ src/groundlm/
   transfer/procrustes.py       cross-family orthogonal Procrustes, ACS baseline
 
 scripts/
-  cr_final_tables.py       every number in Tables 1, 3 and 4, one protocol
+  cr_final_tables.py       every number in Tables 1, 4 and 6, one protocol
   _cr_common.py            grouping, seeded folds, lazy feature loading
   make_figures.py          Figures 1-4
   harden_analyses.py       C3 cosine, cell-C contamination, per-task C4
