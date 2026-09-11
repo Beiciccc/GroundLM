@@ -143,26 +143,46 @@ controlled-stimulus axis does not beat them.
 We build matched statements from NQ-Swap \citep{longpre2021nqswap}, which provides,
 per question $q$, a gold answer $a_{\mathrm{true}}$ supported by an original context
 $c_{\mathrm{org}}$ and a substituted entity $a_{\mathrm{swap}}$ supported by an
-entity-swapped context $c_{\mathrm{sub}}$. We define two bits per (context, answer):
+entity-swapped context $c_{\mathrm{sub}}$. We define three bits per (context, answer):
 \textsc{Support}~$S$ (does the given context entail the asserted answer for the asked
-question?) and \textsc{Overlap}~$O$ (does the answer string occur in the context?).
+question?), \textsc{Overlap}~$O$ (does the answer string occur in the context?), and
+\textsc{Factuality}~$F$ (is the asserted answer the correct answer to the \emph{asked}
+question, irrespective of the context?). $S$ and $F$ coincide except in the
+answer-absent cell~D, where the answer is still factually right but the substituted
+context no longer supports it.
 The $2{\times}2$ design has four cells, of which we realize three (cell~B is
 unrealized in this release; see below):
 \begin{center}\small
-\begin{tabular}{@{}llcc@{}}
+\begin{tabular}{@{}llccc@{}}
 \toprule
-cell & (question, context, answer) & $S$ & $O$ \\
+cell & (question, context, answer) & $S$ & $O$ & $F$ \\
 \midrule
-A & $(q,\ c_{\mathrm{org}},\ a_{\mathrm{true}})$ & 1 & 1 \\
-B & $(q,\ \mathrm{paraphrase}(c_{\mathrm{org}}),\ a_{\mathrm{true}})$ & 1 & 0 \\
-C & $(q',\ c_{\mathrm{org}},\ a_{\mathrm{true}})$ & 0 & 1 \\
-D & $(q,\ c_{\mathrm{sub}},\ a_{\mathrm{true}})$ & 0 & 0 \\
+A & $(q,\ c_{\mathrm{org}},\ a_{\mathrm{true}})$ & 1 & 1 & 1 \\
+B & $(q,\ \mathrm{paraphrase}(c_{\mathrm{org}}),\ a_{\mathrm{true}})$ & 1 & 0 & 1 \\
+C & $(q',\ c_{\mathrm{org}},\ a_{\mathrm{true}})$ & 0 & 1 & 0 \\
+D & $(q,\ c_{\mathrm{sub}},\ a_{\mathrm{true}})$ & 0 & 0 & 1 \\
 \bottomrule
 \end{tabular}
 \end{center}
 Cell~C is a \emph{wrong-question trap}: $a_{\mathrm{true}}$ is present in
 $c_{\mathrm{org}}$ but is offered as the answer to a different question $q'$ (the
-next item's question). Cell~B would paraphrase $c_{\mathrm{org}}$ so the answer is
+next item's question). A realized triple:
+\begin{center}\small
+\begin{tabular}{@{}p{0.96\columnwidth}@{}}
+\toprule
+\textbf{A}\ $(q, c_{\mathrm{org}}, a_{\mathrm{true}})$ \hfill $S{=}1$, $O{=}1$, $F{=}1$\\
+\quad $q$: \emph{who played maudie in the movie el dorado}\\
+\quad $c$: \texttt{Charlene Holt as Maudie};\ \ $a$: \emph{Charlene Holt}\\[2pt]
+\textbf{C}\ $(q', c_{\mathrm{org}}, a_{\mathrm{true}})$ \hfill $S{=}0$, $O{=}1$, $F{=}0$\\
+\quad $q'$: \emph{when is the second half of vikings season~5 coming out}\\[2pt]
+\textbf{D}\ $(q, c_{\mathrm{sub}}, a_{\mathrm{true}})$ \hfill $S{=}0$, $O{=}0$, $F{=}1$\\
+\quad $c_{\mathrm{sub}}$: \texttt{Isabela Moner as Maudie}\\
+\bottomrule
+\end{tabular}
+\end{center}
+The donor $q'$ is unrelated in topic, so the $A$/$C$ contrast is in principle solvable
+from question--answer compatibility alone, without consulting the context at all --- a
+possibility \S\ref{sec:c1} tests directly and confirms. Cell~B would paraphrase $c_{\mathrm{org}}$ so the answer is
 entailed but not copied (open instruct model, keeping an item only if
 token-overlap${\le}0.34$ and an NLI model still entails it); the released build supplies
 no paraphraser, so cell~B has \emph{zero} yield and
@@ -297,18 +317,21 @@ confound is \emph{model confidence} (overlap and answer length are uninformative
 AUROC~$0.500$): answer log-prob and NLI separate $A$ from $C$ on their own, so we
 residualize the hidden states on the three confidence scalars; the support contrast then
 falls to $0.76$--$0.88$, which we take as the primary confound-controlled estimate.
-Third, and decisively, a \emph{no-context ablation} settles what the signal is:
-re-extracting the $A$/$C$ activations with the context \emph{removed}
-(question$+$answer only) leaves supp$_{O=1}$ almost unchanged (raw $0.95$--$0.98$ vs.\
-$0.99$ with context; the confidence-purged estimate does not collapse either,
-$0.81$--$0.84$, rising for two families and falling only ${\sim}0.07$ for Mistral),
-and replacing the context with an unrelated passage gives the same ($0.94$--$0.98$).
+Third, and decisively, a \emph{no-context ablation} settles what the signal is
+(Table~\ref{tab:nocontext}): re-extracting the $A$/$C$ activations with the context
+\emph{removed} (question$+$answer only), or with it replaced by an unrelated passage,
+leaves supp$_{O=1}$ almost unchanged, and the confidence-purged estimate does not
+collapse either --- it \emph{rises} for three of four families, and rises further under
+a substituted context.
 The within-$O{=}1$ contrast is therefore mostly \emph{question--answer compatibility}:
 the probe separates $A$ (whose question the answer fits) from $C$ (whose donor question
 it does not) \emph{without reading the context at all}. A cross-strata control (train
 $A$ vs.\ $D$, which fixes the question but also varies overlap since $D$ is
-answer-absent; evaluate $A$ vs.\ $C$) does transfer at $0.66$--$0.88$, so \emph{some}
-context-sensitive component exists, but it is an upper bound and not separable from the
+answer-absent; evaluate $A$ vs.\ $C$) does transfer at $0.66$--$0.88$. Here $A$ and $D$
+share the question and the answer string and differ only in the context, so an
+$A$-vs-$D$ direction cannot be a question--answer compatibility axis by construction ---
+the exact complement of the ablation above --- and \emph{some}
+context-sensitive component therefore exists, but it is an upper bound and not separable from the
 dominant compatibility signal here. Finally, support and our
 \emph{synthetic} factuality label are \emph{identical} within $O{=}1$ by construction
 (they diverge only in the answer-absent cell~D). We therefore make no context-grounding claim within this stratum.
@@ -335,9 +358,35 @@ contrast varies only the question (source-cluster $95\%$ CIs $[0.983,0.992]$,
 $[0.993,0.998]$, $[0.995,0.999]$, $[0.997,0.999]$). \emph{$+$conf}: hidden states
 residualized on the three confidence scalars, fitted within each fold; our primary
 estimate. \emph{cross}: train $A$ vs.\ $D$, evaluate $A$ vs.\ $C$ on \emph{held-out}
-groups. Within $O{=}1$ support and the synthetic factuality label coincide, so we
+groups, \emph{raw} rather than confidence-purged, hence an upper bound and not on the
+same footing as the \emph{$+$conf} column. Within $O{=}1$ support and the synthetic factuality label coincide, so we
 make no distinctness claim.}
 \label{tab:c1}
+\end{table}
+
+\begin{table}[t]\centering\small
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}lccccccc@{}}
+\toprule
+ & & \multicolumn{2}{c}{with context} & \multicolumn{2}{c}{no context} & \multicolumn{2}{c}{shuffled} \\
+\cmidrule(lr){3-4}\cmidrule(lr){5-6}\cmidrule(lr){7-8}
+model & $L$ & raw & $+$conf & raw & $+$conf & raw & $+$conf \\
+\midrule
+Qwen2.5 & 14 & 0.988 & 0.760 & 0.947 & 0.838 & 0.938 & 0.888 \\
+Mistral & 16 & 0.996 & 0.878 & 0.975 & 0.805 & 0.976 & 0.809 \\
+Llama   & 16 & 0.997 & 0.789 & 0.980 & 0.814 & 0.982 & 0.839 \\
+Gemma   & 21 & 0.998 & 0.811 & 0.984 & 0.812 & 0.983 & 0.841 \\
+\bottomrule
+\end{tabular}
+\caption{\textbf{The within-$O{=}1$ contrast does not need the context.}
+supp$_{O=1}$ re-extracted with the context removed (question$+$answer only) and with it
+replaced by an unrelated passage; same a-priori layers and same collision-free sample as
+Table~\ref{tab:c1} ($n_A{=}1{,}200$, $n_C{=}922$), same source-grouped signed protocol.
+Removing the context costs at most $0.05$ raw, and the confidence-purged contrast is
+\emph{higher} without the context for three of four families --- highest of all when the
+context is replaced by an unrelated passage (Qwen $0.760{\to}0.888$). Only Mistral falls
+($0.878{\to}0.805$).}
+\label{tab:nocontext}
 \end{table}
 
 \begin{figure*}[t]\centering
@@ -443,8 +492,8 @@ of contrasts derived from the shared stimuli, not a grounding-specific axis.}
 \label{tab:c3}
 \end{table}
 
-\begin{figure}[t]\centering
-\includegraphics[width=\columnwidth]{figs/fig_c3_heatmap.pdf}
+\begin{figure*}[t]\centering
+\includegraphics[width=0.75\textwidth]{figs/fig_c3_heatmap.pdf}
 \caption{\textbf{Matched-stimulus contrasts align across families up to a linear map.}
 Source$\to$target transfer AUROC of the support direction; every cell, diagonal
 included, uses that panel's own estimator, source-grouped. (a)~Orthogonal Procrustes is
@@ -454,7 +503,7 @@ ceiling-saturated. (b)~Anchor projection (ACS), scored the same way, is uniforml
 ($0.68$--$0.86$) and its own diagonal ($0.69$--$0.86$) stays well below Procrustes'
 $0.89$--$0.91$, so its gap to Procrustes is not a transfer effect.}
 \label{fig:c3heatmap}
-\end{figure}
+\end{figure*}
 
 \subsection{Synthetic axes do not transfer to real hallucinations}
 \label{sec:c4}
@@ -487,7 +536,12 @@ features first, within each training fold, leaves $0.68$--$0.73$, so some of thi
 is overlap but much of it is not. A
 real support signal therefore exists in the internals, but it is a \emph{different
 direction} from the synthetic axis and is recoverable only with in-domain human
-annotation.
+annotation. That comparison changes the estimator (mass-mean to $L_2$-logistic) and the
+training domain at once, so we separate them (Table~\ref{tab:estdom}): holding the
+estimator at mass-mean, the \emph{same} estimator that transfers at $0.596$ from
+CtrlPairs reaches $0.781$ fitted in-domain, whereas swapping mass-mean for
+$L_2$-logistic moves the estimate by at most $0.05$ and in both directions. What
+separates the two is the training domain, not the estimator.
 
 \begin{table}[t]\centering\small
 \setlength{\tabcolsep}{3.5pt}
@@ -510,6 +564,32 @@ below NLI, confidence, and lexical overlap, and for the weakest family
 label-free); source-passage cluster-bootstrap $95\%$ CIs $[0.737,0.786]$, $[0.780,0.824]$,
 $[0.776,0.820]$.}
 \label{tab:c4}
+\end{table}
+
+\begin{table}[t]\centering\small
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+ & \multicolumn{2}{c}{CtrlPairs-trained} & \multicolumn{2}{c}{RAGTruth-trained} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+model & mass-mean & logistic & mass-mean & logistic \\
+\midrule
+Qwen2.5 & 0.657 & 0.623 & 0.788 & 0.765 \\
+Llama   & 0.591 & 0.517 & 0.774 & 0.813 \\
+Gemma   & 0.541 & 0.492 & 0.781 & 0.798 \\
+\midrule
+mean    & 0.596 & 0.544 & 0.781 & 0.792 \\
+\bottomrule
+\end{tabular}
+\caption{\textbf{Estimator $\times$ training domain (C4).} RAGTruth AUROC at the same
+a-priori layers, scored signed. Column~1 is the synth-$d_S$ column of
+Table~\ref{tab:c4}; the other three hold one factor fixed in turn. Changing the
+training domain is worth ${\approx}0.19$ at a fixed estimator (mass-mean
+$0.596{\to}0.781$); changing the estimator is worth ${\le}0.05$ and moves in both
+directions --- CtrlPairs-trained logistic is \emph{worse}, and below chance on Gemma.
+The RAGTruth columns are $5$-fold passage-grouped CV over $20$ seeds (sd $\le0.006$) and
+agree with Table~\ref{tab:c4}'s in-domain column to $0.001$.}
+\label{tab:estdom}
 \end{table}
 
 \begin{figure}[t]\centering

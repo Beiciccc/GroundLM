@@ -38,18 +38,19 @@ for it and exits with instructions rather than failing part-way.
 | Paper object | Producer | Reads | Writes |
 |---|---|---|---|
 | Table 1 (C1: supp `O=1` raw / +conf / cross-strata, CIs) | `scripts/cr_final_tables.py` | `runs/*_v2/features.npz`, `data/ctrlpairs_v2.jsonl` | `runs/cr_final_tables.json` → `table1` |
-| Table 2 (C3: transported-to-native cosine, transfer AUROC, nulls) | `scripts/harden_analyses.py`, `scripts/heldout_procrustes.py` | `runs/*_v2/features.npz` | `runs/hardened.json` → `c3`, `runs/heldout_procrustes.json` |
-| Table 2 nuisance rows (length / overlap / factuality / confidence) | `scripts/cr_band_and_pairs.py` | `runs/*_v2/features.npz` | `runs/cr_band_and_pairs.json` → `c3_per_pair` |
-| Table 3 (C4 pooled: synth-d_S, conf, in-domain, NLI, overlap, CIs) | `scripts/cr_final_tables.py` | `runs/*_v2/features.npz`, `runs/*_rt/features.npz`, `data/ragtruth.jsonl` | `runs/cr_final_tables.json` → `table3` |
-| Table 4 (C4 per task type) | `scripts/cr_final_tables.py` | as Table 3 | `runs/cr_final_tables.json` → `table4_pertask`, `prose.per_task_mean_over_models` |
-| Table 4 Sent-NLI rows | `scripts/nli_sentence_ragtruth.py` | `data/ragtruth.jsonl` | `runs/nli_sentence_ragtruth.json` |
+| Table 3 (C3: transported-to-native cosine, transfer AUROC, nulls) | `scripts/harden_analyses.py`, `scripts/heldout_procrustes.py` | `runs/*_v2/features.npz` | `runs/hardened.json` → `c3`, `runs/heldout_procrustes.json` |
+| Table 3 nuisance rows (length / overlap / factuality / confidence) | `scripts/cr_band_and_pairs.py` | `runs/*_v2/features.npz` | `runs/cr_band_and_pairs.json` → `c3_per_pair` |
+| Table 4 (C4 pooled: synth-d_S, conf, in-domain, NLI, overlap, CIs) | `scripts/cr_final_tables.py` | `runs/*_v2/features.npz`, `runs/*_rt/features.npz`, `data/ragtruth.jsonl` | `runs/cr_final_tables.json` → `table3` |
+| Table 5 (estimator × training domain) | `scripts/cr_estimator_domain_control.py` | `runs/*_v2/features.npz`, `runs/*_rt/features.npz` | `runs/cr_estimator_domain_control.json` |
+| Table 6 (C4 per task type) | `scripts/cr_final_tables.py` | as Table 4 | `runs/cr_final_tables.json` → `table4_pertask`, `prose.per_task_mean_over_models` |
+| Table 6 Sent-NLI rows | `scripts/nli_sentence_ragtruth.py` | `data/ragtruth.jsonl` | `runs/nli_sentence_ragtruth.json` |
 | Figure 1 (decoupling) | `scripts/make_figures.py::fig_decoupling` | `data/ctrlpairs_v2.jsonl`, `runs/v1_corr.json` | `paper/figs/fig_decoupling.pdf` |
 | Figure 2 (C1 by layer) | `scripts/make_figures.py::fig_c1_layers` | `runs/*_v2/features.npz`, `runs/*_v2_nc/features.npz` | `paper/figs/fig_c1_layers.pdf`, `runs/fig_c1_layers_values.json` |
 | Figure 3 (C3 transfer heatmaps) | `scripts/make_figures.py::fig_c3_heatmap` | `runs/*_v2/features.npz` | `paper/figs/fig_c3_heatmap.pdf`, `runs/fig_c3_heatmap_values.json` |
-| Figure 4 (C4 RAGTruth) | `scripts/make_figures.py::fig_c4_ragtruth` | `runs/cr_final_tables.json` (same source as Table 3, so bars and table cannot diverge) | `paper/figs/fig_c4_ragtruth.pdf` |
+| Figure 4 (C4 RAGTruth) | `scripts/make_figures.py::fig_c4_ragtruth` | `runs/cr_final_tables.json` (same source as Table 4, so bars and table cannot diverge) | `paper/figs/fig_c4_ragtruth.pdf` |
 | §3 construction counts, corr(S,O), donor collisions | `scripts/cr_dupleak_audit.py`, `scripts/harden_analyses.py` | `data/ctrlpairs_v2.jsonl` | `runs/cr_dupleak_audit.json`, `runs/hardened.json` → `cellC` |
 | §3 NLI fooled rate on clean cell C | `scripts/harden_analyses.py` | `data/ctrlpairs_v2.jsonl` | `runs/hardened.json` → `cellC` |
-| §5.1 no-context / shuffled ablation | `scripts/analyze_nocontext.py` | `runs/*_v2{,_nc,_shuf}/features.npz` | `runs/nocontext_ablation.json` |
+| Table 2 (no-context / shuffled ablation) | `scripts/analyze_nocontext.py` | `runs/*_v2{,_nc,_shuf}/features.npz` | `runs/nocontext_ablation.json` |
 | §5.2 confidence asymmetry, separability angles | `scripts/cr_c2_and_separability.py` | `runs/*_v2/features.npz` | `runs/cr_c2_and_separability.json` |
 | §5.4 paired baseline tests | `scripts/cr_final_tables.py`, `scripts/cr_band_and_pairs.py` | `runs/*_rt/features.npz` | `runs/cr_final_tables.json` → `table3`, `runs/cr_band_and_pairs.json` → `c4_paired` |
 | §5.4 in-domain with overlap residualized | `scripts/cr_joint_grouped_foldlocal.py` | `runs/*_rt/features.npz`, `data/ragtruth.jsonl` | `runs/cr_joint_grouped_foldlocal.json` |
@@ -77,7 +78,7 @@ checks can be repeated:
 | Same, for the RAGTruth surface purge and the C2 confound set | `scripts/cr_protocol_audit_{f,g}.py` | `runs/cr_protocol_audit_{f,g}.json` |
 | Duplicate-leakage sensitivity, variant B | `scripts/cr_dupleak_sensitivity.py` | `runs/cr_dupleak_sensitivity_b.json` |
 | Per-entry citation provenance (see note below) | `scripts/generate_bib.py` reads it | `runs/cite_verified.json` |
-| Is the RAGTruth gap the training domain or the estimator? | `scripts/cr_estimator_domain_control.py` | `runs/cr_estimator_domain_control.json` |
+
 
 `runs/*_rt/report_gate_ragtruth.json`, `runs/c1_apriori.json` and
 `runs/qwen25_7b/reanalyze_c2.json` are the **pre-correction** record (GroupKFold over
