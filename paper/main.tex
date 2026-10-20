@@ -1,0 +1,65 @@
+% GroundLM 2026 workshop @ EMNLP -- CAMERA-READY.
+% Uses the ACL template: drop acl.sty, acl_natbib.bst (and optionally
+% ACL-style.sty) from https://github.com/acl-org/acl-style-files into this dir.
+\documentclass[11pt]{article}
+\usepackage[final]{acl}           % camera-ready: no line numbers, no anonymisation
+\usepackage{times}
+\usepackage{latexsym}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\emergencystretch=2em   % avoid overfull hboxes in the narrow ACL columns
+% Two control tables were added late; the default float limits back the queue up by a
+% page. These affect float PLACEMENT only -- margins, fonts and spacing are untouched.
+\setcounter{topnumber}{3}
+\setcounter{bottomnumber}{2}
+\setcounter{totalnumber}{4}
+\renewcommand{\topfraction}{0.92}
+\renewcommand{\bottomfraction}{0.55}
+\renewcommand{\textfraction}{0.06}
+\renewcommand{\floatpagefraction}{0.70}
+
+\title{Grounding or Lexical Overlap?\\
+A Matched-Pair Study of Internals-Based Faithfulness Probes}
+
+\author{
+  Kun Zhang \\
+  School of Computing, University of Leeds \\
+  \texttt{pjdf0740@leeds.ac.uk}
+}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We provide a confound-controlled methodology and a released ``wrong-question''
+diagnostic for internals-based, reference-free hallucination detection, which treats
+\emph{context-faithfulness} (is an answer entailed by the context?) as a linear
+residual-stream direction. In the standard extractive setup, faithfulness is almost
+perfectly correlated with \emph{lexical overlap} ($r{=}0.99$), so an apparent
+``grounding probe'' may be a string-matching detector. Our matched
+\textsc{Support}$\times$\textsc{Overlap} construction \emph{partially} decouples the two
+(halving the confound to $r{=}0.50$), and the diagnostic fools an off-the-shelf NLI
+model. Across four instruction-tuned $7$--$9$B families: (i)~within the
+overlap-controlled stratum a support contrast is linearly decodable, but a
+\emph{no-context ablation} shows it reflects question--answer compatibility rather than
+context use, and is inseparable from factoid-correctness by construction; (ii)~it aligns
+across families up to a linear map, yet answer-length, overlap, and factuality
+directions align equally well, a generic matched-stimulus property, not
+grounding-specific; (iii)~on the three families we could extract, the synthetic direction does not transfer
+to real hallucinations, scoring below NLI, confidence, and lexical overlap on RAGTruth,
+where only an in-domain probe trained on human labels recovers a usable signal.
+\end{abstract}
+
+\input{sections}
+
+\bibliography{references}
+
+\appendix
+\input{appendix}
+
+\end{document}

@@ -1,0 +1,156 @@
+{
+  "in_domain": {
+    "qwen25_7b": {
+      "layer": 14,
+      "auroc": 0.7668917417657619,
+      "ci": [
+        0.7438895928038691,
+        0.7898525843975913
+      ],
+      "auroc_no_overlap": 0.5964012424678717,
+      "overlap_auroc": 0.7532694768836985,
+      "vs_overlap_diff": 0.013636704966092443,
+      "vs_overlap_ci": [
+        -0.012091560934823803,
+        0.03980432176853256
+      ],
+      "vs_overlap_p": 0.1515
+    },
+    "llama31_8b": {
+      "layer": 16,
+      "auroc": 0.82422812350024,
+      "ci": [
+        0.8039685303208893,
+        0.8433057434076451
+      ],
+      "auroc_no_overlap": 0.6661411951865479,
+      "overlap_auroc": 0.7532694768836985,
+      "vs_overlap_diff": 0.07098079174253448,
+      "vs_overlap_ci": [
+        0.0477587441375404,
+        0.09561444927305685
+      ],
+      "vs_overlap_p": 0.0
+    },
+    "gemma2_9b": {
+      "layer": 21,
+      "auroc": 0.7992476759274072,
+      "ci": [
+        0.7782093403981922,
+        0.8200238980972924
+      ],
+      "auroc_no_overlap": 0.6332842300787429,
+      "overlap_auroc": 0.7532694768836985,
+      "vs_overlap_diff": 0.046246654657788905,
+      "vs_overlap_ci": [
+        0.02285840081112633,
+        0.0706814027416832
+      ],
+      "vs_overlap_p": 0.0
+    }
+  },
+  "c1": {
+    "qwen25_7b": {
+      "layer": 14,
+      "supp_O1_raw": 0.8715319444444444,
+      "supp_O1_conf_purged": 0.699342361111111,
+      "logprob_only": 0.7949413194444445,
+      "nli_within_O1": 0.745725,
+      "overlap_within_O1": 0.5,
+      "SF_identical": true,
+      "SF_corr": 1.0,
+      "cross_strata_AvsC": 0.6188413194444444
+    },
+    "mistral7b_v03": {
+      "layer": 16,
+      "supp_O1_raw": 0.8734822916666667,
+      "supp_O1_conf_purged": 0.782453125,
+      "logprob_only": 0.8507243055555553,
+      "nli_within_O1": 0.745725,
+      "overlap_within_O1": 0.5,
+      "SF_identical": true,
+      "SF_corr": 1.0,
+      "cross_strata_AvsC": 0.7788701388888889
+    },
+    "llama31_8b": {
+      "layer": 16,
+      "supp_O1_raw": 0.8762583333333331,
+      "supp_O1_conf_purged": 0.723340972222222,
+      "logprob_only": 0.8572881944444445,
+      "nli_within_O1": 0.745725,
+      "overlap_within_O1": 0.5,
+      "SF_identical": true,
+      "SF_corr": 1.0,
+      "cross_strata_AvsC": 0.78076875
+    },
+    "gemma2_9b": {
+      "layer": 21,
+      "supp_O1_raw": 0.8780670138888889,
+      "supp_O1_conf_purged": 0.7382274305555555,
+      "logprob_only": 0.8509850694444443,
+      "nli_within_O1": 0.745725,
+      "overlap_within_O1": 0.5,
+      "SF_identical": true,
+      "SF_corr": 1.0,
+      "cross_strata_AvsC": 0.7479760416666668
+    }
+  },
+  "c3": {
+    "cos": 0.9758088934028403,
+    "auroc": 0.9009155384611585,
+    "within": 0.8998441317528079,
+    "rand_map": 0.508669130266492,
+    "rand_lab": 0.5428138297454819,
+    "rand_cos": 0.011849184858343494,
+    "rand_lab_cos": 0.12539457868171971,
+    "cos_fac": 0.9897808501905928,
+    "auroc_fac": 0.9138255408412327,
+    "within_fac": 0.909661225645564
+  },
+  "cellC": {
+    "n_items": 1200,
+    "n_distinct_q": 418,
+    "n_collision": 278,
+    "frac_collision": 0.23166666666666666,
+    "fooled_all": 0.37583333333333335,
+    "fooled_clean": 0.25488069414316705,
+    "fooled_cont": 0.7769784172661871,
+    "mean_ent_cleanC": 0.3122729479361511,
+    "mean_ent_A": 0.7374319616953532,
+    "mean_ent_D": 0.17829854145633606,
+    "supp_O1_clean_qwen25_7b": 0.9887481923355026,
+    "supp_O1_clean_mistral7b_v03": 0.9961632321041214,
+    "supp_O1_clean_llama31_8b": 0.9972080621836588,
+    "supp_O1_clean_gemma2_9b": 0.9984119667389733,
+    "corr_SO_all": 0.499268164793328,
+    "corr_SO_clean": 0.5647847598756532
+  },
+  "c4_pertask": {
+    "tasks": [
+      "Data2txt",
+      "QA",
+      "Summary"
+    ],
+    "per_task": {
+      "faithful_rate": {
+        "Data2txt": 0.3568215892053973,
+        "QA": 0.8228228228228228,
+        "Summary": 0.7946026986506747
+      },
+      "overlap": {
+        "Data2txt": 0.6047237076648841,
+        "QA": 0.6856751824817517,
+        "Summary": 0.6494353394849194
+      },
+      "nli": {
+        "Data2txt": 0.5469677381442087,
+        "QA": 0.5666831621922553,
+        "Summary": 0.6330670706514254
+      }
+    },
+    "overlap_pooled": 0.7532694768836985,
+    "overlap_macro": 0.6466114098771851,
+    "nli_pooled": 0.6731189676318455,
+    "nli_macro": 0.5822393236626299
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "layer": 16,
+  "model": "mistralai/Mistral-7B-Instruct-v0.3",
+  "all": {
+    "aurc_faith_axis": 0.4599879839772575,
+    "aurc_two_axis": 0.4421149723266943,
+    "aurc_max_softmax": 0.52688171575064,
+    "aurc_nli": 0.4369903451305151,
+    "coverage_at_risk": 0.004731422209852491,
+    "n": 3593
+  },
+  "overlap1_hard": {
+    "aurc_faith_axis": 0.3388800511358846,
+    "aurc_two_axis": 0.3065088381258866,
+    "aurc_max_softmax": 0.35507942056444,
+    "aurc_nli": 0.31976103911612297,
+    "coverage_at_risk": 0.00625,
+    "n": 2400
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "n": 18984,
+  "corr_support_overlap_exactstring": 0.9861,
+  "corr_support_overlap_tokenpresent": 0.8576,
+  "overlap_def": "exactstring"
+}

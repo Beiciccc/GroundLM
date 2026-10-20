@@ -1,0 +1,10 @@
+{
+  "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+  "layers": [
+    16
+  ],
+  "pooling": [
+    "last"
+  ],
+  "n_layers": 32
+}

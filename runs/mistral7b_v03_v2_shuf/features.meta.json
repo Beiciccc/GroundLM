@@ -1,0 +1,10 @@
+{
+  "model_id": "mistralai/Mistral-7B-Instruct-v0.3",
+  "layers": [
+    16
+  ],
+  "pooling": [
+    "last"
+  ],
+  "n_layers": 32
+}

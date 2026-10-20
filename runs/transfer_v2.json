@@ -1,0 +1,18 @@
+{
+  "depth": 0.5,
+  "pooling": "last",
+  "support": {
+    "procrustes_purged": 0.7790969299533456,
+    "procrustes_raw": 0.9054240831107818,
+    "acs_purged": 0.6697516277725732,
+    "random": 0.543884142675373,
+    "within_target": 0.9045813000741062
+  },
+  "factuality": {
+    "procrustes_purged": 0.7932953510024383,
+    "procrustes_raw": 0.9073303391230545,
+    "acs_purged": 0.6950678440077475,
+    "random": 0.5994353744489641,
+    "within_target": 0.9031743288928755
+  }
+}
